@@ -3,9 +3,9 @@
     xmlns:topo="cn.com.ultrapower.topology.view.*" 
     creationComplete="initApp();" xmlns:tools="tools.*">
     <mx:Style>
-		Application, ToolTip {
-		    fontSize: 12px;
-		}
+        Application, ToolTip {
+            fontSize: 12px;
+        }
     </mx:Style>
     <mx:Script>
         <![CDATA[
@@ -13,11 +13,11 @@
             import tools.LineOptionsPanel;
             import tools.NodeOptionPanel;
             import mx.containers.Form;
-        	import cn.com.ultrapower.topology.view.Node;
-        	import mx.controls.sliderClasses.Slider;
-        	import mx.events.ItemClickEvent;
-        	import mx.events.SliderEvent;
-        	import mx.rpc.events.FaultEvent;
+            import cn.com.ultrapower.topology.view.Node;
+            import mx.controls.sliderClasses.Slider;
+            import mx.events.ItemClickEvent;
+            import mx.events.SliderEvent;
+            import mx.rpc.events.FaultEvent;
             import mx.rpc.events.ResultEvent;
             import mx.binding.utils.BindingUtils;
             
@@ -34,14 +34,14 @@
             private var linePanel:Form = new LineOptionsPanel();
             
             private var nodesData:XML = 
-	            <r>
-		            <node id="node1" title="workgroup" type="workgroup" describe="" />
-		            <node id="node2" title="server" type="server" describe="" />
-		            <node id="node3" title="client" type="client" describe="" />
-		            <node id="node4" title="computer" type="computer" describe="" />
+                <r>
+                    <node id="node1" title="workgroup" type="workgroup" describe="" />
+                    <node id="node2" title="server" type="server" describe="" />
+                    <node id="node3" title="client" type="client" describe="" />
+                    <node id="node4" title="computer" type="computer" describe="" />
                     <node id="node5" title="power" type="power" describe="" />
                     <node id="node6" title="hardware" type="hardware" describe="" />
-	            </r>
+                </r>
             
             private function initApp():void{
                 myData.send();
@@ -82,7 +82,7 @@
             
             private function xmlLoadFaildHandler(event:FaultEvent):void
             {
-            	trace("加载失败");
+                trace("加载失败");
             }
             
             private function clickNodeHandler(tEvent:Event):void
@@ -125,8 +125,8 @@
             
             private function setGraphScale(event:ItemClickEvent):void
             {
-            	var tmpValue:Number = event.index == 0? -1: 1;
-            	graphTest.scaleBy(0.05 * tmpValue, 0.05 * tmpValue);
+                var tmpValue:Number = event.index == 0? -1: 1;
+                graphTest.scaleBy(0.05 * tmpValue, 0.05 * tmpValue);
             }
         ]]>
     </mx:Script>
