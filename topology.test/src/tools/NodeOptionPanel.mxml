@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:FormItem label="Id">
+		<mx:TextInput id="nameId" />
+	</mx:FormItem>
+    <mx:FormItem label="Title">
+        <mx:TextInput id="title" />
+    </mx:FormItem>
+    <mx:FormItem label="Type">
+        <mx:ComboBox id="type">
+        	<mx:Array>
+                <mx:String>workgroup</mx:String>
+                <mx:String>server</mx:String>
+                <mx:String>client</mx:String>
+                <mx:String>computer</mx:String>
+        	</mx:Array>
+        </mx:ComboBox>
+    </mx:FormItem>
+    <mx:FormItem label="Describe">
+        <mx:TextInput id="describe" />
+    </mx:FormItem>
+</mx:Form>

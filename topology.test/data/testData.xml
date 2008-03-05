@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root>
+	<node id="root" title="Root" type="icon1" describe="这是根节点" x="50" y="10" />
+	<node id="node1" title="Node 1" type="icon2" describe="测试节点1" x="10" y="70" />
+	<node id="node2" title="Node 2" type="icon3" describe="测试节点2" x="70" y="70" />
+	<node id="node3" title="Node 3" type="icon4" x="170" y="130" />
+
+	<line fromId="root" toId="node1" color="ff00ff" />
+	<line fromId="root" toId="node2" color="#33ff33" />
+	<line fromId="node1" toId="node2" color="0x666666" />
+	<line fromId="node1" toId="node3" color="999999" />
+</root>

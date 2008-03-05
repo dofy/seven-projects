@@ -1,0 +1,248 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Graph.as</title>
+<link rel="stylesheet" type="text/css" href="../../../../../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="asPackage">package</span> cn.com.ultrapower.topology
+<span class="asBracket">{</span>
+    <span class="asReserved">import</span> mx.containers.Canvas;
+    
+    <span class="asReserved">import</span> flash.events.MouseEvent;
+    
+    <span class="asReserved">public</span> <span class="asClass">class</span> Graph <span class="asReserved">extends</span> Canvas
+    <span class="asBracket">{</span>
+        <span class="asReserved">private</span> <span class="asReserved">const</span> NODE_ID_BEGIN<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; <span class="asComment">// 节点开始层级
+</span>        <span class="asReserved">private</span> <span class="asReserved">const</span> LINE_ID_BEGIN<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; <span class="asComment">// 线 开始层级
+</span>        
+        <span class="asReserved">private</span> <span class="asVar">var</span> _nodeId<span class="asOperator">:</span>uint <span class="asOperator">=</span> NODE_ID_BEGIN; <span class="asComment">// 节点开始 Id
+</span>        <span class="asReserved">private</span> <span class="asVar">var</span> _lineId<span class="asOperator">:</span>uint <span class="asOperator">=</span> LINE_ID_BEGIN; <span class="asComment">// 线  开始 Id
+</span>        
+        <span class="asReserved">private</span> <span class="asVar">var</span> _nodes<span class="asOperator">:</span>Array; <span class="asComment">// 节点数组
+</span>        <span class="asReserved">private</span> <span class="asVar">var</span> _lines<span class="asOperator">:</span>Array; <span class="asComment">// 线 数组
+</span>        
+        <span class="asReserved">private</span> <span class="asVar">var</span> _rootNode<span class="asOperator">:</span>Node;   <span class="asComment">// 根节点
+</span>        
+        <span class="asReserved">private</span> <span class="asVar">var</span> _dragObj<span class="asOperator">:</span>Array;    <span class="asComment">// 当前拖拽对象
+</span>        <span class="asReserved">private</span> <span class="asVar">var</span> _oldMouseX<span class="asOperator">:</span>Number; <span class="asComment">// 原 鼠标 x 坐标
+</span>        <span class="asReserved">private</span> <span class="asVar">var</span> _oldMouseY<span class="asOperator">:</span>Number; <span class="asComment">// 原 鼠标 y 坐标
+</span>        
+        <span class="asComment">// ** 绘制用变量 **
+</span>        <span class="asComment">//private var _content:Canvas;
+</span>        <span class="asReserved">private</span> <span class="asVar">var</span> _existentNodes<span class="asOperator">:</span>Array;
+        
+        <span class="asReserved">public</span> <span class="asFunction">function</span> Graph<span class="asBracket">(){</span>
+            <span class="asReserved">super</span><span class="asBracket">()</span>;
+            _nodes <span class="asOperator">=</span> <span class="asReserved">new</span> Array<span class="asBracket">()</span>;
+            _lines <span class="asOperator">=</span> <span class="asReserved">new</span> Array<span class="asBracket">()</span>;
+            
+            _existentNodes <span class="asOperator">=</span> <span class="asReserved">new</span> Array<span class="asBracket">()</span>;
+            
+            <span class="asComment">// 隐藏滚动条
+</span>            <span class="asReserved">this</span>.verticalScrollPolicy <span class="asOperator">=</span> <span class="asString">&quot;off&quot;</span>;
+            <span class="asReserved">this</span>.horizontalScrollPolicy <span class="asOperator">=</span> <span class="asString">&quot;off&quot;</span>;
+            
+            bindListener<span class="asBracket">()</span>;
+        <span class="asBracket">}</span>
+        
+        <span class="asReserved">public</span> <span class="asFunction">function</span> setData<span class="asBracket">(</span>xml<span class="asOperator">:</span>XML<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            
+            <span class="asVar">var</span> tmpNode<span class="asOperator">:</span>Node;
+            <span class="asVar">var</span> tmpLine<span class="asOperator">:</span>Line;
+            
+            <span class="asVar">var</span> fromNode<span class="asOperator">:</span>Node;
+            <span class="asVar">var</span> toNode<span class="asOperator">:</span>Node;
+            
+            <span class="asReserved">for</span> <span class="asReserved">each</span> <span class="asBracket">(</span><span class="asVar">var</span> nodex<span class="asOperator">:</span>XML <span class="asReserved">in</span> xml.node<span class="asBracket">){</span>
+                tmpNode <span class="asOperator">=</span> <span class="asReserved">new</span> Node<span class="asBracket">(</span>_nodeId<span class="asOperator">++</span>, nodex<span class="asBracket">)</span>;
+                _nodes.push<span class="asBracket">(</span>tmpNode<span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+            
+            <span class="asReserved">for</span> <span class="asReserved">each</span> <span class="asBracket">(</span><span class="asVar">var</span> linex<span class="asOperator">:</span>XML <span class="asReserved">in</span> xml.line<span class="asBracket">){</span>
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;*** From Id:&quot;</span>, linex.@fromId, <span class="asString">&quot;, To Id:&quot;</span>, linex.@toId, <span class="asString">&quot;***&quot;</span><span class="asBracket">)</span>;
+                tmpLine <span class="asOperator">=</span> <span class="asReserved">new</span> Line<span class="asBracket">(</span>_lineId<span class="asOperator">++</span>, linex<span class="asBracket">)</span>;
+                _lines.push<span class="asBracket">(</span>tmpLine<span class="asBracket">)</span>;
+                fromNode <span class="asOperator">=</span> getNodeByName<span class="asBracket">(</span>linex.@fromId<span class="asBracket">)</span> <span class="asReserved">as</span> Node;
+                toNode   <span class="asOperator">=</span> getNodeByName<span class="asBracket">(</span>linex.@toId<span class="asBracket">)</span> <span class="asReserved">as</span> Node;
+                fromNode.addSubNode<span class="asBracket">(</span>toNode<span class="asBracket">)</span>;
+                toNode.addParentNode<span class="asBracket">(</span>fromNode<span class="asBracket">)</span>;
+                tmpLine.bindNodes<span class="asBracket">(</span>fromNode, toNode<span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 绘制拓扑图
+         * */</span>
+        <span class="asReserved">public</span> <span class="asFunction">function</span> display<span class="asBracket">()</span><span class="asOperator">:</span>Boolean<span class="asBracket">{</span>
+            <span class="asComment">// 自动指派跟节点
+</span>            <span class="asReserved">if</span><span class="asBracket">(</span><span class="asOperator">!</span>_rootNode<span class="asBracket">){</span>
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;自动指派根节点.&quot;</span><span class="asBracket">)</span>;
+                rootNode <span class="asOperator">=</span> getNodeById<span class="asBracket">(</span>NODE_ID_BEGIN<span class="asBracket">)</span>.Name;
+            <span class="asBracket">}</span>
+            <span class="asComment">// 未找到根节点
+</span>            <span class="asReserved">if</span><span class="asBracket">(</span><span class="asOperator">!</span>_rootNode<span class="asBracket">){</span>
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;根节点不存在!&quot;</span><span class="asBracket">)</span>;
+                <span class="asReserved">return</span> <span class="asReserved">false</span>;
+            <span class="asBracket">}</span>
+            <span class="asComment">// 开始绘制
+</span>            drawLines<span class="asBracket">()</span>;
+            drawNode<span class="asBracket">(</span>_rootNode<span class="asBracket">)</span>;
+            
+            <span class="asReserved">return</span> <span class="asReserved">true</span>;
+        <span class="asBracket">}</span>
+
+        <span class="asDoc">/**
+         * 绘制节点
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> drawNode<span class="asBracket">(</span>node<span class="asOperator">:</span>Node<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asVar">var</span> i<span class="asOperator">:</span>uint;
+            <span class="asComment">// 绘制子节点
+</span>            <span class="asReserved">if</span><span class="asBracket">(</span><span class="asOperator">!</span>inExistentNodes<span class="asBracket">(</span>node.Id<span class="asBracket">)){</span>
+                <span class="asReserved">this</span>.addChild<span class="asBracket">(</span>node<span class="asBracket">)</span>;
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;绘制节点:&quot;</span>, node.Name<span class="asBracket">)</span>;
+                _existentNodes.push<span class="asBracket">(</span>node.Id<span class="asBracket">)</span>;
+                <span class="asComment">// 绘制所有节点的子节点
+</span>                <span class="asReserved">if</span><span class="asBracket">(</span>node.hasChild<span class="asBracket">()){</span>
+                    <span class="asReserved">for</span> <span class="asBracket">(</span>i <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> node.Children.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                        drawNode<span class="asBracket">(</span>node.Children<span class="asBracket">[</span>i<span class="asBracket">])</span>;
+                    <span class="asBracket">}</span>
+                <span class="asBracket">}</span>
+                <span class="asComment">// 如果根节点有父节点, 绘制其父节点
+</span>                <span class="asReserved">if</span><span class="asBracket">(</span>node <span class="asOperator">==</span> _rootNode <span class="asOperator">&amp;&amp;</span> node.hasParent<span class="asBracket">()){</span>
+                    <span class="asReserved">for</span> <span class="asBracket">(</span>i <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> node.Parent.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                        drawNode<span class="asBracket">(</span>node.Parent<span class="asBracket">[</span>i<span class="asBracket">])</span>;
+                    <span class="asBracket">}</span>
+                <span class="asBracket">}</span>
+            <span class="asBracket">}</span>
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 绘制连线
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> drawLines<span class="asBracket">()</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asReserved">for</span> <span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> _lines.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                <span class="asReserved">this</span>.addChild<span class="asBracket">(</span>_lines<span class="asBracket">[</span>i<span class="asBracket">])</span>;
+            <span class="asBracket">}</span>
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 手动设置根节点
+         * */</span>
+        <span class="asReserved">public</span> <span class="asFunction">function</span> <span class="asReserved">set</span> rootNode<span class="asBracket">(</span>nodeName<span class="asOperator">:</span>String<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asVar">var</span> tmpNode<span class="asOperator">:</span>Node <span class="asOperator">=</span> getNodeByName<span class="asBracket">(</span>nodeName<span class="asBracket">)</span>;
+            <span class="asReserved">if</span><span class="asBracket">(</span>tmpNode<span class="asBracket">){</span>
+                _rootNode <span class="asOperator">=</span> tmpNode;
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;根节点:&quot;</span>, nodeName<span class="asBracket">)</span>;
+            <span class="asBracket">}</span><span class="asReserved">else</span><span class="asBracket">{</span>
+                <span class="asTrace">trace</span><span class="asBracket">(</span><span class="asString">&quot;节点&quot;</span>, nodeName, <span class="asString">&quot;不存在&quot;</span><span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 从 Id 获取节点
+         * */</span>
+        <span class="asReserved">public</span> <span class="asFunction">function</span> getNodeById<span class="asBracket">(</span>id<span class="asOperator">:</span>uint<span class="asBracket">)</span><span class="asOperator">:</span>Node<span class="asBracket">{</span>
+            <span class="asVar">var</span> tmpNode<span class="asOperator">:</span>Node <span class="asOperator">=</span> <span class="asReserved">null</span>;
+            <span class="asReserved">for</span> <span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> _nodes.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                <span class="asReserved">if</span><span class="asBracket">((</span>_nodes<span class="asBracket">[</span>i<span class="asBracket">]</span> <span class="asReserved">as</span> Node<span class="asBracket">)</span>.Id <span class="asOperator">==</span> id<span class="asBracket">){</span>
+                    tmpNode <span class="asOperator">=</span> _nodes<span class="asBracket">[</span>i<span class="asBracket">]</span>;
+                    <span class="asReserved">break</span>;
+                <span class="asBracket">}</span>
+            <span class="asBracket">}</span>
+            <span class="asReserved">return</span> tmpNode;
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 从 Name 获取节点
+         * */</span>
+        <span class="asReserved">public</span> <span class="asFunction">function</span> getNodeByName<span class="asBracket">(</span>name<span class="asOperator">:</span>String<span class="asBracket">)</span><span class="asOperator">:</span>Node<span class="asBracket">{</span>
+            <span class="asVar">var</span> tmpNode<span class="asOperator">:</span>Node <span class="asOperator">=</span> <span class="asReserved">null</span>;
+            <span class="asReserved">for</span> <span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> _nodes.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                <span class="asReserved">if</span><span class="asBracket">((</span>_nodes<span class="asBracket">[</span>i<span class="asBracket">]</span> <span class="asReserved">as</span> Node<span class="asBracket">)</span>.Name <span class="asOperator">==</span> name<span class="asBracket">){</span>
+                    tmpNode <span class="asOperator">=</span> _nodes<span class="asBracket">[</span>i<span class="asBracket">]</span>;
+                    <span class="asReserved">break</span>;
+                <span class="asBracket">}</span>
+            <span class="asBracket">}</span>
+            <span class="asReserved">return</span> tmpNode;
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 从 Id 获取连线
+         * */</span>
+        <span class="asReserved">public</span> <span class="asFunction">function</span> getLineById<span class="asBracket">(</span>id<span class="asOperator">:</span>uint<span class="asBracket">)</span><span class="asOperator">:</span>Line<span class="asBracket">{</span>
+            <span class="asVar">var</span> tmpLine<span class="asOperator">:</span>Line <span class="asOperator">=</span> <span class="asReserved">null</span>;
+            <span class="asReserved">for</span> <span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> _lines.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                <span class="asReserved">if</span><span class="asBracket">((</span>_lines<span class="asBracket">[</span>i<span class="asBracket">]</span> <span class="asReserved">as</span> Line<span class="asBracket">)</span>.Id <span class="asOperator">==</span> id<span class="asBracket">){</span>
+                    tmpLine <span class="asOperator">=</span> _lines<span class="asBracket">[</span>i<span class="asBracket">]</span>;
+                    <span class="asReserved">break</span>;
+                <span class="asBracket">}</span>
+            <span class="asBracket">}</span>
+            <span class="asReserved">return</span> tmpLine;
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 绑定事件
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> bindListener<span class="asBracket">()</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asReserved">this</span>.addEventListener<span class="asBracket">(</span>MouseEvent.MOUSE_DOWN, mouseDownHandler<span class="asBracket">)</span>;
+            <span class="asReserved">this</span>.addEventListener<span class="asBracket">(</span>MouseEvent.MOUSE_UP, mouseUpHandler<span class="asBracket">)</span>;
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 相应鼠标事件方法
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> mouseDownHandler<span class="asBracket">(</span>event<span class="asOperator">:</span>MouseEvent<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asReserved">if</span> <span class="asBracket">(</span>event.target <span class="asReserved">is</span> Node <span class="asOperator">||</span> event.target <span class="asReserved">is</span> Line <span class="asOperator">||</span> event.target <span class="asOperator">==</span> <span class="asReserved">this</span><span class="asBracket">){</span>
+                _dragObj <span class="asOperator">=</span> _nodes;
+            <span class="asBracket">}</span><span class="asReserved">else</span><span class="asBracket">{</span>
+                _dragObj <span class="asOperator">=</span> <span class="asBracket">[</span>getUsableObject<span class="asBracket">(</span>event.target <span class="asReserved">as</span> Object<span class="asBracket">)]</span>;
+                <span class="asReserved">this</span>.setChildIndex<span class="asBracket">(</span>_dragObj<span class="asBracket">[</span>0<span class="asBracket">]</span>, <span class="asReserved">this</span>.getChildren<span class="asBracket">()</span>.length<span class="asOperator">-</span>1<span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+
+            _oldMouseX <span class="asOperator">=</span> <span class="asReserved">this</span>.mouseX;
+            _oldMouseY <span class="asOperator">=</span> <span class="asReserved">this</span>.mouseY;
+            <span class="asReserved">this</span>.addEventListener<span class="asBracket">(</span>MouseEvent.MOUSE_MOVE, moveHandler<span class="asBracket">)</span>;
+        <span class="asBracket">}</span>
+        
+        <span class="asReserved">private</span> <span class="asFunction">function</span> moveHandler<span class="asBracket">(</span>event<span class="asOperator">:</span>MouseEvent<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            <span class="asComment">// 移动整个拓扑图
+</span>            <span class="asReserved">for</span> <span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint; i <span class="asOperator">&lt;</span> _dragObj.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                _dragObj<span class="asBracket">[</span>i<span class="asBracket">]</span>.x <span class="asOperator">+=</span> <span class="asReserved">this</span>.mouseX <span class="asOperator">-</span> _oldMouseX;
+                _dragObj<span class="asBracket">[</span>i<span class="asBracket">]</span>.y <span class="asOperator">+=</span> <span class="asReserved">this</span>.mouseY <span class="asOperator">-</span> _oldMouseY;
+            <span class="asBracket">}</span>
+            _oldMouseX <span class="asOperator">=</span> <span class="asReserved">this</span>.mouseX;
+            _oldMouseY <span class="asOperator">=</span> <span class="asReserved">this</span>.mouseY;
+        <span class="asBracket">}</span>
+        
+        <span class="asReserved">private</span> <span class="asFunction">function</span> mouseUpHandler<span class="asBracket">(</span>event<span class="asOperator">:</span>MouseEvent<span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span><span class="asBracket">{</span>
+            _dragObj <span class="asOperator">=</span> <span class="asReserved">null</span>;
+            <span class="asReserved">this</span>.removeEventListener<span class="asBracket">(</span>MouseEvent.MOUSE_MOVE, moveHandler<span class="asBracket">)</span>;
+        <span class="asBracket">}</span>
+        
+        <span class="asDoc">/**
+         * 返回可用的对象, Graph 本身或一个 Node
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> getUsableObject<span class="asBracket">(</span>obj<span class="asOperator">:</span>Object<span class="asBracket">)</span><span class="asOperator">:</span>Object<span class="asBracket">{</span>
+            <span class="asReserved">if</span> <span class="asBracket">(</span>obj <span class="asReserved">is</span> Node<span class="asBracket">){</span>
+                <span class="asReserved">return</span> obj;
+            <span class="asBracket">}</span><span class="asReserved">else</span><span class="asBracket">{</span>
+                <span class="asReserved">return</span> getUsableObject<span class="asBracket">(</span>obj.parent<span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+        <span class="asBracket">}</span>
+        <span class="asDoc">/**
+         * 判断节点是否已经存在
+         * */</span>
+        <span class="asReserved">private</span> <span class="asFunction">function</span> inExistentNodes<span class="asBracket">(</span>id<span class="asOperator">:</span>uint<span class="asBracket">)</span><span class="asOperator">:</span>Boolean<span class="asBracket">{</span>
+            <span class="asReserved">for</span><span class="asBracket">(</span><span class="asVar">var</span> i<span class="asOperator">:</span>uint <span class="asOperator">=</span> 0; i <span class="asOperator">&lt;</span> _existentNodes.length; i<span class="asOperator">++</span><span class="asBracket">){</span>
+                <span class="asReserved">if</span><span class="asBracket">(</span>id <span class="asOperator">==</span> _existentNodes<span class="asBracket">[</span>i<span class="asBracket">]){</span>
+                    <span class="asReserved">return</span> <span class="asReserved">true</span>;
+                <span class="asBracket">}</span>
+            <span class="asBracket">}</span>
+            <span class="asReserved">return</span> <span class="asReserved">false</span>;
+        <span class="asBracket">}</span>
+    <span class="asBracket">}</span>
+<span class="asBracket">}</span></pre></body>
+</html>

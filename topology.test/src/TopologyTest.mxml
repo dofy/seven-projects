@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" 
+    xmlns:topo="cn.com.ultrapower.topology.view.*" 
+    creationComplete="initApp();" xmlns:tools="tools.*">
+    <mx:Style>
+		Application, ToolTip {
+		    fontSize: 12px;
+		}
+    </mx:Style>
+    <mx:Script>
+        <![CDATA[
+            import tools.GlobalPanel;
+            import tools.LineOptionsPanel;
+            import tools.NodeOptionPanel;
+            import mx.containers.Form;
+        	import cn.com.ultrapower.topology.view.Node;
+        	import mx.controls.sliderClasses.Slider;
+        	import mx.events.ItemClickEvent;
+        	import mx.events.SliderEvent;
+        	import mx.rpc.events.FaultEvent;
+            import mx.rpc.events.ResultEvent;
+            import mx.binding.utils.BindingUtils;
+            
+            import cn.com.ultrapower.topology.event.TopoEvent;
+            import cn.com.ultrapower.topology.view.DDefault;
+            import cn.com.ultrapower.topology.view.DRandom;
+            import cn.com.ultrapower.topology.view.DTree;
+            
+            private var topoEvt:TopoEvent = TopoEvent.getEvent();
+            
+            private var _curPanel:Form;
+            private var globalPanel:Form = new GlobalPanel();
+            private var nodePanel:Form = new NodeOptionPanel();
+            private var linePanel:Form = new LineOptionsPanel();
+            
+            private var nodesData:XML = 
+	            <r>
+		            <node id="node1" title="workgroup" type="workgroup" describe="" />
+		            <node id="node2" title="server" type="server" describe="" />
+		            <node id="node3" title="client" type="client" describe="" />
+		            <node id="node4" title="computer" type="computer" describe="" />
+                    <node id="node5" title="power" type="power" describe="" />
+                    <node id="node6" title="hardware" type="hardware" describe="" />
+	            </r>
+            
+            private function initApp():void{
+                myData.send();
+                changePanel("Global Panel", globalPanel);
+                topoEvt.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
+                topoEvt.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
+                topoEvt.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
+                topoEvt.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+                graphTest.addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
+            }
+            
+            private function xmlResultHandler(event:ResultEvent):void
+            {
+                graphTest.display(event.result as XML);
+                graphTest.rootNode = "node1";
+            }
+            
+            private function changePanel(title:String, cat:Form):Form{
+                optionsPanel.title = title;
+                if (_curPanel != cat)
+                {
+                    _curPanel = cat;
+                    try
+                    {
+                        optionsPanel.removeChildAt(0);
+                    }
+                    catch (e:Error)
+                    {
+                        // nothing
+                    }
+                    return optionsPanel.addChild(cat) as Form;
+                }
+                else
+                {
+                    return _curPanel;
+                }
+            }
+            
+            private function xmlLoadFaildHandler(event:FaultEvent):void
+            {
+            	trace("加载失败");
+            }
+            
+            private function clickNodeHandler(tEvent:Event):void
+            {
+                trace("Click Node:", topoEvt.curNode, topoEvt.curNode.Name);
+                changePanel("Node Option", nodePanel);
+            }
+            
+            private function clickLineHandler(tEvent:Event):void
+            {
+                trace("Click Line:", topoEvt.curLine);
+                changePanel("Line Option", linePanel);
+            }
+            
+            private function selectNoneHandler(tEvent:Event):void
+            {
+                trace("Nothing is selected!");
+                changePanel("Global Option", globalPanel);
+            }
+            
+            private function graphChangeHandler(tEvent:Event):void
+            {
+                trace ("Graph changed~~~");
+            }
+        
+            private function deleteHandler(event:KeyboardEvent):void
+            {
+                event.keyCode == 46 && graphTest.deleteSelectedObjects();
+            }
+                
+            private function setGraphWidthScale(event:SliderEvent):void
+            {
+                graphTest.widthScale = event.value / 100;
+            }
+            
+            private function setGraphHeightScale(event:SliderEvent):void
+            {
+                graphTest.heightScale = event.value / 100;
+            }
+            
+            private function setGraphScale(event:ItemClickEvent):void
+            {
+            	var tmpValue:Number = event.index == 0? -1: 1;
+            	graphTest.scaleBy(0.05 * tmpValue, 0.05 * tmpValue);
+            }
+        ]]>
+    </mx:Script>
+    <mx:HTTPService id="myData" url="data/testData.xml" result="xmlResultHandler(event);" fault="xmlLoadFaildHandler(event);" resultFormat="e4x" />
+    <mx:ApplicationControlBar dock="true">
+    <mx:Label text="Tools:" />
+        <mx:ButtonBar>
+        <mx:Array>
+            <mx:String>Edit</mx:String>
+            <mx:String>Move</mx:String>
+            <mx:String>Center</mx:String>
+            <mx:String>Center Object</mx:String>
+        </mx:Array>
+        </mx:ButtonBar>
+    </mx:ApplicationControlBar>
+    <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
+    <mx:Panel id="optionsPanel" title="Global" width="320" height="100%">
+    </mx:Panel>
+</mx:Application>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties version="1">
+<includeClasses>
+<classEntry path="cn.com.ultrapower.topology.assets.Icons"/>
+<classEntry path="cn.com.ultrapower.topology.event.TopoEvent"/>
+<classEntry path="cn.com.ultrapower.topology.tool.SelectRect"/>
+<classEntry path="cn.com.ultrapower.topology.view.Arrow"/>
+<classEntry path="cn.com.ultrapower.topology.view.DDefault"/>
+<classEntry path="cn.com.ultrapower.topology.view.DRandom"/>
+<classEntry path="cn.com.ultrapower.topology.view.DTree"/>
+<classEntry path="cn.com.ultrapower.topology.view.Graph"/>
+<classEntry path="cn.com.ultrapower.topology.view.IDraw"/>
+<classEntry path="cn.com.ultrapower.topology.view.INode"/>
+<classEntry path="cn.com.ultrapower.topology.view.Line"/>
+<classEntry path="cn.com.ultrapower.topology.view.Node"/>
+<classEntry path="cn.com.ultrapower.topology.view.NodeProxy"/>
+</includeClasses>
+<includeResources>
+<resourceEntry destPath="cn/com/ultrapower/topology/assets/icons.swf" sourcePath="cn/com/ultrapower/topology/assets/icons.swf"/>
+</includeResources>
+<namespaceManifests/>
+</flexLibProperties>
