@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:FormItem label="width scale">
+        <mx:HSlider minimum="50" maximum="200" snapInterval="5"  width="100"/>
+    </mx:FormItem>
+    <mx:FormItem label="height scale">
+        <mx:HSlider minimum="50" maximum="200" snapInterval="5"  width="100"/>
+    </mx:FormItem>
+    <mx:FormItem label="scale">
+        <mx:ButtonBar>
+            <mx:Array>
+                <mx:String>-</mx:String>
+                <mx:String>+</mx:String>
+            </mx:Array>
+        </mx:ButtonBar>
+    </mx:FormItem>
+</mx:Form>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<topology>
+  <node id="root" title="工作组" type="workgroup" describe="根节点工作组" x="501" y="132"/>
+  <node id="node1" title="服务器" type="server" describe="工作组中某台服务器" x="377" y="226"/>
+  <node id="node2" title="客户端" type="client" describe="某客户端" x="655" y="243"/>
+  <node id="node3" title="电脑设备" type="computer" describe="典型设备连接外设" x="384" y="332"/>
+  <node id="node4" title="打印机" type="printer" describe="连接到电脑上的打印机" x="316" y="528"/>
+  <node id="node5" title="存储" type="storage" x="238" describe="存储设备, 如硬盘" y="456"/>
+  <node id="node6" title="音频" type="audio" x="490" describe="" y="515"/>
+  <node id="node7" title="视频" type="video" x="613" describe="" y="453"/>
+  
+  <node id="node991" title="无关系节点1" type="power" x="100" describe="" y="50"/>
+  <node id="node992" title="无关系节点2" type="wifi" x="200" describe="" y="50"/>
+  <node id="node993" title="无关系节点3" type="hardware" x="300" describe="" y="50"/>
+  
+  <line fromId="root" toId="node1" color="ff0000"/>
+  <line fromId="root" toId="node2" color="330066"/>
+  <line fromId="node1" toId="node3" color="000000"/>
+  <line fromId="node3" toId="node4" color="ff00ff"/>
+  <line fromId="node3" toId="node5" color="0000ff"/>
+  <line fromId="node3" toId="node6" color="00ffff"/>
+  <line fromId="node3" toId="node7" color="008000"/>
+  <line fromId="node4" toId="node6" />
+  
+  <line fromId="node991" toId="node992" />
+</topology>
