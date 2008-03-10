@@ -9,6 +9,7 @@
     </mx:Style>
     <mx:Script>
         <![CDATA[
+            import mx.controls.Text;
             import tools.GlobalPanel;
             import tools.LineOptionsPanel;
             import tools.NodeOptionPanel;
@@ -50,13 +51,19 @@
                 topoEvt.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
                 topoEvt.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
                 topoEvt.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+                topoEvt.addEventListener(TopoEvent.NODE_DOUBLE_CLICK, nodeDoubleClickHandler);
                 graphTest.addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
             }
             
             private function xmlResultHandler(event:ResultEvent):void
             {
                 graphTest.display(event.result as XML);
-                graphTest.rootNode = "node1";
+                //graphTest.rootNode = "node1";
+            }
+            
+            public function setRootNode(rn:Node):void
+            {
+                graphTest.rootNode = rn.Name;
             }
             
             private function changePanel(title:String, cat:Form):Form{
@@ -80,32 +87,91 @@
                 }
             }
             
-            private function xmlLoadFaildHandler(event:FaultEvent):void
+            private function commandButtonHandler(evt:ItemClickEvent):void
+            {
+                 switch (evt.item.data)
+                {
+                    case 'edit':
+                    {
+                        graphTest.editable = true;
+                        break;
+                    }
+                    case 'move':
+                    {
+                        graphTest.editable = false;
+                        break;
+                    }
+                    case 'center':
+                    {
+                        graphTest.center();
+                        break;
+                    }
+                    case 'centerObject':
+                    {
+                        graphTest.center(topoEvt.curNode);
+                        break;
+                    }
+                    case 'test':
+                    {
+                        // load new xml file
+                        myData.url = "data/testData.bak.xml";
+                        myData.send();
+                        break;
+                    }
+                    case 'd_random':
+                    {
+                        graphTest.draw(new DRandom());
+                        break;
+                    }
+                    case 'd_tree':
+                    {
+                        graphTest.draw(new DTree());
+                        break;
+                    }
+                    case 'd_default':
+                    {
+                        graphTest.draw(new DDefault());
+                        break;
+                    }
+                }
+            }
+            
+            private function xmlLoadFaildHandler(evt:FaultEvent):void
             {
                 trace("加载失败");
             }
             
-            private function clickNodeHandler(tEvent:Event):void
+            private function clickNodeHandler(evt:Event):void
             {
                 trace("Click Node:", topoEvt.curNode, topoEvt.curNode.Name);
-                changePanel("Node Option", nodePanel);
+                var tmpForm:NodeOptionPanel = changePanel("Node Option", nodePanel) as NodeOptionPanel;
+                tmpForm.setNode(topoEvt.curNode);
             }
             
-            private function clickLineHandler(tEvent:Event):void
+            private function clickLineHandler(evt:Event):void
             {
                 trace("Click Line:", topoEvt.curLine);
-                changePanel("Line Option", linePanel);
+                var tmpForm:LineOptionsPanel = changePanel("Line Option", linePanel) as LineOptionsPanel;
+                tmpForm.setLine(topoEvt.curLine);
             }
             
-            private function selectNoneHandler(tEvent:Event):void
+            private function selectNoneHandler(evt:Event):void
             {
                 trace("Nothing is selected!");
                 changePanel("Global Option", globalPanel);
             }
             
-            private function graphChangeHandler(tEvent:Event):void
+            private function graphChangeHandler(evt:Event):void
             {
                 trace ("Graph changed~~~");
+                changePanel("Global Option", globalPanel);
+            }
+            
+            private function nodeDoubleClickHandler(evt:Event):void
+            {
+                myData.url = "data/testData.xml";
+                myData.send();
+                changePanel("Global Option", globalPanel);
             }
         
             private function deleteHandler(event:KeyboardEvent):void
@@ -133,14 +199,18 @@
     <mx:HTTPService id="myData" url="data/testData.xml" result="xmlResultHandler(event);" fault="xmlLoadFaildHandler(event);" resultFormat="e4x" />
     <mx:ApplicationControlBar dock="true">
     <mx:Label text="Tools:" />
-        <mx:ButtonBar>
+        <mx:LinkBar itemClick="commandButtonHandler(event);" labelField="label">
         <mx:Array>
-            <mx:String>Edit</mx:String>
-            <mx:String>Move</mx:String>
-            <mx:String>Center</mx:String>
-            <mx:String>Center Object</mx:String>
+            <mx:Object label="Edit" data="edit" />
+            <mx:Object label="Move" data="move" />
+            <mx:Object label="Center" data="center" />
+            <mx:Object label="Center Object" data="centerObject" />
+            <mx:Object label="Test" data="test" />
+            <mx:Object label="Random" data="d_random" />
+            <mx:Object label="Tree" data="d_tree" />
+            <mx:Object label="Default" data="d_default" />
         </mx:Array>
-        </mx:ButtonBar>
+        </mx:LinkBar>
     </mx:ApplicationControlBar>
     <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
     <mx:Panel id="optionsPanel" title="Global" width="320" height="100%">
