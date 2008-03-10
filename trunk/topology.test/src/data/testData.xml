@@ -8,9 +8,6 @@
   <node id="node5" title="存储" type="storage" x="238.00" describe="存储设备, 如硬盘" y="456.00"/>
   <node id="node6" title="音频" type="audio" x="490.00" describe="" y="515.00"/>
   <node id="node7" title="视频" type="video" x="613.00" describe="" y="453.00"/>
-  <node id="node991" title="无关系节点1" type="power" x="100.00" describe="" y="50.00"/>
-  <node id="node992" title="无关系节点2" type="wifi" x="200.00" describe="" y="50.00"/>
-  <node id="node992" title="无关系节点3" type="hardware" x="300.00" describe="" y="50.00"/>
   <line fromId="root" toId="node1" color="ff0000" width="1" arrowType="1" arrowMode="0"/>
   <line fromId="root" toId="node2" color="330066" width="2" arrowType="0" arrowMode="0"/>
   <line fromId="node1" toId="node3" color="0" width="1" arrowMode="0" arrowType="0"/>
@@ -18,5 +15,4 @@
   <line fromId="node3" toId="node5" color="ff" width="1" arrowType="0" arrowMode="0"/>
   <line fromId="node3" toId="node6" color="ffff" width="1" arrowType="0" arrowMode="0"/>
   <line fromId="node3" toId="node7" color="8000" width="1" arrowType="1" arrowMode="0"/>
-  <line fromId="node991" toId="node992" color="0" width="4" arrowType="0" arrowMode="0"/>
 </topology>

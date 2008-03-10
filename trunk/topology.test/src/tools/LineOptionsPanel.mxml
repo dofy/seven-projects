@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script>
+    <![CDATA[
+        import cn.com.ultrapower.topology.view.Line;
+        private var _curLine:Line;
+        public function setLine(line:Line):void
+        {
+            _curLine = line;
+            fromId.text = line.fromNode.Name;
+            toId.text = line.toNode.Name;
+        }
+        
+        private function changeLineOptions():void
+        {
+            _curLine.arrowType = parseInt(arrowType.text);
+            _curLine.arrowMode = parseInt(arrowMode.text);
+        }
+    ]]>
+</mx:Script>
     <mx:FormItem label="From Node">
-        <mx:TextInput id="fromId" />
+        <mx:TextInput id="fromId" editable="false" />
     </mx:FormItem>
     <mx:FormItem label="To Node">
-        <mx:TextInput id="toId" />
+        <mx:TextInput id="toId" editable="false" />
     </mx:FormItem>
     <mx:FormItem label="Arrow Type">
         <mx:ComboBox id="arrowType">
@@ -23,4 +41,5 @@
             </mx:Array>
         </mx:ComboBox>
     </mx:FormItem>
+    <mx:Button label="Change" click="changeLineOptions();" />
 </mx:Form>
