@@ -66,12 +66,15 @@ package cn.com.ultrapower.topology.view
             nodeIcon = new Image();
             nodeTitle = new Label();
             effect = new Move(this);
-            proxy = new NodeProxy(this.Name);
+            proxy = new NodeProxy(Name);
+            
+            doubleClickEnabled = true;
 
-            this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-            this.addEventListener(MouseEvent.MOUSE_UP,   mouseUpHandler);
-            this.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
-            this.addEventListener(MouseEvent.MOUSE_OUT,  mouseOutHandler);
+            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+            addEventListener(MouseEvent.MOUSE_UP,   mouseUpHandler);
+            addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+            addEventListener(MouseEvent.MOUSE_OUT,  mouseOutHandler);
+            addEventListener(MouseEvent.DOUBLE_CLICK, doubleClickHandler);
         }
         
         /////////////////////////////////////
@@ -83,30 +86,30 @@ package cn.com.ultrapower.topology.view
         override protected function createChildren():void{
         	super.createChildren();
         	
-            this.toolTip = _data.@describe;
-            this.setStyle("horizontalAlign","center");
+            toolTip = _data.@describe;
+            setStyle("horizontalAlign","center");
             
             nodeIcon.source = icons.getIcon(_data.@type);
-            this.addChild(nodeIcon);
+            addChild(nodeIcon);
             
             nodeTitle.text = _data.@title;
             nodeTitle.maxWidth = 70;
-            this.addChild(nodeTitle);
+            addChild(nodeTitle);
          
             nodeIcon.addChild(proxy);
             proxy.visible = false;
             
             //effect.easingFunction = Elastic.easeOut;
 
-            this.setStyle("borderStyle", "solid");
-            this.setStyle("borderThickness", 0);
-            this.setStyle("cornerRadius", CORNET_RADIUS);
-            this.setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
+            setStyle("borderStyle", "solid");
+            setStyle("borderThickness", 0);
+            setStyle("cornerRadius", CORNET_RADIUS);
+            setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
             
-            this.setStyle("paddingTop", 3);
-            this.setStyle("paddingRight", 3);
-            this.setStyle("paddingBottom", 3);
-            this.setStyle("paddingLeft", 3);
+            setStyle("paddingTop", 3);
+            setStyle("paddingRight", 3);
+            setStyle("paddingBottom", 3);
+            setStyle("paddingLeft", 3);
         }
         
         /**
@@ -129,7 +132,7 @@ package cn.com.ultrapower.topology.view
         {
             if(node is Node && _children.indexOf(node) === -1)
             {
-                trace("成功:",this.Name,"->",node.Name);
+                trace("成功:",Name,"->",node.Name);
                 _children.push(node);
                 return true;
             }
@@ -151,7 +154,7 @@ package cn.com.ultrapower.topology.view
         {
             if(node is Node && _parent.indexOf(node) === -1)
             {
-                trace("成功:",this.Name,"<-",node.Name);
+                trace("成功:",Name,"<-",node.Name);
                 _parent.push(node);
                 return true;
             }
@@ -223,7 +226,7 @@ package cn.com.ultrapower.topology.view
          * */
         public function checkNode(node:Node):Boolean
         {
-        	return this == node || this._children.indexOf(node) >= 0 || this._parent.indexOf(node) >= 0;
+        	return this == node || _children.indexOf(node) >= 0 || _parent.indexOf(node) >= 0;
         }
         
         ////////////////////////////////////////
@@ -257,7 +260,7 @@ package cn.com.ultrapower.topology.view
         public function set Title(s:String):void
         {
         	_data.@title = s;
-        	this.nodeTitle.text = s;
+        	nodeTitle.text = s;
         }
         
         public function get Title():String
@@ -268,7 +271,7 @@ package cn.com.ultrapower.topology.view
         public function set Type(s:String):void
         {
             _data.@type = s;
-            this.nodeIcon.source = icons.getIcon(s);
+            nodeIcon.source = icons.getIcon(s);
         }
         
         public function get Type():String
@@ -279,7 +282,7 @@ package cn.com.ultrapower.topology.view
         public function set Describe(s:String):void
         {
             _data.@describe = s;
-            this.toolTip = s;
+            toolTip = s;
         }
         
         public function get Describe():String
@@ -289,8 +292,8 @@ package cn.com.ultrapower.topology.view
         
         public function get Data():XML
         {
-        	_data.@x = this.x.toFixed(2);
-        	_data.@y = this.y.toFixed(2);
+        	_data.@x = x.toFixed(2);
+        	_data.@y = y.toFixed(2);
         	return _data;
         }
         
@@ -355,9 +358,9 @@ package cn.com.ultrapower.topology.view
          * */
         private function setNormalStyle():void
         {
-            this.setStyle("borderThickness", 0);
-            this.setStyle("backgroundColor", BG_COLOR);
-            this.setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
+            setStyle("borderThickness", 0);
+            setStyle("backgroundColor", BG_COLOR);
+            setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
         }
         
         /**
@@ -365,9 +368,9 @@ package cn.com.ultrapower.topology.view
          * */
         private function setOverStyle():void
         {
-            this.setStyle("borderThickness", BORDER_THICKNESS);
-            this.setStyle("backgroundColor", BG_COLOR);
-            this.setStyle("backgroundAlpha", BG_ALPHA_OVER);
+            setStyle("borderThickness", BORDER_THICKNESS);
+            setStyle("backgroundColor", BG_COLOR);
+            setStyle("backgroundAlpha", BG_ALPHA_OVER);
         }
         
         /**
@@ -375,9 +378,9 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSelectStyle():void
         {
-            this.setStyle("borderThickness", BORDER_THICKNESS);
-            this.setStyle("backgroundColor", BG_COLOR);
-            this.setStyle("backgroundAlpha", BG_ALPHA_SELECT);
+            setStyle("borderThickness", BORDER_THICKNESS);
+            setStyle("backgroundColor", BG_COLOR);
+            setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
         
         /**
@@ -385,9 +388,9 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSuperStyle():void
         {
-            this.setStyle("borderThickness", BORDER_THICKNESS);
-            this.setStyle("backgroundColor", BG_COLOR);
-            this.setStyle("backgroundAlpha", BG_ALPHA_SUPER);
+            setStyle("borderThickness", BORDER_THICKNESS);
+            setStyle("backgroundColor", BG_COLOR);
+            setStyle("backgroundAlpha", BG_ALPHA_SUPER);
         }
         
         /**
@@ -395,9 +398,9 @@ package cn.com.ultrapower.topology.view
          * */
         private function setDownStyle():void
         {
-            this.setStyle("borderThickness", BORDER_THICKNESS);
-            this.setStyle("backgroundColor", BG_COLOR_DOWN);
-            this.setStyle("backgroundAlpha", BG_ALPHA_SELECT);
+            setStyle("borderThickness", BORDER_THICKNESS);
+            setStyle("backgroundColor", BG_COLOR_DOWN);
+            setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
         
         private function mouseDownHandler(evt:Event):void
@@ -417,6 +420,7 @@ package cn.com.ultrapower.topology.view
         private function mouseOverHandler(evt:Event):void
         {
         	_editable && (proxy.visible = true);
+            nodeIcon.setChildIndex(proxy, 1);
             _isDown? setDownStyle(): _isSelected? setSuperStyle(): setOverStyle();
             try
             {
@@ -432,6 +436,11 @@ package cn.com.ultrapower.topology.view
         {
             _editable && (proxy.visible = false);
             _isSelected? setSelectStyle(): setNormalStyle();
+        }
+        
+        private function doubleClickHandler(evt:Event):void
+        {
+            topoEvt.dispatchEvent(new Event(TopoEvent.NODE_DOUBLE_CLICK));
         }
     }
 }

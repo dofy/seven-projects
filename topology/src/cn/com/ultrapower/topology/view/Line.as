@@ -16,7 +16,7 @@ package cn.com.ultrapower.topology.view
         private const BG_ALPHA_SELECT:Number = 0.3;
         private const BG_ALPHA_SUPER:Number  = 0.5;
         
-        private const BG_WIDTH_OFFSET:uint = 6;
+        private const BG_WIDTH_OFFSET:uint = 7;
         
         private var _id:uint;
         // 节点坐标点
@@ -80,8 +80,8 @@ package cn.com.ultrapower.topology.view
             color = parseInt(tColor.replace(/#|0x/ig, ''), 16) ;
             
             lineWidth = parseInt(_data.@width);
-            type = parseInt(_data.@arrowType);
-            mode = parseInt(_data.@arrowMode);
+            arrowType = parseInt(_data.@arrowType);
+            arrowMode = parseInt(_data.@arrowMode);
         }
         
         override protected function childrenCreated():void
@@ -206,16 +206,18 @@ package cn.com.ultrapower.topology.view
             _width = w <= 0? 1 : w;
             arrow1.lineWidth = _width;
             arrow2.lineWidth = _width;
+            refresh();
         }
         
-        public function set type(t:uint):void
+        public function set arrowType(t:uint):void
         {
             _type = t;
             arrow1.type = t;
             arrow2.type = t;
+            redrawArrow();
         }
         
-        public function set mode(m:uint):void
+        public function set arrowMode(m:uint):void
         {
             switch (m)
             {
@@ -237,6 +239,7 @@ package cn.com.ultrapower.topology.view
                     break;
                 }
             }
+            redrawArrow();
         }
         
         public function get Data():XML
