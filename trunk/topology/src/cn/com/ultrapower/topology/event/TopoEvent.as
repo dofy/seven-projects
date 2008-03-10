@@ -3,7 +3,6 @@ package cn.com.ultrapower.topology.event
     import cn.com.ultrapower.topology.view.Line;
     import cn.com.ultrapower.topology.view.Node;
     
-    import flash.events.Event;
     import flash.events.EventDispatcher;
     
     public class TopoEvent extends EventDispatcher
@@ -12,6 +11,7 @@ package cn.com.ultrapower.topology.event
         public static const LINE_CLICK:String = "lineClick";
         public static const GRAPH_CLICK:String = "graphClick";
         public static const GRAPH_CHANGED:String = "graphChanged";
+        public static const NODE_DOUBLE_CLICK:String = "nodeDoubleClick";
         
         private static var _object:TopoEvent;
         

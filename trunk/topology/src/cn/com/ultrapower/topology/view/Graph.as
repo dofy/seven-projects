@@ -23,8 +23,8 @@ package cn.com.ultrapower.topology.view
         private const STATE_SELECT_LINE:uint = 10;
         private const STATE_DRAG_RECT:uint = 100;
         
-        private var _nodeId:uint = NODE_ID_BEGIN; // 节点开始 Id
-        private var _lineId:uint = LINE_ID_BEGIN; // 线  开始 Id
+        private var _nodeId:uint; // 节点开始 Id
+        private var _lineId:uint; // 线  开始 Id
         
         private var _editable:Boolean = true;      // 模式(是否可编辑)
         private var _hasDragRect:Boolean = false;  // 选框存在变量
@@ -92,6 +92,11 @@ package cn.com.ultrapower.topology.view
             proxy = new NodeProxy();
             
             drawBot = new DDefault();
+            
+            _nodeId = NODE_ID_BEGIN; // 节点开始 Id
+            _lineId = LINE_ID_BEGIN; // 线  开始 Id
+            
+            _rootNode = null;
         }
         
         /**
@@ -99,13 +104,13 @@ package cn.com.ultrapower.topology.view
          * */
         public function display(xml:XML):Boolean
         {
+            init();
+            removeAllChildren();
             var fromNode:Node;
             var toNode:Node;
             
             var mp_x:Number = midpoint.x;
             var mp_y:Number = midpoint.y;
-            
-            init();
             
             for each (var nodex:XML in xml.node)
             {
@@ -147,12 +152,13 @@ package cn.com.ultrapower.topology.view
             return true;
         }
         
-        public function draw():void
+        public function draw(model:IDraw = null):void
         {
         	if (_editable)
         	{
-        	   drawBot.makeTreeForm(this, getTreeArray());
-        	   topoEvt.dispatchEvent(new Event(TopoEvent.GRAPH_CHANGED));
+        	    model && (drawBot = model);
+                drawBot.makeTreeForm(this, getTreeArray());
+                topoEvt.dispatchEvent(new Event(TopoEvent.GRAPH_CHANGED));
         	}
         }
         
@@ -208,6 +214,7 @@ package cn.com.ultrapower.topology.view
 	        	{
 	        		removeNode(_selectedNodes.pop());
 	        	}
+	        	_nodes.indexOf(_rootNode) === -1 && _nodes.length > 0 && (_rootNode = _nodes[0]);
                 topoEvt.curNode = null;
                 topoEvt.dispatchEvent(new Event(TopoEvent.GRAPH_CHANGED));
         	}
