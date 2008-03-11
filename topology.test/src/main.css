@@ -1,0 +1,14 @@
+/* CSS file */
+Application {
+    background-color: #dddddd;
+}
+Application, ToolTip {
+    fontSize: 12px;
+}
+LinkButton{
+    overSkin: "linkButtonOverSkin";
+}
+
+.linkButtonOverSkin{
+    background-color:#ffffff;
+}

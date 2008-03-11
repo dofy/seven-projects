@@ -25,11 +25,13 @@
         
         private function changeNodeOptions():void
         {
+            /*
             if (nameId.text != _curNode.Name)
             {
                 _curNode.Name = Application.application.graphTest.getNewNodeId(nameId.text);
                 nameId.text = _curNode.Name;
             }
+            */
             _curNode.Type = type.text;
             _curNode.Title = title.text;
             _curNode.Describe = describe.text;
@@ -37,13 +39,13 @@
     ]]>
 </mx:Script>
 	<mx:FormItem label="Id">
-		<mx:TextInput id="nameId" editable="true" />
+		<mx:TextInput id="nameId" editable="false" />
 	</mx:FormItem>
     <mx:FormItem label="Title">
-        <mx:TextInput id="title" />
+        <mx:TextInput id="title" change="changeNodeOptions();" />
     </mx:FormItem>
     <mx:FormItem label="Type">
-        <mx:ComboBox id="type">
+        <mx:ComboBox id="type" change="changeNodeOptions();">
         	<mx:Array>
                 <mx:Object label="workgroup" icon="{new Icons().getIcon('workgroup')}" />
                 <mx:Object label="server" icon="{new Icons().getIcon('server')}" />
@@ -60,10 +62,9 @@
         </mx:ComboBox>
     </mx:FormItem>
     <mx:FormItem label="Describe">
-        <mx:TextInput id="describe" />
+        <mx:TextInput id="describe" change="changeNodeOptions();" />
     </mx:FormItem>
     <mx:HBox>
-        <mx:Button label="Change" click="changeNodeOptions();" />
         <mx:Button label="Set Rootnode" click="Application.application.setRootNode(_curNode);" />
     </mx:HBox>
 </mx:Form>
