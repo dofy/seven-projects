@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <topology>
+    <id>4587</id>
+    <name>拓扑组件 Demo</name>
+    <background>..</background>
   <node id="root" title="工作组" type="workgroup" describe="根节点工作组" x="501.00" y="132.00"/>
   <node id="node1" title="服务器" type="server" describe="工作组中某台服务器" x="72.00" y="181.00"/>
   <node id="node2" title="客户端" type="client" describe="某客户端" x="655.00" y="243.00"/>
