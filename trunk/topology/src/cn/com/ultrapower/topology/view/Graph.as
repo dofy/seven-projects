@@ -35,6 +35,10 @@ package cn.com.ultrapower.topology.view
         
         private var curLine:Line;
         
+        private var _id:uint;                // 拓扑图 id
+        private var _name:String;            // 拓扑图 名称
+        private var _background:String;      // 拓扑图 背景
+        
         private var _nodes:Array; // 节点数组
         private var _lines:Array; // 线 数组
         
@@ -111,6 +115,10 @@ package cn.com.ultrapower.topology.view
             
             var mp_x:Number = midpoint.x;
             var mp_y:Number = midpoint.y;
+            
+            _id = xml.id;
+            _name = xml.name;
+            _background = xml.background;
             
             for each (var nodex:XML in xml.node)
             {
@@ -344,6 +352,19 @@ package cn.com.ultrapower.topology.view
         ///////////////////////////////////////////
         
         /**
+         * 获取属性
+         * */
+        public function get mapId():uint
+        {
+            return _id;
+        }
+        
+        public function get mapName():String
+        {
+            return _name;
+        } 
+        
+        /**
          * 模式转换
          * */
         public function set editable(can:Boolean):void
@@ -400,6 +421,7 @@ package cn.com.ultrapower.topology.view
         /**
          * 缩放控制
          * */
+        [Bindable]
         public function get widthScale():Number
         {
         	var tr:Rectangle = getContentArea();
@@ -412,6 +434,7 @@ package cn.com.ultrapower.topology.view
             //center();
         }
         
+        [Bindable]
         public function get heightScale():Number
         {
             var tr:Rectangle = getContentArea();
@@ -431,6 +454,10 @@ package cn.com.ultrapower.topology.view
         {
             var xmlData:XML = new XML("<topology />");
             var i:uint;
+            // 拓扑图熟悉
+            xmlData.id = _id;
+            xmlData.name = _name;
+            xmlData.background = _background;
             // 节点数据
             for (i = 0; i < _nodes.length; i++)
             {

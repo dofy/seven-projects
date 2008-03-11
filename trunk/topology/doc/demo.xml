@@ -3,7 +3,10 @@
 	接受任何合法的 XML 格式文本, 编码必须 utf-8, 可以不包含第一行. 
 	flex 返回的 MXL 数据不包含第一行.
 -->
-<topology name="" background="">
+<topology>
+    <id>mapId</id>
+    <name>MapName</name>
+    <background>bg</background>
 <!--
 	根节点名称无所谓, 叫什么都行, 没有任何属性
 	其他节点名称和属性名称大小写敏感, 除标"必选"外的属性为可选属性
