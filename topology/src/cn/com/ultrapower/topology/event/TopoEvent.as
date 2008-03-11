@@ -4,7 +4,7 @@ package cn.com.ultrapower.topology.event
     import cn.com.ultrapower.topology.view.Node;
     
     import flash.events.EventDispatcher;
-    
+
     public class TopoEvent extends EventDispatcher
     {
         public static const NODE_CLICK:String = "nodeClick";

@@ -1,10 +1,13 @@
 package cn.com.ultrapower.topology.view
 {
+    import flash.display.CapsStyle;
+    import flash.display.JointStyle;
+    import flash.display.LineScaleMode;
     import flash.display.Shape;
 
     public class Arrow extends Shape
     {
-        private const A_BASE:uint = 9;
+        private const A_BASE:Number = 7;
         
         private var _width:uint;
         private var _color:uint;
@@ -17,11 +20,9 @@ package cn.com.ultrapower.topology.view
         {
             super();
             
+            lineWidth = width;
             _color = color;
-            _width = width;
             _type = type;
-            
-            _area = A_BASE + _width;
             
             draw();
         }
@@ -37,8 +38,8 @@ package cn.com.ultrapower.topology.view
         {
             if (_isChanged)
             {
-                this.graphics.clear();
-                this.graphics.lineStyle(_width, _color, 1);
+                graphics.clear();
+                graphics.lineStyle(_width, _color, 1, false, LineScaleMode.NORMAL, CapsStyle.NONE, JointStyle.MITER);
                 if (_type == 0)
                 {
                     // 线型
@@ -47,9 +48,9 @@ package cn.com.ultrapower.topology.view
                 else
                 {
                     // 实心
-                    this.graphics.beginFill(_color);
+                    graphics.beginFill(_color);
                     drawArrowLines();
-                    this.graphics.endFill();
+                    graphics.endFill();
                 }
                 _isChanged = false;
             }
@@ -57,8 +58,8 @@ package cn.com.ultrapower.topology.view
         
         public function move(_x:Number, _y:Number):void
         {
-            this.x = _x;
-            this.y = _y;
+            x = _x;
+            y = _y;
         }
         
         //////////////////////////////////
@@ -74,11 +75,17 @@ package cn.com.ultrapower.topology.view
             }
         }
         
+        public function get color():uint
+        {
+            return _color;
+        }
+        
         public function set lineWidth(w:uint):void
         {
             if (_width != w)
             {
                 _width = w <= 0? 1 : w;
+                _area = A_BASE + _width * (1 + Math.pow(_width, 1/5));
                 _isChanged = true;
             }
         }

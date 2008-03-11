@@ -195,51 +195,85 @@ package cn.com.ultrapower.topology.view
         
         public function set color(c:uint):void
         {
-        	_color = c;
-        	arrow1.color = c;
-        	arrow2.color = c;
-        	refresh();
+            if (_color != c)
+            {
+            	_color = c;
+            	arrow1.color = c;
+            	arrow2.color = c;
+            	refresh();
+            }
+        }
+        
+        public function get color():uint
+        {
+            return _color;
         }
         
         public function set lineWidth(w:uint):void
         {
-            _width = w <= 0? 1 : w;
-            arrow1.lineWidth = _width;
-            arrow2.lineWidth = _width;
-            refresh();
+            if (_width != w)
+            {
+                _width = w <= 0? 1 : w;
+                arrow1.lineWidth = _width;
+                arrow2.lineWidth = _width;
+                refresh();
+            }
+        }
+        
+        public function get lineWidth():uint
+        {
+            return _width;
         }
         
         public function set arrowType(t:uint):void
         {
-            _type = t;
-            arrow1.type = t;
-            arrow2.type = t;
-            redrawArrow();
+            if (_type != t)
+            {
+                _type = t;
+                arrow1.type = t;
+                arrow2.type = t;
+                redrawArrow();
+            }
+        }
+        
+        public function get arrowType():uint
+        {
+            return _type;
         }
         
         public function set arrowMode(m:uint):void
         {
-            switch (m)
+            if (_mode != m)
             {
-                case 1:
+                _mode = m;
+                switch (m)
                 {
-                    _ra1 = 0;
-                    _ra2 = 180;
-                    break;
+                    case 1:
+                    {
+                        _ra1 = 0;
+                        _ra2 = 180;
+                        break;
+                    }
+                    case 2:
+                    {
+                        _ra1 = 180;
+                        _ra2 = 0;
+                        break;
+                    }
+                    default:
+                    {
+                        _mode = 0
+                        _ra1 = _ra2 = 0;
+                        break;
+                    }
                 }
-                case 2:
-                {
-                    _ra1 = 180;
-                    _ra2 = 0;
-                    break;
-                }
-                default:
-                {
-                    _ra1 = _ra2 = 0;
-                    break;
-                }
-            }
             redrawArrow();
+            }
+        }
+        
+        public function get arrowMode():uint
+        {
+            return _mode;
         }
         
         public function get Data():XML
@@ -287,7 +321,7 @@ package cn.com.ultrapower.topology.view
                 this.graphics.lineStyle(_width, _color);
                 this.graphics.moveTo(_x1, _y1);
                 this.graphics.lineTo(_x2, _y2);
-                this.graphics.lineStyle(BG_WIDTH_OFFSET + _width, _color, bgAlpha);
+                this.graphics.lineStyle(BG_WIDTH_OFFSET + _width, _color, _isSelected && bgAlpha == 0 ? BG_ALPHA_SELECT : bgAlpha);
                 this.graphics.lineTo(_x1, _y1);
                 redrawArrow();
             }

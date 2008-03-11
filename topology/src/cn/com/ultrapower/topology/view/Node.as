@@ -93,7 +93,7 @@ package cn.com.ultrapower.topology.view
             addChild(nodeIcon);
             
             nodeTitle.text = _data.@title;
-            nodeTitle.maxWidth = 70;
+            //nodeTitle.maxWidth = 70;
             addChild(nodeTitle);
          
             nodeIcon.addChild(proxy);
@@ -259,8 +259,11 @@ package cn.com.ultrapower.topology.view
         
         public function set Title(s:String):void
         {
-        	_data.@title = s;
-        	nodeTitle.text = s;
+            if (_data.@title != s)
+            {
+            	_data.@title = s;
+            	nodeTitle.text = s;
+            }
         }
         
         public function get Title():String
@@ -270,8 +273,11 @@ package cn.com.ultrapower.topology.view
         
         public function set Type(s:String):void
         {
-            _data.@type = s;
-            nodeIcon.source = icons.getIcon(s);
+            if (_data.@type != s)
+            {
+                _data.@type = s;
+                nodeIcon.source = icons.getIcon(s);
+            }
         }
         
         public function get Type():String
@@ -281,8 +287,11 @@ package cn.com.ultrapower.topology.view
         
         public function set Describe(s:String):void
         {
-            _data.@describe = s;
-            toolTip = s;
+            if (_data.@describe != s)
+            {
+                _data.@describe = s;
+                toolTip = s;
+            }
         }
         
         public function get Describe():String
