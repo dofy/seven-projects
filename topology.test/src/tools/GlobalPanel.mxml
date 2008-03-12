@@ -3,15 +3,18 @@
     <mx:Script>
         <![CDATA[
             import mx.events.ItemClickEvent;
-            import mx.core.Application;
             
             import cn.com.ultrapower.topology.view.Graph;
             private var _curGraph:Graph;
             
-            public function setGraph():void
+            public function setObject(graph:Graph):void
             {
-                null == _curGraph && (_curGraph = Application.application.graphTest);
-                
+                _curGraph = graph;
+                refreshData();
+            }
+            
+            private function refreshData():void
+            {
                 mapId.text = _curGraph.mapId.toString();
                 mapName.text = _curGraph.mapName;
                 txtWS.text = (_curGraph.widthScale * 100).toFixed(0) + ' %';
@@ -22,7 +25,7 @@
             {
                 var tOffset:Number = (event.index * 2 - 1) * .2;
                 _curGraph.scaleTo(_curGraph.widthScale + tOffset, _curGraph.heightScale + tOffset);
-                setGraph(); 
+                //refreshData(); 
             }
         ]]>
     </mx:Script>

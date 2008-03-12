@@ -2,13 +2,15 @@
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
     <![CDATA[
-        import mx.controls.listClasses.ListItemRenderer;
+        import cn.com.ultrapower.topology.view.Graph;
         import cn.com.ultrapower.topology.assets.Icons;
-        import mx.core.Application;
         import cn.com.ultrapower.topology.view.Node;
+        
+        private var _curGraph:Graph;
         private var _curNode:Node;
-        public function setNode(node:Node):void
+        public function setObject(graph:Graph, node:Node):void
         {
+            _curGraph = graph;
             _curNode = node;
             nameId.text = node.Name;
             title.text = node.Title;
@@ -65,6 +67,6 @@
         <mx:TextInput id="describe" change="changeNodeOptions();" />
     </mx:FormItem>
     <mx:HBox>
-        <mx:Button label="Set Rootnode" click="Application.application.setRootNode(_curNode);" />
+        <mx:Button label="Set Rootnode" click="_curGraph.rootNode = _curNode.Name;" />
     </mx:HBox>
 </mx:Form>

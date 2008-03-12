@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:topo="cn.com.ultrapower.topology.view.*" 
+    creationComplete="initApp();" xmlns:tools="tools.*">
+    <mx:Metadata>
+        [Event(name="dbClick", type="mx.events.DynamicEvent")]
+        [Event(name="saveTopo", type="mx.events.DynamicEvent")]
+    </mx:Metadata>
+    <mx:Script source="main_app.as" />
+    <mx:LinkBar itemClick="commandButtonHandler(event);" labelField="label">
+    <mx:Array>
+        <mx:Object label="Save" icon="@Embed('../icons/save.png')" data="save" />
+        <mx:Object label="Edit" icon="@Embed('../icons/edit.png')" data="edit" />
+        <mx:Object label="Move" icon="@Embed('../icons/move.png')" data="move" />
+        <mx:Object label="Center" icon="@Embed('../icons/center.png')" data="center" />
+        <mx:Object label="Center Object" icon="@Embed('../icons/center_obj.png')" data="centerObject" />
+        <mx:Object label="Random" icon="@Embed('../icons/random.png')" data="d_random" />
+        <mx:Object label="Tree" icon="@Embed('../icons/tree.png')" data="d_tree" />
+        <mx:Object label="Default" icon="@Embed('../icons/normal.png')" data="d_default" />
+        <mx:Object label="Copy XML" icon="@Embed('../icons/copy.png')" data="xml" />
+    </mx:Array>
+    </mx:LinkBar>
+    <mx:HBox width="100%" height="100%">
+        <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
+        <mx:VBox>
+            <mx:Panel title="Nodes" width="320" height="320">
+                <mx:Tile id="nodesBar" width="100%" height="100%" horizontalAlign="center" />
+            </mx:Panel> 
+            <mx:Panel id="optionsPanel" title="Global" width="320" />
+        </mx:VBox>
+    </mx:HBox>
+</mx:VBox>

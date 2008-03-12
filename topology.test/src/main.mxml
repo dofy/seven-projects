@@ -23,6 +23,10 @@
         </mx:LinkBar>
     </mx:ApplicationControlBar>
     <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
-    <mx:Panel id="optionsPanel" title="Global" width="320" height="100%">
-    </mx:Panel>
+    <mx:VBox>
+        <mx:Panel title="Nodes" width="320" height="320">
+            <mx:Tile id="nodesBar" width="100%" height="100%" horizontalAlign="center" />
+        </mx:Panel> 
+        <mx:Panel id="optionsPanel" title="Global" width="320" />
+    </mx:VBox>
 </mx:Application>
