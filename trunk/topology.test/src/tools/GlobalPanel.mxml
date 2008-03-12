@@ -15,10 +15,12 @@
             
             private function refreshData():void
             {
-                mapId.text = _curGraph.mapId.toString();
+                mapId.text = _curGraph.mapId;
                 mapName.text = _curGraph.mapName;
+                /*
                 txtWS.text = (_curGraph.widthScale * 100).toFixed(0) + ' %';
                 txtHS.text = (_curGraph.heightScale * 100).toFixed(0) + ' %';
+                */
             }
             
             private function graphScaleHandler(event:ItemClickEvent):void
@@ -33,21 +35,19 @@
         <mx:Label id="mapId" />
     </mx:FormItem>
     <mx:FormItem label="Name">
-        <mx:Label id="mapName" />
+        <mx:TextInput id="mapName" width="120" change="_curGraph.mapName = event.target.text;" />
     </mx:FormItem>
     <mx:FormItem label="width scale" direction="horizontal">
         <mx:HSlider id="wScale" minimum="10" maximum="200" snapInterval="1"  width="100" change="_curGraph.widthScale = event.value / 100" />
-        <mx:Label id="txtWS" text="{wScale.value} %" />
     </mx:FormItem>
     <mx:FormItem label="height scale" direction="horizontal">
         <mx:HSlider id="hScale" minimum="10" maximum="200" snapInterval="1"  width="100" change="_curGraph.heightScale = event.value / 100" />
-        <mx:Label id="txtHS" text="{hScale.value} %" />
     </mx:FormItem>
     <mx:FormItem label="scale">
         <mx:ButtonBar itemClick="graphScaleHandler(event);">
             <mx:Array>
-                <mx:Object icon="@Embed('icons/zoom_out.png')" toolTip="Zoom out" />
-                <mx:Object icon="@Embed('icons/zoom_in.png')" toolTip="Zoom in" />
+                <mx:Object icon="@Embed('../icons/zoom_out.png')" toolTip="Zoom out" />
+                <mx:Object icon="@Embed('../icons/zoom_in.png')" toolTip="Zoom in" />
             </mx:Array>
         </mx:ButtonBar>
     </mx:FormItem>

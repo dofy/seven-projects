@@ -3,7 +3,7 @@
     xmlns:topo="cn.com.ultrapower.topology.view.*" 
     creationComplete="initApp();" xmlns:tools="tools.*">
     <mx:Metadata>
-        [Event(name="dbClick", type="mx.events.DynamicEvent")]
+        [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
         [Event(name="saveTopo", type="mx.events.DynamicEvent")]
     </mx:Metadata>
     <mx:Script source="main_app.as" />
