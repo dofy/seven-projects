@@ -5,6 +5,7 @@
 <mx:Style source="main.css" />
 <mx:Script>
     <![CDATA[
+        import cn.com.ultrapower.topology.event.TopoEvent;
         import mx.events.DynamicEvent;
         import cn.com.ultrapower.topology.view.Node;
         
@@ -13,12 +14,12 @@
             topoApp.setData(xml1);
         }
         
-        private function dbClickHandler(evt:DynamicEvent):void
+        private function dbClickHandler(evt:TopoEvent):void
         {
             /**
              * 读取数据
              */
-            trace("== node name ==", (evt.node as Node).Name);
+            trace("== node name ==", (evt.target).Name);
             topoApp.setData(xml2);
         }
         
@@ -71,6 +72,5 @@
         </topology>
     ]]>
 </mx:Script>
-    <mx:Button label="save" click="trace(topoApp.getData());" />
-    <demo:TopologyApp id="topoApp" width="100%" height="100%" dbClick="dbClickHandler(event);" />
+    <demo:TopologyApp id="topoApp" width="100%" height="100%" nodeDoubleClick="dbClickHandler(event);" />
 </mx:Application>

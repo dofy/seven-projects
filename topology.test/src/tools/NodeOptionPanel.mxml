@@ -41,10 +41,10 @@
     ]]>
 </mx:Script>
 	<mx:FormItem label="Id">
-		<mx:TextInput id="nameId" editable="false" />
+		<mx:Label id="nameId" />
 	</mx:FormItem>
     <mx:FormItem label="Title">
-        <mx:TextInput id="title" change="changeNodeOptions();" />
+        <mx:TextInput id="title" change="changeNodeOptions();" width="120"/>
     </mx:FormItem>
     <mx:FormItem label="Type">
         <mx:ComboBox id="type" change="changeNodeOptions();">
@@ -64,7 +64,7 @@
         </mx:ComboBox>
     </mx:FormItem>
     <mx:FormItem label="Describe">
-        <mx:TextInput id="describe" change="changeNodeOptions();" />
+        <mx:TextInput id="describe" change="changeNodeOptions();"  width="120"/>
     </mx:FormItem>
     <mx:HBox>
         <mx:Button label="Set Rootnode" click="_curGraph.rootNode = _curNode.Name;" />

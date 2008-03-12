@@ -45,17 +45,16 @@
     ]]>
 </mx:Script>
     <mx:FormItem label="From Node">
-        <mx:TextInput id="fromId" editable="false" />
+        <mx:Label id="fromId" />
     </mx:FormItem>
     <mx:FormItem label="To Node">
-        <mx:TextInput id="toId" editable="false" />
+        <mx:Label id="toId" />
     </mx:FormItem>
     <mx:FormItem label="Color">
         <mx:ColorPicker id="lineColor" width="60" change="changeLineOptions();" />
     </mx:FormItem>
     <mx:FormItem label="Line Width:" direction="horizontal">
         <mx:HSlider id="lineWidth" minimum="1" maximum="10" snapInterval="1" width="100" change="changeLineOptions();"/>
-        <mx:Label text="{lineWidth.value} px" />
     </mx:FormItem>
     <mx:FormItem label="Arrow Type">
         <mx:ComboBox id="arrowType" change="changeLineOptions();">

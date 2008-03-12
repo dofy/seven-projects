@@ -4,6 +4,7 @@ import cn.com.ultrapower.topology.view.DDefault;
 import cn.com.ultrapower.topology.view.DRandom;
 import cn.com.ultrapower.topology.view.DTree;
 import cn.com.ultrapower.topology.view.Graph;
+import cn.com.ultrapower.topology.view.Line;
 import cn.com.ultrapower.topology.view.Node;
 
 import flash.events.Event;
@@ -23,8 +24,8 @@ import mx.managers.DragManager;
 import tools.GlobalPanel;
 import tools.LineOptionsPanel;
 import tools.NodeOptionPanel;
-
-private var topoEvt:TopoEvent = TopoEvent.getEvent();
+import mx.rpc.events.ResultEvent;
+import mx.rpc.events.FaultEvent;
 
 private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
@@ -73,15 +74,17 @@ private function initApp():void
 {
     addNodes();
     changePanel("Global Panel", globalPanel);
-    topoEvt.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
-    topoEvt.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
-    topoEvt.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
-    topoEvt.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
-    topoEvt.addEventListener(TopoEvent.NODE_DOUBLE_CLICK, nodeDoubleClickHandler);
     
-    graphTest.addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
+    graphTest.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
+    graphTest.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
+    graphTest.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
+    graphTest.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+
     graphTest.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
     graphTest.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+    
+    addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
+    
 }
 
 private function addNodes():void
@@ -136,7 +139,7 @@ private function dragEnterHandler(event:DragEvent):void
     if (event.dragSource.formats.indexOf('data') !== -1)
     {
         DragManager.acceptDragDrop(event.currentTarget as IUIComponent);
-    } 
+    }
 }
 
 private function dragDropHandler(event:DragEvent):void
@@ -150,13 +153,26 @@ private function dragDropHandler(event:DragEvent):void
 
 private function commandButtonHandler(evt:ItemClickEvent):void
 {
+	
+        	var topoXML:XML = graphTest.XMLData;
+        	var mapId:String = topoXML.id;
+        	var mapData:String = topoXML.toString();
      switch (evt.item.data)
     {
         case 'save':
         {
+        	
+        	//错误提示
+        	/*
+			topoService.addEventListener(FaultEvent.FAULT,gotError);
+        	topoService.editTopology.addEventListener(ResultEvent.RESULT,saveTopoData);
+        	topoService.editTopology(mapId,mapData);
+        	*/
+        	/*
             var saveEvent:DynamicEvent = new DynamicEvent("saveTopo");
             saveEvent.data = graphTest.XMLData;
             dispatchEvent(saveEvent);
+            */
             break;
         }
         case 'edit':
@@ -168,7 +184,7 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'move':
         {
             graphTest.editable = false;
-            graphTest.cursorManager.setCursor(evt.item.icon);
+            //graphTest.cursorManager.setCursor(evt.item.icon);
             break;
         }
         case 'center':
@@ -178,7 +194,7 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         }
         case 'centerObject':
         {
-            graphTest.center(topoEvt.curNode);
+            //graphTest.center(topoEvt.curNode);
             break;
         }
         case 'd_random':
@@ -199,24 +215,40 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'xml':
         {
             System.setClipboard(graphTest.XMLData);
-            Alert.show("xml 数据已复制到剪贴板.", "提醒");
+            Alert.show("xml 数据已复制到剪贴板", "提醒");
             break;
         }
     }
 }
+/**
+*错误提示
+**/
+private function gotError( fault:FaultEvent ):void
+{
+	Alert.show( "Server reported an error - " + fault.fault.faultString );
+} 
 
+private function saveTopoData(result:ResultEvent):void{
+	trace(result.result);
+}
+private function getTopoData(result:ResultEvent):void{
+	trace(result.result);
+	var xmlStr:XML = new XML(result.result);
+	setData(xmlStr);
+
+}
 private function clickNodeHandler(evt:Event):void
 {
-    trace("Click Node:", topoEvt.curNode, topoEvt.curNode.Name);
+    trace("Click Node:", evt.target);
     var tmpForm:NodeOptionPanel = changePanel("Node Option", nodePanel) as NodeOptionPanel;
-    tmpForm.setObject(graphTest, topoEvt.curNode);
+    tmpForm.setObject(graphTest, evt.target as Node);
 }
 
 private function clickLineHandler(evt:Event):void
 {
-    trace("Click Line:", topoEvt.curLine);
+    trace("Click Line:", evt.target);
     var tmpForm:LineOptionsPanel = changePanel("Line Option", linePanel) as LineOptionsPanel;
-    tmpForm.setObject(graphTest, topoEvt.curLine);
+    tmpForm.setObject(graphTest, evt.target as Line);
 }
 
 private function selectNoneHandler(evt:Event):void
@@ -229,15 +261,6 @@ private function selectNoneHandler(evt:Event):void
 private function graphChangeHandler(evt:Event):void
 {
     trace ("Graph changed~~~");
-    var tmpForm:GlobalPanel = changePanel("Global Option", globalPanel) as GlobalPanel;
-    tmpForm.setObject(graphTest);
-}
-
-private function nodeDoubleClickHandler(evt:Event):void
-{
-    var dbClickEvent:DynamicEvent = new DynamicEvent("dbClick");
-    dbClickEvent.node = evt.currentTarget.curNode;
-    dispatchEvent(dbClickEvent);
     var tmpForm:GlobalPanel = changePanel("Global Option", globalPanel) as GlobalPanel;
     tmpForm.setObject(graphTest);
 }
