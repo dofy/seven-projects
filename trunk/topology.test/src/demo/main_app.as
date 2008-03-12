@@ -6,6 +6,7 @@ import cn.com.ultrapower.topology.view.DTree;
 import cn.com.ultrapower.topology.view.Graph;
 import cn.com.ultrapower.topology.view.Node;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.system.System;
 
@@ -14,11 +15,10 @@ import mx.controls.Alert;
 import mx.core.DragSource;
 import mx.core.IUIComponent;
 import mx.events.DragEvent;
+import mx.events.DynamicEvent;
 import mx.events.ItemClickEvent;
 import mx.managers.CursorManager;
 import mx.managers.DragManager;
-import mx.rpc.events.FaultEvent;
-import mx.rpc.events.ResultEvent;
 
 import tools.GlobalPanel;
 import tools.LineOptionsPanel;
@@ -55,13 +55,22 @@ public function setRootNode(rn:Node):void
     graphTest.rootNode = rn.Name;
 }
 
+public function getData():XML
+{
+    return graphTest.XMLData;
+}
+
+public function setData(data:XML):void
+{
+    graphTest.display(data);
+}
+
 ///////////////////////////////////////
 // private functions
 ///////////////////////////////////////
 
 private function initApp():void
 {
-    myData.send();
     addNodes();
     changePanel("Global Panel", globalPanel);
     topoEvt.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
@@ -139,16 +148,17 @@ private function dragDropHandler(event:DragEvent):void
     tmpGraph.addNode(tmpGraph.mouseX - xOffset, tmpGraph.mouseY - yOffset, nodeData);
 }
 
-private function xmlResultHandler(event:ResultEvent):void
-{
-    graphTest.display(event.result as XML);
-    //graphTest.rootNode = "node1";
-}
-
 private function commandButtonHandler(evt:ItemClickEvent):void
 {
      switch (evt.item.data)
     {
+        case 'save':
+        {
+            var saveEvent:DynamicEvent = new DynamicEvent("saveTopo");
+            saveEvent.data = graphTest.XMLData;
+            dispatchEvent(saveEvent);
+            break;
+        }
         case 'edit':
         {
             graphTest.editable = true;
@@ -169,13 +179,6 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'centerObject':
         {
             graphTest.center(topoEvt.curNode);
-            break;
-        }
-        case 'test':
-        {
-            // load new xml file
-            myData.url = "data/testData.bak.xml";
-            myData.send();
             break;
         }
         case 'd_random':
@@ -200,11 +203,6 @@ private function commandButtonHandler(evt:ItemClickEvent):void
             break;
         }
     }
-}
-
-private function xmlLoadFaildHandler(evt:FaultEvent):void
-{
-    trace("加载失败");
 }
 
 private function clickNodeHandler(evt:Event):void
@@ -237,8 +235,9 @@ private function graphChangeHandler(evt:Event):void
 
 private function nodeDoubleClickHandler(evt:Event):void
 {
-    myData.url = "data/testData.xml";
-    myData.send();
+    var dbClickEvent:DynamicEvent = new DynamicEvent("dbClick");
+    dbClickEvent.node = evt.currentTarget.curNode;
+    dispatchEvent(dbClickEvent);
     var tmpForm:GlobalPanel = changePanel("Global Option", globalPanel) as GlobalPanel;
     tmpForm.setObject(graphTest);
 }

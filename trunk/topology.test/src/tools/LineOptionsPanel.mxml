@@ -2,11 +2,15 @@
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
     <![CDATA[
-        import mx.collections.ArrayCollection;
+        import cn.com.ultrapower.topology.view.Graph;
         import cn.com.ultrapower.topology.view.Line;
+        
+        private var _curGraph:Graph;
         private var _curLine:Line;
-        public function setLine(line:Line):void
+        
+        public function setObject(graph:Graph, line:Line):void
         {
+            _curGraph = graph;
             _curLine = line;
             fromId.text = line.fromNode.Name;
             toId.text = line.toNode.Name;
