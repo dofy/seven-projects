@@ -192,14 +192,14 @@ package cn.com.ultrapower.topology.view
          * 添加节点
          * */
         public function addNode(_x:Number, _y:Number, data:XML):Node{
-        	var tmpNode:Node = new Node(_nodeId++, data);
-            tmpNode.editable = _editable;
-            tmpNode.Name = getNewNodeId(data.@id);
-            tmpNode.x = _x;
-            tmpNode.y = _y;
-            _nodes.push(tmpNode);
-            this.addChild(tmpNode);
-            return tmpNode;
+        	var newNode:Node = new Node(_nodeId++, data);
+            newNode.editable = _editable;
+            newNode.Name = getNewNodeId(data.@id);
+            newNode.x = _x;
+            newNode.y = _y;
+            _nodes.push(newNode);
+            addChild(newNode);
+            return newNode;
         }
         
         /**
@@ -283,16 +283,16 @@ package cn.com.ultrapower.topology.view
          * */
         public function getNodeById(id:uint):Node
         {
-            var tmpNode:Node = null;
+            var nodeById:Node = null;
             for (var i:uint = 0; i < _nodes.length; i++)
             {
                 if((_nodes[i] as Node).Id == id)
                 {
-                    tmpNode = _nodes[i];
+                    nodeById = _nodes[i];
                     break;
                 }
             }
-            return tmpNode;
+            return nodeById;
         }
         
         /**
@@ -300,16 +300,16 @@ package cn.com.ultrapower.topology.view
          * */
         public function getNodeByName(name:String):Node
         {
-            var tmpNode:Node = null;
+            var nodeByName:Node = null;
             for (var i:uint = 0; i < _nodes.length; i++)
             {
                 if((_nodes[i] as Node).Name == name)
                 {
-                    tmpNode = _nodes[i];
+                    nodeByName = _nodes[i];
                     break;
                 }
             }
-            return tmpNode;
+            return nodeByName;
         }
         
         /**
@@ -343,7 +343,7 @@ package cn.com.ultrapower.topology.view
          * */
         public function getNewNodeId(id:String = null):String
         {
-            getNodeByName(id) && (id = getNewNodeId("node_" + new Date().getTime())); 
+            (null == id || '' == id || getNodeByName(id)) && (id = getNewNodeId("node_" + new Date().getTime())); 
             return id;
         }
         

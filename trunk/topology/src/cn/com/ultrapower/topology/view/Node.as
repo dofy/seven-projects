@@ -14,7 +14,6 @@ package cn.com.ultrapower.topology.view
     public class Node extends VBox implements INode
     {
         private const CORNET_RADIUS:uint     = 5;
-        private const BORDER_THICKNESS:uint  = 1;
         private const BG_COLOR:Number        = 0xcccccc;
         private const BG_COLOR_DOWN:Number   = 0x5cc0ff;
         private const BG_ALPHA_NORMAL:Number = 0;
@@ -35,9 +34,9 @@ package cn.com.ultrapower.topology.view
         
         private var _lines:Array;    // 关联连线
         
-        private var _id:uint;       // 数字 id
+        private var _id:uint;        // 数字 id
         
-        private var _data:XML;      // XML 数据
+        private var _data:XML;       // XML 数据
         
         private var _ox:Number;  // 原始 x 坐标信息
         private var _oy:Number;  // 原始 y 坐标信息
@@ -249,7 +248,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Name(s:String):void
         {
-        	_data.@id = s;
+        	_editable && (_data.@id = s);
         }
         
         public function get Name():String
@@ -259,7 +258,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Title(s:String):void
         {
-            if (_data.@title != s)
+            if (_editable && (_data.@title != s))
             {
             	_data.@title = s;
             	nodeTitle.text = s;
@@ -273,7 +272,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Type(s:String):void
         {
-            if (_data.@type != s)
+            if (_editable && (_data.@type != s))
             {
                 _data.@type = s;
                 nodeIcon.source = icons.getIcon(s);
@@ -287,7 +286,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Describe(s:String):void
         {
-            if (_data.@describe != s)
+            if (_editable && (_data.@describe != s))
             {
                 _data.@describe = s;
                 toolTip = s;
@@ -367,7 +366,6 @@ package cn.com.ultrapower.topology.view
          * */
         private function setNormalStyle():void
         {
-            setStyle("borderThickness", 0);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
         }
@@ -377,7 +375,6 @@ package cn.com.ultrapower.topology.view
          * */
         private function setOverStyle():void
         {
-            setStyle("borderThickness", BORDER_THICKNESS);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_OVER);
         }
@@ -387,7 +384,6 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSelectStyle():void
         {
-            setStyle("borderThickness", BORDER_THICKNESS);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
@@ -397,7 +393,6 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSuperStyle():void
         {
-            setStyle("borderThickness", BORDER_THICKNESS);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_SUPER);
         }
@@ -407,7 +402,6 @@ package cn.com.ultrapower.topology.view
          * */
         private function setDownStyle():void
         {
-            setStyle("borderThickness", BORDER_THICKNESS);
             setStyle("backgroundColor", BG_COLOR_DOWN);
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
@@ -422,8 +416,11 @@ package cn.com.ultrapower.topology.view
         {
             _isDown = false;
             setSuperStyle();
-            topoEvt.curNode = this;
-            topoEvt.dispatchEvent(new Event(TopoEvent.NODE_CLICK));
+            if (_editable)
+            {
+                topoEvt.curNode = this;
+                topoEvt.dispatchEvent(new Event(TopoEvent.NODE_CLICK));
+            }
         }
         
         private function mouseOverHandler(evt:Event):void
