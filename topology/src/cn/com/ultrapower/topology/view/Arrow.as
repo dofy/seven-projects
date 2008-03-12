@@ -9,7 +9,7 @@ package cn.com.ultrapower.topology.view
     {
         private const A_BASE:Number = 7;
         
-        private var _width:uint;
+        private var _width:uint = 1;
         private var _color:uint;
         private var _type:uint; // 类型: 0 1
         private var _area:uint;
@@ -84,7 +84,7 @@ package cn.com.ultrapower.topology.view
         {
             if (_width != w)
             {
-                _width = w <= 0? 1 : w;
+                _width = w <= 0 ? 1 : w;
                 _area = A_BASE + _width * (1 + Math.pow(_width, 1/5));
                 _isChanged = true;
             }
