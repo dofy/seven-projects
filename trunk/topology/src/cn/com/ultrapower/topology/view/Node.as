@@ -44,8 +44,6 @@ package cn.com.ultrapower.topology.view
         private var _isSelected:Boolean; // 节点被选中
         private var _isDown:Boolean;     // 鼠标按下
         
-        private var topoEvt:TopoEvent = TopoEvent.getEvent();
-        
         public function Node(id:uint, data:XML)
         {
             trace("节点", id, "创建成功!");
@@ -406,24 +404,20 @@ package cn.com.ultrapower.topology.view
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
         
-        private function mouseDownHandler(evt:Event):void
+        private function mouseDownHandler(evt:MouseEvent):void
         {
         	_isDown = true;
             setDownStyle();
         }
         
-        private function mouseUpHandler(evt:Event):void
+        private function mouseUpHandler(evt:MouseEvent):void
         {
             _isDown = false;
             setSuperStyle();
-            if (_editable)
-            {
-                topoEvt.curNode = this;
-                topoEvt.dispatchEvent(new Event(TopoEvent.NODE_CLICK));
-            }
+            _editable && dispatchEvent(new TopoEvent(TopoEvent.NODE_CLICK));
         }
         
-        private function mouseOverHandler(evt:Event):void
+        private function mouseOverHandler(evt:MouseEvent):void
         {
         	_editable && (proxy.visible = true);
             nodeIcon.setChildIndex(proxy, 1);
@@ -438,15 +432,15 @@ package cn.com.ultrapower.topology.view
             }
         }
         
-        private function mouseOutHandler(evt:Event):void
+        private function mouseOutHandler(evt:MouseEvent):void
         {
             _editable && (proxy.visible = false);
             _isSelected? setSelectStyle(): setNormalStyle();
         }
         
-        private function doubleClickHandler(evt:Event):void
+        private function doubleClickHandler(evt:MouseEvent):void
         {
-            topoEvt.dispatchEvent(new Event(TopoEvent.NODE_DOUBLE_CLICK));
+            dispatchEvent(new TopoEvent(TopoEvent.NODE_DOUBLE_CLICK));
         }
     }
 }

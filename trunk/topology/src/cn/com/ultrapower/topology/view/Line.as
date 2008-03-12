@@ -52,8 +52,6 @@ package cn.com.ultrapower.topology.view
         private var _ra1:uint;        // arrow1 增补角度
         private var _ra2:uint;        // arrow2 增补角度
         
-        private var topoEvt:TopoEvent = TopoEvent.getEvent();
-        
         public function Line(id:uint, data:XML)
         {
             trace("连线", id, "创建成功!");
@@ -392,8 +390,8 @@ package cn.com.ultrapower.topology.view
         {
             _isDown = false;
             _editable && setSuperStyle();
-            topoEvt.curLine = this;
-            topoEvt.dispatchEvent(new Event(TopoEvent.LINE_CLICK));
+            
+            dispatchEvent(new TopoEvent(TopoEvent.LINE_CLICK));
         }
         
         private function mouseOverHandler(evt:Event):void
