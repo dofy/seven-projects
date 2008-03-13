@@ -15,17 +15,16 @@ import mx.containers.Form;
 import mx.controls.Alert;
 import mx.core.DragSource;
 import mx.core.IUIComponent;
+import mx.events.CloseEvent;
 import mx.events.DragEvent;
-import mx.events.DynamicEvent;
 import mx.events.ItemClickEvent;
-import mx.managers.CursorManager;
 import mx.managers.DragManager;
+import mx.rpc.events.FaultEvent;
+import mx.rpc.events.ResultEvent;
 
 import tools.GlobalPanel;
 import tools.LineOptionsPanel;
 import tools.NodeOptionPanel;
-import mx.rpc.events.ResultEvent;
-import mx.rpc.events.FaultEvent;
 
 private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
@@ -73,7 +72,7 @@ public function setData(data:XML):void
 private function initApp():void
 {
     addNodes();
-    changePanel("Global Panel", globalPanel);
+    changePanel("全局属性", globalPanel);
     
     graphTest.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
     graphTest.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
@@ -153,16 +152,29 @@ private function dragDropHandler(event:DragEvent):void
 
 private function commandButtonHandler(evt:ItemClickEvent):void
 {
-	
-        	var topoXML:XML = graphTest.XMLData;
-        	var mapId:String = topoXML.id;
-        	var mapData:String = topoXML.toString();
-     switch (evt.item.data)
+    switch (evt.item.data)
     {
-        case 'save':
+        case 'new':
         {
-        	
+            graphTest.isChanged
+                ? Alert.show("拓扑图已被修改, 确定放弃修改吗?",
+                           "确认",
+                           Alert.YES | Alert.NO,
+                           null,
+                           function(event:CloseEvent):void
+                           {
+                                Alert.YES == event.detail &&
+                                graphTest.display(new XML()); 
+                           })
+                : graphTest.display(new XML());
+            break;
+        }
+        case 'save':
+        {	
         	//错误提示
+            var topoXML:XML = graphTest.XMLData;
+            var mapId:String = topoXML.id;
+            var mapData:String = topoXML.toString();
         	/*
 			topoService.addEventListener(FaultEvent.FAULT,gotError);
         	topoService.editTopology.addEventListener(ResultEvent.RESULT,saveTopoData);
@@ -173,18 +185,6 @@ private function commandButtonHandler(evt:ItemClickEvent):void
             saveEvent.data = graphTest.XMLData;
             dispatchEvent(saveEvent);
             */
-            break;
-        }
-        case 'edit':
-        {
-            graphTest.editable = true;
-            CursorManager.removeAllCursors();
-            break;
-        }
-        case 'move':
-        {
-            graphTest.editable = false;
-            //graphTest.cursorManager.setCursor(evt.item.icon);
             break;
         }
         case 'center':
@@ -212,7 +212,7 @@ private function commandButtonHandler(evt:ItemClickEvent):void
             graphTest.draw(new DDefault());
             break;
         }
-        case 'xml':
+        case 'copyXML':
         {
             System.setClipboard(graphTest.XMLData);
             Alert.show("xml 数据已复制到剪贴板", "提醒");
@@ -240,28 +240,28 @@ private function getTopoData(result:ResultEvent):void{
 private function clickNodeHandler(evt:Event):void
 {
     trace("Click Node:", evt.target);
-    var tmpForm:NodeOptionPanel = changePanel("Node Option", nodePanel) as NodeOptionPanel;
+    var tmpForm:NodeOptionPanel = changePanel("节点属性", nodePanel) as NodeOptionPanel;
     tmpForm.setObject(graphTest, evt.target as Node);
 }
 
 private function clickLineHandler(evt:Event):void
 {
     trace("Click Line:", evt.target);
-    var tmpForm:LineOptionsPanel = changePanel("Line Option", linePanel) as LineOptionsPanel;
+    var tmpForm:LineOptionsPanel = changePanel("连线属性", linePanel) as LineOptionsPanel;
     tmpForm.setObject(graphTest, evt.target as Line);
 }
 
 private function selectNoneHandler(evt:Event):void
 {
     trace("Nothing is selected!");
-    var tmpForm:GlobalPanel = changePanel("Global Option", globalPanel) as GlobalPanel;
+    var tmpForm:GlobalPanel = changePanel("全局属性", globalPanel) as GlobalPanel;
     tmpForm.setObject(graphTest);
 }
 
 private function graphChangeHandler(evt:Event):void
 {
     trace ("Graph changed~~~");
-    var tmpForm:GlobalPanel = changePanel("Global Option", globalPanel) as GlobalPanel;
+    var tmpForm:GlobalPanel = changePanel("全局属性", globalPanel) as GlobalPanel;
     tmpForm.setObject(graphTest);
 }
 
