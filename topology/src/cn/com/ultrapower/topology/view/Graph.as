@@ -38,15 +38,16 @@ package cn.com.ultrapower.topology.view
         private var proxy:NodeProxy;               // 节点代理
         
         private var _state:uint = STATE_NOTHING;   // 初始化状态
+        private var _isChanged:Boolean;            // 拓扑图被修改
         
         private var curLine:Line;
         
         private var _id:String;                // 拓扑图 id
-        private var _name:String;            // 拓扑图 名称
-        private var _background:String;      // 拓扑图 背景
+        private var _name:String;              // 拓扑图 名称
+        private var _background:String;        // 拓扑图 背景
         
-        private var _nodes:Array; // 节点数组
-        private var _lines:Array; // 线 数组
+        private var _nodes:Array;    // 节点数组
+        private var _lines:Array;    // 线 数组
         
         private var _rootNode:Node;   // 根节点
         
@@ -69,8 +70,8 @@ package cn.com.ultrapower.topology.view
         {
             super();
             // 隐藏滚动条
-			this.verticalScrollPolicy = "off";
-			this.horizontalScrollPolicy = "off";
+			verticalScrollPolicy = "off";
+			horizontalScrollPolicy = "off";
             
             init();
         }
@@ -105,6 +106,7 @@ package cn.com.ultrapower.topology.view
             _nodeId = NODE_ID_BEGIN; // 节点开始 Id
             _lineId = LINE_ID_BEGIN; // 线  开始 Id
             
+            _isChanged = false;
             _rootNode = null;
         }
         
@@ -161,6 +163,7 @@ package cn.com.ultrapower.topology.view
             }
             
             draw();
+            _isChanged = false;
 
             return true;
         }
@@ -171,7 +174,6 @@ package cn.com.ultrapower.topology.view
         	{
         	    model && (drawBot = model);
                 drawBot.makeTreeForm(this, getTreeArray());
-                
                 dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
         	}
         }
@@ -191,7 +193,6 @@ package cn.com.ultrapower.topology.view
         	   tr = getContentArea();
         	}
         	dMoveNodes(midpoint.x-tr.x-tr.width/2, midpoint.y-tr.y-tr.height/2);
-        	
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
         }
         
@@ -206,6 +207,7 @@ package cn.com.ultrapower.topology.view
             newNode.y = _y;
             _nodes.push(newNode);
             addChild(newNode);
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             return newNode;
         }
         
@@ -374,6 +376,11 @@ package cn.com.ultrapower.topology.view
             _name = n;
         }
         
+        public function get isChanged():Boolean
+        {
+            return _isChanged;
+        }
+        
         /**
          * 模式转换
          * */
@@ -478,6 +485,7 @@ package cn.com.ultrapower.topology.view
             {
                 xmlData.line[i] = _lines[i].Data;
             }
+            _isChanged = false;
             return xmlData;
         }
 
@@ -511,8 +519,13 @@ package cn.com.ultrapower.topology.view
          * 绑定事件
          * */
         private function bindListener():void{
-            this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-            this.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+            addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+            addEventListener(TopoEvent.GRAPH_CHANGED, 
+                                function():void
+                                {
+                                    _isChanged = true;
+                                });
         }
         
         /**
@@ -743,6 +756,7 @@ package cn.com.ultrapower.topology.view
 	        		    node2node(curLine.fromNode, curLine.toNode);
 	        		    tmpToNode.pushLine(curLine);
                         curLine.editable = true;
+                        dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED))
         		    }
         		    else
         		    {
@@ -767,13 +781,6 @@ package cn.com.ultrapower.topology.view
         	}
             _state = STATE_NOTHING;
         }
-        
-        /*
-        private function deleteHandler(event:KeyboardEvent):void
-        {
-            event.keyCode == 46 && deleteSelectedObjects();
-        }
-        */
         
         /**
          * 绑定连线第二节点
@@ -817,6 +824,7 @@ package cn.com.ultrapower.topology.view
                 }
             }
             /*
+            // do not delete
             len = _lines.length;
             for (i = 0; i < len; i++)
             {

@@ -199,6 +199,7 @@ package cn.com.ultrapower.topology.view
             	arrow1.color = c;
             	arrow2.color = c;
             	refresh();
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
@@ -215,6 +216,7 @@ package cn.com.ultrapower.topology.view
                 arrow1.lineWidth = _width;
                 arrow2.lineWidth = _width;
                 refresh();
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
@@ -231,6 +233,7 @@ package cn.com.ultrapower.topology.view
                 arrow1.type = t;
                 arrow2.type = t;
                 redrawArrow();
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
@@ -265,7 +268,8 @@ package cn.com.ultrapower.topology.view
                         break;
                     }
                 }
-            redrawArrow();
+                redrawArrow();
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         

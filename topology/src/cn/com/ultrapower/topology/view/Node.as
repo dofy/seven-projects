@@ -187,6 +187,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo = xv;
             effect.yTo = yv;
             effect.play();
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
         }
         
         /**
@@ -199,6 +200,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo += xv;
             effect.yTo += yv;
             effect.play();
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
         }
         
         /**
@@ -246,7 +248,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Name(s:String):void
         {
-        	_editable && (_data.@id = s);
+        	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));;
         }
         
         public function get Name():String
@@ -260,6 +262,7 @@ package cn.com.ultrapower.topology.view
             {
             	_data.@title = s;
             	nodeTitle.text = s;
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
@@ -274,6 +277,7 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@type = s;
                 nodeIcon.source = icons.getIcon(s);
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
@@ -288,6 +292,7 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@describe = s;
                 toolTip = s;
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             }
         }
         
