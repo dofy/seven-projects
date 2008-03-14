@@ -10,6 +10,7 @@ package cn.com.ultrapower.topology.view
     import flash.geom.Rectangle;
     
     import mx.containers.Canvas;
+    import mx.events.EffectEvent;
 
     [Event(name="nodeClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="lineClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
@@ -28,6 +29,9 @@ package cn.com.ultrapower.topology.view
         private const STATE_MOVE_PROXY:uint = 3;
         private const STATE_SELECT_LINE:uint = 10;
         private const STATE_DRAG_RECT:uint = 100;
+        
+        public const MIN_SCALE:Number = .5;
+        public const MAX_SCALE:Number = 3;
         
         private var _nodeId:uint; // 节点开始 Id
         private var _lineId:uint; // 线  开始 Id
@@ -55,6 +59,9 @@ package cn.com.ultrapower.topology.view
         private var _selectedLines:Array;  // 选中的连线
         private var _oldMouseX:Number;     // 原 鼠标 x 坐标
         private var _oldMouseY:Number;     // 原 鼠标 y 坐标
+        
+        private var _scale:Number = 1;
+        
         private var _nodeMoved:Boolean = false;  // 节点被移动
         
         // ** 绘制用变量 **
@@ -65,6 +72,9 @@ package cn.com.ultrapower.topology.view
         private var drawBot:IDraw;        // 绘制树形算法
         
         private var selectNone:Boolean;
+        
+        private var effectCount:int = 0;
+        private var _actions:Array = new Array();
         
         public function Graph()
         {
@@ -354,6 +364,24 @@ package cn.com.ultrapower.topology.view
             return id;
         }
         
+        /**
+         * 添加 action 到动作列表
+         * */
+        public function appendActions(f:Function, goon:Boolean = false, runNow:Boolean = false):void
+        {
+            _actions.push({fun:f, go:goon});
+            runNow && runActionsList();
+        }
+        
+        /**
+         * 清空动作列表
+         * */
+        public function cleanActions():void
+        {
+            _actions = [];
+            effectCount = 0;
+        }
+        
         ///////////////////////////////////////////
         // getter & setter
         ///////////////////////////////////////////
@@ -464,6 +492,42 @@ package cn.com.ultrapower.topology.view
         	//center();
         }
         
+        [Bindable]
+        public function get realScale():Number
+        {
+            return _scale;
+        }
+        
+        public function set realScale(s:Number):void
+        {
+            if (s != _scale)
+            {
+                if (MIN_SCALE > s)
+                {
+                    s = MIN_SCALE;
+                }
+                else if (MAX_SCALE < s)
+                {
+                    s = MAX_SCALE;
+                }
+                var wOffset:Number;
+                var hOffset:Number;
+                var tNode:Node;
+                for (var i:uint = 0; i < _nodes.length; i++)
+                {
+                    tNode = _nodes[i];
+                    wOffset = tNode.width - tNode.oldWidth * s;
+                    hOffset = tNode.height - tNode.oldHeight * s;
+                    
+                    tNode.scaleX = tNode.scaleY = s;
+                    
+                    tNode.x += wOffset / 2;
+                    tNode.y += hOffset / 2;
+                }
+                _scale = s;
+            }
+        }
+        
         /**
          * 获取 xml 数据
          * */
@@ -521,10 +585,20 @@ package cn.com.ultrapower.topology.view
         private function bindListener():void{
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
             addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
-            addEventListener(TopoEvent.GRAPH_CHANGED, 
+            addEventListener(TopoEvent.GRAPH_CHANGED, anyChangeHandler);
+            addEventListener(TopoEvent.NODE_CHANGED, anyChangeHandler);
+            addEventListener(TopoEvent.LINE_CHANGED, anyChangeHandler);
+            
+            addEventListener(EffectEvent.EFFECT_START, function():void{effectCount++});
+            addEventListener(EffectEvent.EFFECT_END, 
                                 function():void
                                 {
-                                    _isChanged = true;
+                                    effectCount--;
+                                    if (effectCount <= 0)
+                                    {
+                                        trace(">>>> effect end!!!!!");
+                                        runActionsList();
+                                    }
                                 });
         }
         
@@ -782,6 +856,11 @@ package cn.com.ultrapower.topology.view
             _state = STATE_NOTHING;
         }
         
+        private function anyChangeHandler(event:TopoEvent):void
+        {
+            _isChanged = true;
+        }
+        
         /**
          * 绑定连线第二节点
          * */
@@ -952,6 +1031,21 @@ package cn.com.ultrapower.topology.view
             else 
             {
                 return getUsableObject(obj.parent);
+            }
+        }
+        
+        /**
+         * actions
+         * */
+        private function runActionsList():void
+        {
+            var obj:Object = _actions.shift();
+            if (obj)
+            {
+                var f:Function = obj.fun;
+                var g:Boolean = obj.go;
+                f.call(f);
+                obj.go && runActionsList();
             }
         }
     }
