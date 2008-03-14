@@ -2,6 +2,7 @@
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
     <![CDATA[
+        import mx.managers.PopUpManager;
         import cn.com.ultrapower.topology.view.Graph;
         import cn.com.ultrapower.topology.assets.Icons;
         import cn.com.ultrapower.topology.view.Node;
@@ -15,7 +16,8 @@
             nameId.text = node.Name;
             title.text = node.Title;
             describe.text = node.Describe;
-            for(var i:uint = 0; i < type.rowCount; i++)
+            childMapId.text = node.ChildMapId;
+            for(var i:uint = 0; i < type.dataProvider.length; i++)
             {
                 if (type.dataProvider[i].label == node.Type)
                 {
@@ -37,16 +39,27 @@
             _curNode.Type = type.text;
             _curNode.Title = title.text;
             _curNode.Describe = describe.text;
+            _curNode.ChildMapId = childMapId.text;
+        }
+        
+        private function showMapSelecter():void
+        {
+            var popWin:SelectChildMap = new SelectChildMap()
+            popWin.curMapId = _curGraph.mapId;
+            popWin.nodeText = childMapId;
+            popWin.node = _curNode;
+            PopUpManager.addPopUp(popWin, parentApplication as DisplayObject, true);
+            PopUpManager.centerPopUp(popWin);
         }
     ]]>
 </mx:Script>
 	<mx:FormItem label="Id">
-		<mx:Label id="nameId" />
+		<mx:Label id="nameId" maxWidth="120" />
 	</mx:FormItem>
-    <mx:FormItem label="Title">
+    <mx:FormItem label="标题">
         <mx:TextInput id="title" change="changeNodeOptions();" width="120"/>
     </mx:FormItem>
-    <mx:FormItem label="Type">
+    <mx:FormItem label="类型">
         <mx:ComboBox id="type" change="changeNodeOptions();">
         	<mx:Array>
                 <mx:Object label="workgroup" icon="{new Icons().getIcon('workgroup')}" />
@@ -63,8 +76,12 @@
         	</mx:Array>
         </mx:ComboBox>
     </mx:FormItem>
-    <mx:FormItem label="Describe">
+    <mx:FormItem label="描述">
         <mx:TextInput id="describe" change="changeNodeOptions();"  width="120"/>
+    </mx:FormItem>
+    <mx:FormItem label="子拓扑图" direction="horizontal">
+        <mx:TextInput id="childMapId" change="changeNodeOptions();" editable="false" width="80"/>
+        <mx:Button label="选择..." click="showMapSelecter();" />
     </mx:FormItem>
     <mx:HBox>
         <mx:Button label="Set Rootnode" click="_curGraph.rootNode = _curNode.Name;" />

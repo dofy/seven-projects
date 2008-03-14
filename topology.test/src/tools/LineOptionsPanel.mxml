@@ -24,8 +24,8 @@
         {
             _curLine.color = lineColor.selectedColor;
             _curLine.lineWidth = lineWidth.value;
-            _curLine.arrowType = parseInt(arrowType.text);
-            _curLine.arrowMode = parseInt(arrowMode.text);
+            _curLine.arrowType = parseInt(arrowType.selectedItem.data);
+            _curLine.arrowMode = parseInt(arrowMode.selectedItem.data);
         }
         
         private function checkListItem(combobox:ComboBox, item:Object):int
@@ -44,32 +44,32 @@
         }
     ]]>
 </mx:Script>
-    <mx:FormItem label="From Node">
-        <mx:Label id="fromId" />
+    <mx:FormItem label="始节点">
+        <mx:Label id="fromId" maxWidth="120" />
     </mx:FormItem>
-    <mx:FormItem label="To Node">
-        <mx:Label id="toId" />
+    <mx:FormItem label="终节点">
+        <mx:Label id="toId" maxWidth="120" />
     </mx:FormItem>
-    <mx:FormItem label="Color">
+    <mx:FormItem label="颜色">
         <mx:ColorPicker id="lineColor" width="60" change="changeLineOptions();" />
     </mx:FormItem>
-    <mx:FormItem label="Line Width:" direction="horizontal">
+    <mx:FormItem label="线宽" direction="horizontal">
         <mx:HSlider id="lineWidth" minimum="1" maximum="10" snapInterval="1" width="100" change="changeLineOptions();"/>
     </mx:FormItem>
-    <mx:FormItem label="Arrow Type">
+    <mx:FormItem label="箭头类型">
         <mx:ComboBox id="arrowType" change="changeLineOptions();">
             <mx:Array>
-                <mx:Object label="0" data="0" />
-                <mx:Object label="1" data="1" />
+                <mx:Object label="线型" data="0" />
+                <mx:Object label="实心" data="1" />
             </mx:Array>
         </mx:ComboBox>
     </mx:FormItem>
-    <mx:FormItem label="Arrow Mode">
+    <mx:FormItem label="箭头方向">
         <mx:ComboBox id="arrowMode" change="changeLineOptions();">
             <mx:Array>
-                <mx:Object label="0" data="0" />
-                <mx:Object label="1" data="1" />
-                <mx:Object label="2" data="2" />
+                <mx:Object label="同向" data="0" />
+                <mx:Object label="相对" data="1" />
+                <mx:Object label="相反" data="2" />
             </mx:Array>
         </mx:ComboBox>
     </mx:FormItem>

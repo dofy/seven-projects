@@ -25,6 +25,7 @@ import mx.rpc.events.ResultEvent;
 import tools.GlobalPanel;
 import tools.LineOptionsPanel;
 import tools.NodeOptionPanel;
+import mx.events.ResizeEvent;
 
 private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
@@ -78,6 +79,7 @@ private function initApp():void
     graphTest.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
     graphTest.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
     graphTest.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+    graphTest.addEventListener(TopoEvent.NODE_DOUBLE_CLICK, showChildMapHandler);
 
     graphTest.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
     graphTest.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
@@ -152,6 +154,9 @@ private function dragDropHandler(event:DragEvent):void
 
 private function commandButtonHandler(evt:ItemClickEvent):void
 {
+    var topoXML:XML;
+    var mapId:String;
+    var mapData:String;
     switch (evt.item.data)
     {
         case 'new':
@@ -172,19 +177,37 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'save':
         {	
         	//错误提示
-            var topoXML:XML = graphTest.XMLData;
-            var mapId:String = topoXML.id;
-            var mapData:String = topoXML.toString();
-        	/*
-			topoService.addEventListener(FaultEvent.FAULT,gotError);
-        	topoService.editTopology.addEventListener(ResultEvent.RESULT,saveTopoData);
-        	topoService.editTopology(mapId,mapData);
+        	
+		    topoXML = graphTest.XMLData;
+		    mapId = topoXML.id;
+		    mapData = topoXML.toString();
+		    /*
+        	topoService.addEventListener(FaultEvent.FAULT,gotError);
+            topoService.editTopology.addEventListener(ResultEvent.RESULT,saveTopoData);
+            topoService.editTopology(mapId,mapData);
+            listdata.init();
         	*/
-        	/*
-            var saveEvent:DynamicEvent = new DynamicEvent("saveTopo");
-            saveEvent.data = graphTest.XMLData;
-            dispatchEvent(saveEvent);
-            */
+            break;
+        }
+        case 'del':
+        {
+            Alert.show("确定要删除该拓扑图吗?",
+                       "确认",
+                       Alert.YES | Alert.NO,
+                       null,
+                       function(event:CloseEvent):void
+                       {
+                            if (Alert.YES == event.detail)
+                            {
+							    topoXML = graphTest.XMLData;
+							    mapId = topoXML.id;
+							    /*
+                            	topoService.removeTopology.addEventListener(ResultEvent.RESULT,delTopoData);
+					            topoService.removeTopology(mapId);
+					            listdata.init();
+					            */
+                            } 
+                       });
             break;
         }
         case 'center':
@@ -215,7 +238,7 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'copyXML':
         {
             System.setClipboard(graphTest.XMLData);
-            Alert.show("xml 数据已复制到剪贴板", "提醒");
+            Alert.show("XML 数据已复制到剪贴板", "提醒");
             break;
         }
     }
@@ -230,6 +253,13 @@ private function gotError( fault:FaultEvent ):void
 
 private function saveTopoData(result:ResultEvent):void{
 	trace(result.result);
+}
+
+private function delTopoData(result:ResultEvent):void
+{
+	trace(result.result);
+    // 描述一个新的 空拓扑图
+    graphTest.display(new XML());
 }
 private function getTopoData(result:ResultEvent):void{
 	trace(result.result);
@@ -265,7 +295,30 @@ private function graphChangeHandler(evt:Event):void
     tmpForm.setObject(graphTest);
 }
 
+private function showChildMapHandler(evt:TopoEvent):void
+{
+	var topoId:String = evt.target.ChildMapId;
+	if (topoId != '')
+	{
+		//getTopo(topoId);
+	}
+}
+
 private function deleteHandler(event:KeyboardEvent):void
 {
     event.keyCode == 46 && graphTest.deleteSelectedObjects();
 }
+
+//////////////////////////////////
+// service functions
+//////////////////////////////////
+/*
+private function getTopo(id:String):void{
+	topoService.getTopologyStr.addEventListener(ResultEvent.RESULT,getTopoFun);
+	topoService.getTopologyStr(id);			
+}
+private function getTopoFun(result:ResultEvent):void{
+	var xmlStr:XML = new XML(result.result);
+	setData(xmlStr);
+}
+*/

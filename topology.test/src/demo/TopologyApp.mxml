@@ -6,11 +6,15 @@
         [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     </mx:Metadata>
     <mx:Script source="main_app.as" />
+	<!--mx:RemoteObject id="topoService" destination="GenericDestination" 
+		 	source="com.ultrapower.ultranms.link.topology.TopoManager"
+		    showBusyCursor="true"/-->		
     <mx:HBox verticalAlign="middle">
         <mx:LinkBar itemClick="commandButtonHandler(event);" labelField="label">
         <mx:Array>
             <mx:Object label="新建" icon="@Embed('../icons/new.png')" data="new" />
             <mx:Object label="保存" icon="@Embed('../icons/save.png')" data="save" />
+            <mx:Object label="删除" icon="@Embed('../icons/delete.png')" data="del" />
             <!--
             <mx:Object label="Edit" icon="@Embed('../icons/edit.png')" data="edit" />
             <mx:Object label="Move" icon="@Embed('../icons/move.png')" data="move" />
@@ -26,6 +30,7 @@
         <mx:CheckBox label="编辑模式" selected="true" change="graphTest.editable = event.target.selected" />
     </mx:HBox>
     <mx:HBox width="100%" height="100%">
+    	<tools:treeList id="listdata" width="150" height="100%" />
         <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
         <mx:VBox width="280">
             <mx:Panel title="添加节点" width="100%" height="330">
