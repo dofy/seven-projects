@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:List xmlns:mx="http://www.adobe.com/2006/mxml" 
+    creationComplete="//init()" 
+    itemClick="//getTopo(this.selectedItem.id)">
+<mx:Script>
+	<![CDATA[
+        /*
+		import cn.com.ultrapower.topology.view.Graph;
+		import demo.TopologyApp;
+		import vo.ListVo;
+		import mx.rpc.events.ResultEvent;
+		*/
+		private var _mapId:String;
+		/*
+		public function init():void{
+        	topoService.getMapname.addEventListener(ResultEvent.RESULT,getTreeData);
+        	topoService.getMapname('0');
+		}
+		public function getTreeData(result:ResultEvent):void{
+			if(result.result.length == 0){
+				return;
+			}
+			var listData:Array = result.result as Array;
+			var dataArr:Array = new Array();
+			
+			for(var i:int = 0;i<listData[0].length;i++){
+				var listvo:ListVo = new ListVo();				
+				listvo.id = listData[0][i];	
+				listvo.label = listData[1][i];				
+				dataArr.push(listvo);
+			}
+			this.dataProvider = dataArr;
+		}
+		public function getTopo(id:String):void{
+        	topoService.getTopologyStr.addEventListener(ResultEvent.RESULT,getTopoFun);
+        	topoService.getTopologyStr(id);			
+		}
+		private function getTopoFun(result:ResultEvent):void{
+			var xmlStr:XML = new XML(result.result);
+			if (id == "mapList")
+			{
+				_mapId = xmlStr.id;
+				var previewGraph:Graph = parent.getChildByName('mapViewer') as Graph;
+                previewGraph.cleanActions();
+                previewGraph.appendActions(function():void{previewGraph.editable = true;}, true);
+                previewGraph.appendActions(function():void{previewGraph.display(xmlStr);});
+                previewGraph.appendActions(function():void{previewGraph.scaleTo(.9, .9);});
+                previewGraph.appendActions(function():void{previewGraph.center();});
+                previewGraph.appendActions(function():void{previewGraph.editable = false;}, true, true);
+			}
+			else
+			{
+				(parent.parent as TopologyApp).setData(xmlStr);
+			}
+	
+		}
+		*/
+		
+		public function get mapId():String
+		{
+			return _mapId;
+		}
+	]]>
+</mx:Script>
+	<mx:RemoteObject id="topoService" destination="GenericDestination" 
+		 	source="com.ultrapower.ultranms.link.topology.TopoManager"
+		    showBusyCursor="true"/>		
+</mx:List>

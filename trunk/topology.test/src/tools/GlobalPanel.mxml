@@ -2,9 +2,11 @@
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
     <mx:Script>
         <![CDATA[
+            import mx.collections.ArrayCollection;
             import mx.events.ItemClickEvent;
             
             import cn.com.ultrapower.topology.view.Graph;
+            [Bindable]
             private var _curGraph:Graph;
             
             public function setObject(graph:Graph):void
@@ -26,29 +28,35 @@
             private function graphScaleHandler(event:ItemClickEvent):void
             {
                 var tOffset:Number = (event.index * 2 - 1) * .2;
-                _curGraph.scaleTo(_curGraph.widthScale + tOffset, _curGraph.heightScale + tOffset);
+                _curGraph.realScale += tOffset;
+                //_curGraph.scaleTo(_curGraph.widthScale + tOffset, _curGraph.heightScale + tOffset);
                 //refreshData(); 
             }
         ]]>
     </mx:Script>
     <mx:FormItem label="ID">
-        <mx:Label id="mapId" />
+        <mx:Label id="mapId" maxWidth="120" />
     </mx:FormItem>
-    <mx:FormItem label="Name">
+    <mx:FormItem label="名称">
         <mx:TextInput id="mapName" width="120" change="_curGraph.mapName = event.target.text;" />
     </mx:FormItem>
-    <mx:FormItem label="width scale" direction="horizontal">
-        <mx:HSlider id="wScale" minimum="10" maximum="200" snapInterval="1"  width="100" change="_curGraph.widthScale = event.value / 100" />
+    <mx:FormItem label="横距缩放" direction="horizontal">
+        <mx:HSlider id="wScale" minimum="10" maximum="200" snapInterval="1"  width="100" 
+            change="_curGraph.widthScale = event.value / 100" />
     </mx:FormItem>
-    <mx:FormItem label="height scale" direction="horizontal">
-        <mx:HSlider id="hScale" minimum="10" maximum="200" snapInterval="1"  width="100" change="_curGraph.heightScale = event.value / 100" />
+    <mx:FormItem label="纵距缩放" direction="horizontal">
+        <mx:HSlider id="hScale" minimum="10" maximum="200" snapInterval="1"  width="100" 
+            change="_curGraph.heightScale = event.value / 100" />
     </mx:FormItem>
-    <mx:FormItem label="scale">
+    <!--mx:FormItem label="大小缩放" direction="horizontal">
         <mx:ButtonBar itemClick="graphScaleHandler(event);">
             <mx:Array>
                 <mx:Object icon="@Embed('../icons/zoom_out.png')" toolTip="Zoom out" />
                 <mx:Object icon="@Embed('../icons/zoom_in.png')" toolTip="Zoom in" />
             </mx:Array>
         </mx:ButtonBar>
-    </mx:FormItem>
+        <mx:LinkButton id="scaleNum" icon="@Embed(source='icons/resize.png')" 
+            toolTip="Resize to 100%" label="{(_curGraph.realScale * 100).toFixed(0)}" 
+            click="_curGraph.realScale = 1;" />
+    </mx:FormItem-->
 </mx:Form>
