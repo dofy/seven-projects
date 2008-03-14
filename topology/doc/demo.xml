@@ -14,12 +14,13 @@
   <node id="node1" title="服务器" type="server" describe="工作组中某台服务器" x="198.75" y="596.00"/>
 <!--
 	node:
-		id:       节点唯一标识 (必选)
-		title:    节点标题 (默认空)
-		type:     节点类型 (目前支持 icons.swf 中列出的类型, 默认 dot)
-		describe: 描述
-		x:        x 坐标
-		y:        y 坐标
+		id:         节点唯一标识 (必选)
+		title:      节点标题 (默认空)
+		type:       节点类型 (目前支持 icons.swf 中列出的类型, 默认 dot)
+		describe:   描述
+		childMapId: 子拓扑图 Id
+		x:          x 坐标
+		y:          y 坐标
 -->
   <node id="node2" title="客户端" type="client" describe="某客户端" x="89.05" y="318.00"/>
   <node id="node5" title="存储" type="storage" x="202.85" describe="存储设备, 如硬盘" y="281.00"/>

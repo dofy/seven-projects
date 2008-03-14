@@ -3,13 +3,13 @@ package cn.com.ultrapower.topology.view
     import cn.com.ultrapower.topology.assets.Icons;
     import cn.com.ultrapower.topology.event.TopoEvent;
     
-    import flash.events.Event;
     import flash.events.MouseEvent;
     
     import mx.containers.VBox;
     import mx.controls.Image;
     import mx.controls.Label;
-    import mx.effects.Move; 
+    import mx.effects.Move;
+    import mx.events.EffectEvent; 
     
     public class Node extends VBox implements INode
     {
@@ -65,6 +65,18 @@ package cn.com.ultrapower.topology.view
             effect = new Move(this);
             proxy = new NodeProxy(Name);
             
+            effect.addEventListener(EffectEvent.EFFECT_END, 
+                                    function():void
+                                    {
+                                        dispatchEvent(new EffectEvent(EffectEvent.EFFECT_END, true));
+                                    });
+                                    
+            effect.addEventListener(EffectEvent.EFFECT_START, 
+                                    function():void
+                                    {
+                                        dispatchEvent(new EffectEvent(EffectEvent.EFFECT_START, true));
+                                    });
+            
             doubleClickEnabled = true;
 
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
@@ -98,7 +110,7 @@ package cn.com.ultrapower.topology.view
             
             //effect.easingFunction = Elastic.easeOut;
 
-            setStyle("borderStyle", "solid");
+            setStyle("borderStyle", "inside");
             setStyle("borderThickness", 0);
             setStyle("cornerRadius", CORNET_RADIUS);
             setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
@@ -107,6 +119,7 @@ package cn.com.ultrapower.topology.view
             setStyle("paddingRight", 3);
             setStyle("paddingBottom", 3);
             setStyle("paddingLeft", 3);
+            
         }
         
         /**
@@ -187,7 +200,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo = xv;
             effect.yTo = yv;
             effect.play();
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
         }
         
         /**
@@ -200,7 +213,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo += xv;
             effect.yTo += yv;
             effect.play();
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
         }
         
         /**
@@ -248,7 +261,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Name(s:String):void
         {
-        	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));;
+        	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));;
         }
         
         public function get Name():String
@@ -262,7 +275,7 @@ package cn.com.ultrapower.topology.view
             {
             	_data.@title = s;
             	nodeTitle.text = s;
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
             }
         }
         
@@ -277,7 +290,7 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@type = s;
                 nodeIcon.source = icons.getIcon(s);
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
             }
         }
         
@@ -292,13 +305,27 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@describe = s;
                 toolTip = s;
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
             }
         }
         
         public function get Describe():String
         {
             return _data.@describe;
+        }
+        
+        public function set ChildMapId(mapId:String):void
+        {
+            if (_editable && (_data.@childMapId != mapId))
+            {
+                _data.@childMapId = mapId;
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+            }
+        }
+        
+        public function get ChildMapId():String
+        {
+            return _data.@childMapId;
         }
         
         public function get Data():XML
@@ -316,6 +343,16 @@ package cn.com.ultrapower.topology.view
         public function get oy():Number
         {
         	return _oy;
+        }
+        
+        public function get oldWidth():Number
+        {
+            return unscaledWidth;
+        }
+        
+        public function get oldHeight():Number
+        {
+            return unscaledHeight;
         }
         
         /**
@@ -339,7 +376,7 @@ package cn.com.ultrapower.topology.view
          * */
         public function get cx():Number
         {
-            return x + width/2;
+            return x + width / 2;
         }
         
         /**
@@ -347,7 +384,7 @@ package cn.com.ultrapower.topology.view
          * */
         public function get cy():Number
         {
-            return y + nodeIcon.height/2;
+            return y + nodeIcon.contentHeight * scaleY / 2;
         }
         
         public function get isSelected():Boolean
@@ -369,6 +406,7 @@ package cn.com.ultrapower.topology.view
          * */
         private function setNormalStyle():void
         {
+            setStyle("borderThickness", 0);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_NORMAL);
         }
@@ -378,6 +416,7 @@ package cn.com.ultrapower.topology.view
          * */
         private function setOverStyle():void
         {
+            setStyle("borderThickness", 1);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_OVER);
         }
@@ -387,6 +426,7 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSelectStyle():void
         {
+            setStyle("borderThickness", 1);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
@@ -396,6 +436,7 @@ package cn.com.ultrapower.topology.view
          * */
         private function setSuperStyle():void
         {
+            setStyle("borderThickness", 1);
             setStyle("backgroundColor", BG_COLOR);
             setStyle("backgroundAlpha", BG_ALPHA_SUPER);
         }
@@ -405,6 +446,7 @@ package cn.com.ultrapower.topology.view
          * */
         private function setDownStyle():void
         {
+            setStyle("borderThickness", 1);
             setStyle("backgroundColor", BG_COLOR_DOWN);
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
