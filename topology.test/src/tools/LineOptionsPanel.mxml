@@ -12,8 +12,10 @@
         {
             _curGraph = graph;
             _curLine = line;
-            fromId.text = line.fromNode.Name;
-            toId.text = line.toNode.Name;
+            fromId.text = line.fromNode.Name.toString();
+            toId.text = line.toNode.Name.toString();
+            describe.text = line.Describe;
+            resId.text = line.ResId;
             lineColor.selectedColor = line.color;
             lineWidth.value = line.lineWidth;
             arrowType.selectedIndex = checkListItem(arrowType, line.arrowType);
@@ -22,6 +24,8 @@
         
         private function changeLineOptions():void
         {
+            _curLine.Describe = describe.text;
+            _curLine.ResId = resId.text;
             _curLine.color = lineColor.selectedColor;
             _curLine.lineWidth = lineWidth.value;
             _curLine.arrowType = parseInt(arrowType.selectedItem.data);
@@ -49,6 +53,12 @@
     </mx:FormItem>
     <mx:FormItem label="终节点">
         <mx:Label id="toId" maxWidth="120" />
+    </mx:FormItem>
+    <mx:FormItem label="描述">
+        <mx:TextInput id="describe" change="changeLineOptions();"  width="120"/>
+    </mx:FormItem>
+    <mx:FormItem label="资源 Id">
+        <mx:TextInput id="resId" change="changeLineOptions();"  width="120"/>
     </mx:FormItem>
     <mx:FormItem label="颜色">
         <mx:ColorPicker id="lineColor" width="60" change="changeLineOptions();" />

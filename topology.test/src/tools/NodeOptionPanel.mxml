@@ -13,9 +13,10 @@
         {
             _curGraph = graph;
             _curNode = node;
-            nameId.text = node.Name;
+            nameId.text = node.Name.toString();
             title.text = node.Title;
             describe.text = node.Describe;
+            resId.text = node.ResId;
             childMapId.text = node.ChildMapId;
             for(var i:uint = 0; i < type.dataProvider.length; i++)
             {
@@ -39,6 +40,7 @@
             _curNode.Type = type.text;
             _curNode.Title = title.text;
             _curNode.Describe = describe.text;
+            _curNode.ResId = resId.text;
             _curNode.ChildMapId = childMapId.text;
         }
         
@@ -78,6 +80,9 @@
     </mx:FormItem>
     <mx:FormItem label="描述">
         <mx:TextInput id="describe" change="changeNodeOptions();"  width="120"/>
+    </mx:FormItem>
+    <mx:FormItem label="资源 Id">
+        <mx:TextInput id="resId" change="changeNodeOptions();"  width="120"/>
     </mx:FormItem>
     <mx:FormItem label="子拓扑图" direction="horizontal">
         <mx:TextInput id="childMapId" change="changeNodeOptions();" editable="false" width="80"/>
