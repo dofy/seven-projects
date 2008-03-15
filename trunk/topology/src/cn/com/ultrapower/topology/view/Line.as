@@ -68,6 +68,7 @@ package cn.com.ultrapower.topology.view
         {
             super.createChildren();
             
+            toolTip = _data.@describe;
             arrow1 = new Arrow(_color, _width);
             arrow2 = new Arrow(_color, _width);
             
@@ -189,6 +190,35 @@ package cn.com.ultrapower.topology.view
             //trace(_id, "y2:", n);
             _y2 = n;
             refresh();
+        }
+        
+        public function set Describe(s:String):void
+        {
+            if (_editable && (_data.@describe != s))
+            {
+                _data.@describe = s;
+                toolTip = s;
+                dispatchEvent(new TopoEvent(TopoEvent.LINE_CHANGED));
+            }
+        }
+        
+        public function get Describe():String
+        {
+            return _data.@describe;
+        }
+        
+        public function get ResId():String
+        {
+            return _data.@resId;
+        }
+        
+        public function set ResId(resId:String):void
+        {
+            if (_editable && (_data.@resId != resId))
+            {
+                _data.@resId = resId;
+                dispatchEvent(new TopoEvent(TopoEvent.LINE_CHANGED));
+            }
         }
         
         public function set color(c:uint):void

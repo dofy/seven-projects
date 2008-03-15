@@ -49,6 +49,8 @@ package cn.com.ultrapower.topology.view
         private var _id:String;                // 拓扑图 id
         private var _name:String;              // 拓扑图 名称
         private var _background:String;        // 拓扑图 背景
+        private var _serverTime:Number;        // 服务器时间
+        private var _timeOffset:Number         // 时间差
         
         private var _nodes:Array;    // 节点数组
         private var _lines:Array;    // 线 数组
@@ -70,6 +72,7 @@ package cn.com.ultrapower.topology.view
         private var _midpoint:Point;      // 中心点
         
         private var drawBot:IDraw;        // 绘制树形算法
+        private var isInit:Boolean;       // 是否初始化中
         
         private var selectNone:Boolean;
         
@@ -102,6 +105,8 @@ package cn.com.ultrapower.topology.view
          * */
         public function init():void
         {
+            isInit = true;
+            
             _nodes = new Array();
             _lines = new Array();
             _midpoint = new Point();
@@ -136,6 +141,16 @@ package cn.com.ultrapower.topology.view
             _id = xml.id;
             _name = xml.name;
             _background = xml.background;
+            _serverTime = Number(xml.systime);
+            
+            if (0 == _serverTime)
+            {
+                _serverTime = new Date().getTime();
+            }
+            
+            // 计算服务器与客户端时间差
+            _timeOffset = _serverTime - new Date().getTime();
+            
             
             for each (var nodex:XML in xml.node)
             {
@@ -174,13 +189,14 @@ package cn.com.ultrapower.topology.view
             
             draw();
             _isChanged = false;
+            isInit = false;
 
             return true;
         }
         
         public function draw(model:IDraw = null):void
         {
-        	if (_editable)
+        	if (_editable || isInit)
         	{
         	    model && (drawBot = model);
                 drawBot.makeTreeForm(this, getTreeArray());
@@ -210,6 +226,7 @@ package cn.com.ultrapower.topology.view
          * 添加节点
          * */
         public function addNode(_x:Number, _y:Number, data:XML):Node{
+            var numId:String = data.@id;
         	var newNode:Node = new Node(_nodeId++, data);
             newNode.editable = _editable;
             newNode.Name = getNewNodeId(data.@id);
@@ -315,7 +332,7 @@ package cn.com.ultrapower.topology.view
         /**
          * 从 Name 获取节点
          * */
-        public function getNodeByName(name:String):Node
+        public function getNodeByName(name:Number):Node
         {
             var nodeByName:Node = null;
             for (var i:uint = 0; i < _nodes.length; i++)
@@ -358,9 +375,9 @@ package cn.com.ultrapower.topology.view
         /**
          * 返回可用唯一id
          * */
-        public function getNewNodeId(id:String = null):String
+        public function getNewNodeId(id:Number):Number
         {
-            (null == id || '' == id || getNodeByName(id)) && (id = getNewNodeId("node_" + new Date().getTime())); 
+            (0 >= id || isNaN(id) || getNodeByName(id)) && (id = getNewNodeId(new Date().getTime() + _timeOffset)); 
             return id;
         }
         
@@ -439,7 +456,7 @@ package cn.com.ultrapower.topology.view
         /**
          * 手动设置根节点
          * */
-        public function set rootNode(nodeName:String):void
+        public function set rootNode(nodeName:Number):void
         {
             var tmpNode:Node = getNodeByName(nodeName);
             if(tmpNode)

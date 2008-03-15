@@ -7,6 +7,7 @@
     <id>mapId</id>
     <name>MapName</name>
     <background>bg</background>
+    <systime>1205569121000</systime>
 <!--
 	根节点名称无所谓, 叫什么都行, 没有任何属性
 	其他节点名称和属性名称大小写敏感, 除标"必选"外的属性为可选属性
@@ -19,6 +20,7 @@
 		type:       节点类型 (目前支持 icons.swf 中列出的类型, 默认 dot)
 		describe:   描述
 		childMapId: 子拓扑图 Id
+		resId:      资源 Id
 		x:          x 坐标
 		y:          y 坐标
 -->
@@ -34,12 +36,14 @@
 	line:
 		fromId:     始节点id, 对应 node 的 id (必选)
 		toId:       终节点id, (同上, 必选)
+        resId:      资源 Id
+        describe:   描述
 		color:      连续颜色(默认黑色, 支持的格式: 0xffffff, #ffffff, ffffff)
 		width:      线宽(默认1)
 		arrowStyle: 箭头样式(可选值 0 线状简体; 1 实心箭头. 默认0)
 		arrowMode:  箭头模式, 或者说方向 (可选值: 0 同向; 1 相反; 2 相对. 默认0)
 -->
-  <line fromId="node992" toId="node1" color="000000"/>
+  <line fromId="node992" toId="node1" describe="连线111" color="000000"/>
 
   <line fromId="test1" toId="node991" color="000000"/>
   <line fromId="node7" toId="node1" color="000000"/>
