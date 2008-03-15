@@ -6,10 +6,10 @@ package cn.com.ultrapower.topology.view
 
 	public class NodeProxy extends Container implements INode
 	{
-		private var _name:String;
+		private var _name:Number;
 		private var _lines:Array;
 		
-		public function NodeProxy(name:String = "*Unnamed*") 
+		public function NodeProxy(name:Number = 0) 
 		{
 			super();
 			_lines = new Array();
@@ -56,12 +56,12 @@ package cn.com.ultrapower.topology.view
             return false;
         } 
 		
-		public function set Name(name:String):void 
+		public function set Name(name:Number):void 
 		{
-			_name = name + " Proxy";
+			_name = name;
 		}
 		
-		public function get Name():String 
+		public function get Name():Number 
 		{
 			return _name;
 		}

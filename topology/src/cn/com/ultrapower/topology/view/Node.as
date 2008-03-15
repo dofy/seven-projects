@@ -259,12 +259,12 @@ package cn.com.ultrapower.topology.view
             return _id;
         }
         
-        public function set Name(s:String):void
+        public function set Name(s:Number):void
         {
         	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));;
         }
         
-        public function get Name():String
+        public function get Name():Number
         {
             return _data.@id;
         }
@@ -319,6 +319,20 @@ package cn.com.ultrapower.topology.view
             if (_editable && (_data.@childMapId != mapId))
             {
                 _data.@childMapId = mapId;
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+            }
+        }
+        
+        public function get ResId():String
+        {
+            return _data.@resId;
+        }
+        
+        public function set ResId(resId:String):void
+        {
+            if (_editable && (_data.@resId != resId))
+            {
+                _data.@resId = resId;
                 dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
             }
         }
