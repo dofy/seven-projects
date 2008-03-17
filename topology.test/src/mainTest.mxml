@@ -27,18 +27,18 @@
         <topology>
             <id>4587</id>
             <name>拓扑组件 Demo</name>
-            <background>..</background>
-              <node id="1" title="工作组" type="workgroup" describe="根节点工作组" resId="95586" x="501.00" y="132.00"/>
-              <node id="2" title="服务器" type="server" describe="工作组中某台服务器" x="72.00" y="181.00"/>
+            <background>background/map2.png</background>
+              <node id="1" title="工作组" type="workgroup" describe="根节点工作组" blink="ff0000" resId="95586" x="501.00" y="132.00"/>
+              <node id="2" title="服务器" type="server" describe="工作组中某台服务器" blink="ffffff" x="72.00" y="181.00"/>
               <node id="3" title="客户端" type="client" describe="某客户端" x="655.00" y="243.00"/>
               <node id="4" title="电脑设备" type="computer" describe="典型设备连接外设" x="384.00" y="332.00"/>
               <node id="5" title="打印机" type="printer" describe="连接到电脑上的打印机" x="316.00" y="528.00"/>
               <node id="6" title="存储" type="storage" x="238.00" describe="存储设备, 如硬盘" y="456.00"/>
-              <node id="7" title="音频" type="audio" x="490.00" describe="" y="515.00"/>
-              <node id="8" title="视频" type="video" x="613.00" describe="" y="453.00"/>
+              <node id="7" title="音频" type="audio" x="490.00" describe="" blink="#00ff00" y="515.00"/>
+              <node id="8" title="视频" type="video" x="613.00" describe="" blink="ffff00" y="453.00"/>
               <line fromId="1" toId="2" describe="工作组到服务器" color="ff0000" width="1" arrowType="1" arrowMode="0"/>
               <line fromId="1" toId="3" color="330066" width="2" arrowType="0" arrowMode="0"/>
-              <line fromId="2" toId="4" color="0" width="1" arrowMode="0" arrowType="0"/>
+              <line fromId="2" toId="4" color="0" blink="ff0000" width="1" arrowMode="0" arrowType="0"/>
               <line fromId="4" toId="5" color="ff00ff" width="1" arrowMode="0" arrowType="0"/>
               <line fromId="4" toId="6" color="ff" width="1" arrowType="0" arrowMode="0"/>
               <line fromId="4" toId="7" color="ffff" width="1" arrowType="0" arrowMode="0"/>
@@ -47,6 +47,7 @@
         
         private var xml2:XML = 
         <topology>
+            <background>background/bg2.jpg</background>
           <node id="1" title="工作组" type="workgroup" describe="根节点工作组" x="501" y="132"/>
           <node id="2" title="服务器" type="server" describe="工作组中某台服务器" x="377" y="226"/>
           <node id="3" title="客户端" type="client" describe="某客户端" x="655" y="243"/>

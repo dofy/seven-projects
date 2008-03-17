@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="bindHandler();">
 <mx:Script>
     <![CDATA[
+        import mx.events.ListEvent;
         import mx.managers.PopUpManager;
         import cn.com.ultrapower.topology.view.Graph;
         import cn.com.ultrapower.topology.assets.Icons;
@@ -9,6 +10,12 @@
         
         private var _curGraph:Graph;
         private var _curNode:Node;
+        
+        private function bindHandler():void
+        {
+            type.addEventListener(ListEvent.CHANGE, changeNodeOptions);
+        }
+        
         public function setObject(graph:Graph, node:Node):void
         {
             _curGraph = graph;
@@ -18,6 +25,7 @@
             describe.text = node.Describe;
             resId.text = node.ResId;
             childMapId.text = node.ChildMapId;
+            showTitle.selected = node.showTitle;
             for(var i:uint = 0; i < type.dataProvider.length; i++)
             {
                 if (type.dataProvider[i].label == node.Type)
@@ -30,18 +38,12 @@
         
         private function changeNodeOptions():void
         {
-            /*
-            if (nameId.text != _curNode.Name)
-            {
-                _curNode.Name = Application.application.graphTest.getNewNodeId(nameId.text);
-                nameId.text = _curNode.Name;
-            }
-            */
             _curNode.Type = type.text;
             _curNode.Title = title.text;
             _curNode.Describe = describe.text;
             _curNode.ResId = resId.text;
             _curNode.ChildMapId = childMapId.text;
+            _curNode.showTitle = showTitle.selected;
         }
         
         private function showMapSelecter():void
@@ -62,7 +64,7 @@
         <mx:TextInput id="title" change="changeNodeOptions();" width="120"/>
     </mx:FormItem>
     <mx:FormItem label="类型">
-        <mx:ComboBox id="type" change="changeNodeOptions();">
+        <mx:ComboBox id="type">
         	<mx:Array>
                 <mx:Object label="workgroup" icon="{new Icons().getIcon('workgroup')}" />
                 <mx:Object label="server" icon="{new Icons().getIcon('server')}" />
@@ -88,7 +90,12 @@
         <mx:TextInput id="childMapId" change="changeNodeOptions();" editable="false" width="80"/>
         <mx:Button label="选择..." click="showMapSelecter();" />
     </mx:FormItem>
-    <mx:HBox>
-        <mx:Button label="Set Rootnode" click="_curGraph.rootNode = _curNode.Name;" />
-    </mx:HBox>
+    <mx:FormItem label="显示标题">
+        <mx:CheckBox id="showTitle" label="显示" change="changeNodeOptions();" />
+    </mx:FormItem>
+    <mx:FormItem label="测试闪烁" direction="horizontal">
+        <mx:ColorPicker width="50" change="_curNode.Blink = event.target.selectedColor" />
+        <mx:Button label="停止闪烁" click="_curNode.Blink = -1;" />
+    </mx:FormItem>
+    <mx:Button label="设为根节点" click="_curGraph.rootNode = _curNode.Name;" />
 </mx:Form>
