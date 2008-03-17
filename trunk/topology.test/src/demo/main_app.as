@@ -1,4 +1,5 @@
 // ActionScript file
+import cn.com.ultrapower.topology.assets.Icons;
 import cn.com.ultrapower.topology.event.TopoEvent;
 import cn.com.ultrapower.topology.view.DDefault;
 import cn.com.ultrapower.topology.view.DRandom;
@@ -30,21 +31,6 @@ private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
 private var nodePanel:Form = new NodeOptionPanel();
 private var linePanel:Form = new LineOptionsPanel();
-
-private var nodesData:XML = 
-    <r>
-        <node id="" title="workgroup" type="workgroup" describe="" />
-        <node id="" title="server" type="server" describe="" />
-        <node id="" title="client" type="client" describe="" />
-        <node id="" title="computer" type="computer" describe="" />
-        <node id="" title="power" type="power" describe="" />
-        <node id="" title="hardware" type="hardware" describe="" />
-        <node id="" title="storage" type="storage" describe="" />
-        <node id="" title="printer" type="printer" describe="" />
-        <node id="" title="audio" type="audio" describe="" />
-        <node id="" title="video" type="video" describe="" />
-        <node id="" title="wifi" type="wifi" describe="" />
-    </r>
 
 ///////////////////////////////////////
 // public functions
@@ -92,10 +78,12 @@ private function initApp():void
 private function addNodes():void
 {
     var tmpNode:Node;
-    var arrNodes:XMLList = nodesData.node;
-    for (var i:uint = 0; i < arrNodes.length(); i++)
+    var nodeXML:XML = <node />;
+    var arrNodes:Array = new Icons().getIconList();
+    for (var i:uint = 0; i < arrNodes.length; i++)
     {
-        tmpNode = new Node(i, arrNodes[i]);
+        nodeXML.@title = nodeXML.@type = arrNodes[i];
+        tmpNode = new Node(i, nodeXML.copy());
         tmpNode.addEventListener(MouseEvent.MOUSE_DOWN, nodeDragHandler);
         nodesBar.addChild(tmpNode);
     }

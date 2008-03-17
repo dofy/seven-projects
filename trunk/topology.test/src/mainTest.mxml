@@ -28,8 +28,8 @@
             <id>4587</id>
             <name>拓扑组件 Demo</name>
             <background>background/map2.png</background>
-              <node id="1" title="工作组" type="workgroup" describe="根节点工作组" blink="ff0000" resId="95586" x="501.00" y="132.00"/>
-              <node id="2" title="服务器" type="server" describe="工作组中某台服务器" blink="ffffff" x="72.00" y="181.00"/>
+              <node id="1" title="工作组" type="model" describe="根节点工作组" blink="ff0000" resId="95586" x="501.00" y="132.00"/>
+              <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="72.00" y="181.00"/>
               <node id="3" title="客户端" type="client" describe="某客户端" x="655.00" y="243.00"/>
               <node id="4" title="电脑设备" type="computer" describe="典型设备连接外设" x="384.00" y="332.00"/>
               <node id="5" title="打印机" type="printer" describe="连接到电脑上的打印机" x="316.00" y="528.00"/>
