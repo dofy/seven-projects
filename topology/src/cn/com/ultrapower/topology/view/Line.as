@@ -8,6 +8,8 @@ package cn.com.ultrapower.topology.view
     import mx.binding.utils.BindingUtils;
     import mx.binding.utils.ChangeWatcher;
     import mx.core.UIComponent;
+    import mx.effects.Glow;
+    import mx.events.EffectEvent;
     
     public class Line extends UIComponent
     {
@@ -17,6 +19,11 @@ package cn.com.ultrapower.topology.view
         private const BG_ALPHA_SUPER:Number  = 0.5;
         
         private const BG_WIDTH_OFFSET:uint = 7;
+        
+        private const BLINK_ALPHA_FROM:Number  = 1;
+        private const BLINK_ALPHA_TO:Number  = 0.5;
+        private const BLINK_STRENGTH_FROM:Number  = 25;
+        private const BLINK_STRENGTH_TO:Number  = 0;
         
         private var _id:uint;
         // 节点坐标点
@@ -34,6 +41,9 @@ package cn.com.ultrapower.topology.view
         private var _color:uint;
         private var _type:uint;
         private var _mode:uint;
+        
+        private var _blink:int;      // 闪烁颜色
+        private var blinkBot:Glow;   // 闪烁特效
         
         // 起始节点
         private var _fromNode:INode = null;
@@ -58,6 +68,8 @@ package cn.com.ultrapower.topology.view
             _id = id;
             _data = data? data: <line fromId="" toId="" color="000000" width="1" arrowType="0" arrowMode="0"/>;
             
+            blinkBot = new Glow(this);
+            
             this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
             this.addEventListener(MouseEvent.MOUSE_UP,   mouseUpHandler);
             this.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
@@ -74,6 +86,10 @@ package cn.com.ultrapower.topology.view
             
             this.addChild(arrow1);
             this.addChild(arrow2);
+            
+            var tBlink:String = _data.@blink;
+            tBlink = tBlink.replace(/#|0x/ig, '');
+            Blink = '' == tBlink ? -1 : parseInt(tBlink, 16) ;
             
             var tColor:String = _data.@color;
             color = parseInt(tColor.replace(/#|0x/ig, ''), 16) ;
@@ -205,6 +221,34 @@ package cn.com.ultrapower.topology.view
         public function get Describe():String
         {
             return _data.@describe;
+        }
+        
+        public function set Blink(b:int):void
+        {
+            if (_blink != b)
+            {
+                _blink = b;
+                if (-1 == b)
+                {
+                    // 取消闪烁
+                    trace("clean blink");
+                    blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                }
+                else
+                {
+                    // 闪烁处理
+                    trace("flash");
+                    blinkBot.alphaFrom = BLINK_ALPHA_FROM;
+                    blinkBot.alphaTo = BLINK_ALPHA_TO;
+                    blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
+                    blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
+                    blinkBot.color = b;
+                    blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                    blinkBot.addEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                    blinkBot.end();
+                    blinkBot.play();
+                }
+            }
         }
         
         public function get ResId():String
@@ -437,6 +481,12 @@ package cn.com.ultrapower.topology.view
         {
             _editable && (_isSelected? setSelectStyle(): setNormalStyle());
         }
-
+        
+        /**
+         * 闪烁循环
+         * */
+        private function blinkLoopHandler(event:EffectEvent):void{
+            event.target.play();
+        }
     }
 }
