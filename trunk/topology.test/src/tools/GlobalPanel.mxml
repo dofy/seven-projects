@@ -2,8 +2,9 @@
 <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml">
     <mx:Script>
         <![CDATA[
-            import mx.collections.ArrayCollection;
             import mx.events.ItemClickEvent;
+            import mx.events.ListEvent;
+            import mx.collections.ArrayCollection;
             
             import cn.com.ultrapower.topology.view.Graph;
             [Bindable]
@@ -27,10 +28,14 @@
             
             private function graphScaleHandler(event:ItemClickEvent):void
             {
-                var tOffset:Number = (event.index * 2 - 1) * .2;
+                var tOffset:Number = (event.index * .2 - .1);
                 _curGraph.realScale += tOffset;
                 //_curGraph.scaleTo(_curGraph.widthScale + tOffset, _curGraph.heightScale + tOffset);
-                //refreshData(); 
+                //refreshData();
+            }
+            private function setBackgroundHandler(event:ListEvent):void
+            {
+                _curGraph.background = event.target.selectedItem.data;
             }
         ]]>
     </mx:Script>
@@ -48,15 +53,25 @@
         <mx:HSlider id="hScale" minimum="10" maximum="200" snapInterval="1"  width="100" 
             change="_curGraph.heightScale = event.value / 100" />
     </mx:FormItem>
-    <!--mx:FormItem label="大小缩放" direction="horizontal">
+    <mx:FormItem label="大小缩放" direction="horizontal">
         <mx:ButtonBar itemClick="graphScaleHandler(event);">
             <mx:Array>
                 <mx:Object icon="@Embed('../icons/zoom_out.png')" toolTip="Zoom out" />
                 <mx:Object icon="@Embed('../icons/zoom_in.png')" toolTip="Zoom in" />
             </mx:Array>
         </mx:ButtonBar>
-        <mx:LinkButton id="scaleNum" icon="@Embed(source='icons/resize.png')" 
+        <mx:LinkButton id="scaleNum" icon="@Embed(source='../icons/resize.png')" 
             toolTip="Resize to 100%" label="{(_curGraph.realScale * 100).toFixed(0)}" 
             click="_curGraph.realScale = 1;" />
-    </mx:FormItem-->
+    </mx:FormItem>
+    <mx:FormItem label="背景">
+        <mx:List width="120" rowCount="4" itemClick="setBackgroundHandler(event);">
+            <mx:Array>
+                <mx:Object label="bg1" data="background/bg1.jpg" />
+                <mx:Object label="bg2" data="background/bg2.jpg" />
+                <mx:Object label="map" data="background/map.png" />
+                <mx:Object label="map2" data="background/map2.png" />
+            </mx:Array>
+        </mx:List>
+    </mx:FormItem>
 </mx:Form>

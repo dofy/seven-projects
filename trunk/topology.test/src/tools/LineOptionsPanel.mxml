@@ -82,5 +82,8 @@
                 <mx:Object label="相反" data="2" />
             </mx:Array>
         </mx:ComboBox>
+    </mx:FormItem>    <mx:FormItem label="测试闪烁" direction="horizontal">
+        <mx:ColorPicker width="50" change="_curLine.Blink = event.target.selectedColor" />
+        <mx:Button label="停止闪烁" click="_curLine.Blink = -1;" />
     </mx:FormItem>
 </mx:Form>

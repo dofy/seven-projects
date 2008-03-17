@@ -25,7 +25,6 @@ import mx.rpc.events.ResultEvent;
 import tools.GlobalPanel;
 import tools.LineOptionsPanel;
 import tools.NodeOptionPanel;
-import mx.events.ResizeEvent;
 
 private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
@@ -73,7 +72,9 @@ public function setData(data:XML):void
 private function initApp():void
 {
     addNodes();
-    changePanel("全局属性", globalPanel);
+    var tmpPanel:GlobalPanel = changePanel("全局属性", globalPanel) as GlobalPanel;
+    tmpPanel.setObject(graphTest);
+//    graphTest.display(new XML());
     
     graphTest.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
     graphTest.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
@@ -84,7 +85,7 @@ private function initApp():void
     graphTest.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
     graphTest.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
     
-    addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
+    graphTest.addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
     
 }
 
@@ -217,7 +218,7 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         }
         case 'centerObject':
         {
-            //graphTest.center(topoEvt.curNode);
+            graphTest.center(graphTest.currentNode);
             break;
         }
         case 'd_random':

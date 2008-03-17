@@ -30,7 +30,7 @@
         <mx:CheckBox label="编辑模式" selected="true" change="graphTest.editable = event.target.selected" />
     </mx:HBox>
     <mx:HBox width="100%" height="100%">
-    	<tools:treeList id="listdata" width="150" height="100%" />
+    	<tools:treeList id="listdata" width="120" height="100%" />
         <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" />
         <mx:VBox width="280">
             <mx:Panel title="添加节点" width="100%" height="330">
