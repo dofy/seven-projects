@@ -8,7 +8,9 @@ package cn.com.ultrapower.topology.view
     import mx.containers.VBox;
     import mx.controls.Image;
     import mx.controls.Label;
+    import mx.effects.Glow;
     import mx.effects.Move;
+    import mx.effects.Zoom;
     import mx.events.EffectEvent; 
     
     public class Node extends VBox implements INode
@@ -21,10 +23,16 @@ package cn.com.ultrapower.topology.view
         private const BG_ALPHA_SELECT:Number = 0.7;
         private const BG_ALPHA_SUPER:Number  = 0.9;
         
+        private const BLINK_ALPHA_FROM:Number  = 1;
+        private const BLINK_ALPHA_TO:Number  = 0.5;
+        private const BLINK_STRENGTH_FROM:Number  = 20;
+        private const BLINK_STRENGTH_TO:Number  = 0;
+        
         private var icons:Icons;          // 图标资源
         private var nodeIcon:Image;       // 图标
         private var nodeTitle:Label;      // 标题
         private var effect:Move;          // 动效
+        private var zoom:Zoom;            // 缩放
         private var proxy:NodeProxy;      // 节点代理
         
         private var _editable:Boolean = false;  // 编辑模式
@@ -35,11 +43,17 @@ package cn.com.ultrapower.topology.view
         private var _lines:Array;    // 关联连线
         
         private var _id:uint;        // 数字 id
+        private var _blink:int;      // 闪烁颜色
+        private var blinkBot:Glow;   // 闪烁特效
         
         private var _data:XML;       // XML 数据
         
-        private var _ox:Number;  // 原始 x 坐标信息
-        private var _oy:Number;  // 原始 y 坐标信息
+        private var _ox:Number;          // 原始 x 坐标信息
+        private var _oy:Number;          // 原始 y 坐标信息
+        private var _scale:Number;       // 缩放比例
+        
+        private var _showTitle:Boolean = true;  // 显示标题
+//        private var _hasTitle:Boolean = true;   // 存在标题
         
         private var _isSelected:Boolean; // 节点被选中
         private var _isDown:Boolean;     // 鼠标按下
@@ -63,8 +77,10 @@ package cn.com.ultrapower.topology.view
             nodeIcon = new Image();
             nodeTitle = new Label();
             effect = new Move(this);
+            zoom = new Zoom(this);
             proxy = new NodeProxy(Name);
-            
+            blinkBot = new Glow(nodeIcon);
+            _scale = 1;
             effect.addEventListener(EffectEvent.EFFECT_END, 
                                     function():void
                                     {
@@ -95,20 +111,26 @@ package cn.com.ultrapower.topology.view
         override protected function createChildren():void{
         	super.createChildren();
         	
+        	var tBlink:String = _data.@blink;
+        	tBlink = tBlink.replace(/#|0x/ig, '');
+            Blink = '' == tBlink ? -1 : parseInt(tBlink, 16) ;
+        	
             toolTip = _data.@describe;
             setStyle("horizontalAlign","center");
             
             nodeIcon.source = icons.getIcon(_data.@type);
             addChild(nodeIcon);
             
+            nodeTitle.minWidth = 60;
+            nodeTitle.maxWidth = 70;
+            nodeTitle.setStyle("textAlign", "center");
             nodeTitle.text = _data.@title;
-            //nodeTitle.maxWidth = 70;
             addChild(nodeTitle);
          
             nodeIcon.addChild(proxy);
             proxy.visible = false;
             
-            //effect.easingFunction = Elastic.easeOut;
+//            effect.easingFunction = Elastic.easeOut;
 
             setStyle("borderStyle", "inside");
             setStyle("borderThickness", 0);
@@ -314,6 +336,34 @@ package cn.com.ultrapower.topology.view
             return _data.@describe;
         }
         
+        public function set Blink(b:int):void
+        {
+            if (_blink != b)
+            {
+                _blink = b;
+                if (-1 == b)
+                {
+                    // 取消闪烁
+                    trace("clean blink");
+                    blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                }
+                else
+                {
+                    // 闪烁处理
+                    trace("flash");
+                    blinkBot.alphaFrom = BLINK_ALPHA_FROM;
+                    blinkBot.alphaTo = BLINK_ALPHA_TO;
+                    blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
+                    blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
+                    blinkBot.color = b;
+                    blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                    blinkBot.addEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
+                    blinkBot.end();
+                    blinkBot.play();
+                }
+            }
+        }
+        
         public function set ChildMapId(mapId:String):void
         {
             if (_editable && (_data.@childMapId != mapId))
@@ -349,6 +399,20 @@ package cn.com.ultrapower.topology.view
         	return _data;
         }
         
+        public function get showTitle():Boolean
+        {
+            return _showTitle;
+        }
+        
+        public function set showTitle(s:Boolean):void
+        {
+            if (s != _showTitle)
+            {
+                _showTitle = s;
+                setNodeTitle(s);
+            }
+        }
+        
         public function get ox():Number
         {
         	return _ox;
@@ -367,6 +431,24 @@ package cn.com.ultrapower.topology.view
         public function get oldHeight():Number
         {
             return unscaledHeight;
+        }
+        
+        public function set realScale(s:Number):void
+        {
+            if (_editable && s != _scale)
+            {
+                _scale = s;
+                setNodeTitle(s >= 1 && _showTitle);
+                zoom.end();
+                zoom.zoomWidthTo = s;
+                zoom.zoomHeightTo = s;
+                zoom.play();
+            }
+        }
+        
+        public function get realScale():Number
+        {
+            return _scale;
         }
         
         /**
@@ -465,6 +547,22 @@ package cn.com.ultrapower.topology.view
             setStyle("backgroundAlpha", BG_ALPHA_SELECT);
         }
         
+        private function setNodeTitle(s:Boolean):void
+        {
+            if (getChildren().indexOf(nodeTitle) === -1)
+            {
+                s && addChild(nodeTitle) && (toolTip = Describe);
+            }
+            else
+            {
+                !s && removeChild(nodeTitle) && (toolTip = "<" + Title + ">\n" + Describe);
+            }
+        }
+        
+        //////////////////////////////
+        // handlers
+        //////////////////////////////
+        
         private function mouseDownHandler(evt:MouseEvent):void
         {
         	_isDown = true;
@@ -483,6 +581,7 @@ package cn.com.ultrapower.topology.view
         	_editable && (proxy.visible = true);
             nodeIcon.setChildIndex(proxy, 1);
             _isDown? setDownStyle(): _isSelected? setSuperStyle(): setOverStyle();
+            
             try
             {
                 _editable && (parent as Graph).setNodeToTop(this);
@@ -502,6 +601,13 @@ package cn.com.ultrapower.topology.view
         private function doubleClickHandler(evt:MouseEvent):void
         {
             dispatchEvent(new TopoEvent(TopoEvent.NODE_DOUBLE_CLICK));
+        }
+        
+        /**
+         * 闪烁循环
+         * */
+        private function blinkLoopHandler(event:EffectEvent):void{
+            event.target.play();
         }
     }
 }

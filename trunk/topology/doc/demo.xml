@@ -12,26 +12,27 @@
 	根节点名称无所谓, 叫什么都行, 没有任何属性
 	其他节点名称和属性名称大小写敏感, 除标"必选"外的属性为可选属性
 -->
-  <node id="node1" title="服务器" type="server" describe="工作组中某台服务器" x="198.75" y="596.00"/>
+  <node id="12" title="服务器" type="server" describe="工作组中某台服务器" x="198.75" y="596.00"/>
 <!--
 	node:
 		id:         节点唯一标识 (必选)
 		title:      节点标题 (默认空)
 		type:       节点类型 (目前支持 icons.swf 中列出的类型, 默认 dot)
 		describe:   描述
+		blink:      闪烁颜色值, 同连线颜色
 		childMapId: 子拓扑图 Id
 		resId:      资源 Id
 		x:          x 坐标
 		y:          y 坐标
 -->
-  <node id="node2" title="客户端" type="client" describe="某客户端" x="89.05" y="318.00"/>
-  <node id="node5" title="存储" type="storage" x="202.85" describe="存储设备, 如硬盘" y="281.00"/>
-  <node id="node7" title="视频" type="video" x="313.10" describe="" y="377.00"/>
-  <node id="node991" title="无关系节点1" type="power" x="632.40" describe="" y="284.00"/>
-  <node id="node992" title="无关系节点2" type="wifi" x="540.70" describe="无关系节点无关系节点无关系节点无关系节点无关系节点" y="518.00"/>
-  <node id="test1" title="test node" type="workgroup" x="356.00" y="116.00"/>
+  <node id="13" title="客户端" type="client" describe="某客户端" x="89.05" y="318.00"/>
+  <node id="14" title="存储" type="storage" x="202.85" describe="存储设备, 如硬盘" y="281.00"/>
+  <node id="15" title="视频" type="video" x="313.10" describe="" y="377.00"/>
+  <node id="16" title="无关系节点1" type="power" x="632.40" describe="" y="284.00"/>
+  <node id="17" title="无关系节点2" type="wifi" x="540.70" describe="无关系节点无关系节点无关系节点无关系节点无关系节点" y="518.00"/>
+  <node id="18" title="test node" type="workgroup" x="356.00" y="116.00"/>
 
-  <line fromId="node991" toId="node992" color="" width="" arrowStyle="" arrowMode=""   />
+  <line fromId="12" toId="13" color="" width="" arrowStyle="" arrowMode=""   />
 <!--
 	line:
 		fromId:     始节点id, 对应 node 的 id (必选)
@@ -43,10 +44,10 @@
 		arrowStyle: 箭头样式(可选值 0 线状简体; 1 实心箭头. 默认0)
 		arrowMode:  箭头模式, 或者说方向 (可选值: 0 同向; 1 相反; 2 相对. 默认0)
 -->
-  <line fromId="node992" toId="node1" describe="连线111" color="000000"/>
+  <line fromId="12" toId="14" describe="连线111" color="000000"/>
 
-  <line fromId="test1" toId="node991" color="000000"/>
-  <line fromId="node7" toId="node1" color="000000"/>
-  <line fromId="node2" toId="node1" color="000000"/>
-  <line fromId="node5" toId="test1" color="000000"/>
+  <line fromId="13" toId="15" color="000000"/>
+  <line fromId="13" toId="16" color="000000"/>
+  <line fromId="13" toId="17" color="000000"/>
+  <line fromId="13" toId="18" color="000000"/>
 </topology>

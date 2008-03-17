@@ -5,9 +5,12 @@ package cn.com.ultrapower.topology.view
     
     import flash.display.DisplayObject;
     import flash.events.Event;
+    import flash.events.IOErrorEvent;
     import flash.events.MouseEvent;
     import flash.geom.Point;
     import flash.geom.Rectangle;
+    import flash.net.URLLoader;
+    import flash.net.URLRequest;
     
     import mx.containers.Canvas;
     import mx.events.EffectEvent;
@@ -44,7 +47,8 @@ package cn.com.ultrapower.topology.view
         private var _state:uint = STATE_NOTHING;   // 初始化状态
         private var _isChanged:Boolean;            // 拓扑图被修改
         
-        private var curLine:Line;
+        private var _curNode:Node;
+        private var _curLine:Line;
         
         private var _id:String;                // 拓扑图 id
         private var _name:String;              // 拓扑图 名称
@@ -62,7 +66,7 @@ package cn.com.ultrapower.topology.view
         private var _oldMouseX:Number;     // 原 鼠标 x 坐标
         private var _oldMouseY:Number;     // 原 鼠标 y 坐标
         
-        private var _scale:Number = 1;
+        private var _scale:Number;         // 缩放比
         
         private var _nodeMoved:Boolean = false;  // 节点被移动
         
@@ -107,6 +111,8 @@ package cn.com.ultrapower.topology.view
         {
             isInit = true;
             
+            _scale = 1;
+            
             _nodes = new Array();
             _lines = new Array();
             _midpoint = new Point();
@@ -140,8 +146,9 @@ package cn.com.ultrapower.topology.view
             
             _id = xml.id;
             _name = xml.name;
-            _background = xml.background;
             _serverTime = Number(xml.systime);
+            
+            background = xml.background;
             
             if (0 == _serverTime)
             {
@@ -232,6 +239,7 @@ package cn.com.ultrapower.topology.view
             newNode.Name = getNewNodeId(data.@id);
             newNode.x = _x;
             newNode.y = _y;
+            newNode.realScale = _scale;
             _nodes.push(newNode);
             addChild(newNode);
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
@@ -411,6 +419,11 @@ package cn.com.ultrapower.topology.view
             return _id;
         }
         
+        public function set mapId(id:String):void
+        {
+            _id = id;
+        }
+        
         public function get mapName():String
         {
             return _name;
@@ -418,7 +431,23 @@ package cn.com.ultrapower.topology.view
         
         public function set mapName(n:String):void
         {
-            _name = n;
+            _editable && (_name = n);
+        }
+        
+        public function get background():String
+        {
+            return _background;
+        }
+        
+        public function set background(url:String):void
+        {
+            if (_editable && url != _background)
+            {
+                //loadBG(url);
+                _background = url;
+                setStyle("backgroundImage", url);
+                //setStyle("backgroundSize", "100%");
+            }
         }
         
         public function get isChanged():Boolean
@@ -468,6 +497,14 @@ package cn.com.ultrapower.topology.view
             {
                 trace("节点", nodeName, "不存在");
             }
+        }
+        
+        /**
+         * 当前选中节点
+         * */
+        public function get currentNode():Node
+        {
+            return _curNode;
         }
         
         /**
@@ -527,21 +564,11 @@ package cn.com.ultrapower.topology.view
                 {
                     s = MAX_SCALE;
                 }
-                var wOffset:Number;
-                var hOffset:Number;
-                var tNode:Node;
+                _scale = s;
                 for (var i:uint = 0; i < _nodes.length; i++)
                 {
-                    tNode = _nodes[i];
-                    wOffset = tNode.width - tNode.oldWidth * s;
-                    hOffset = tNode.height - tNode.oldHeight * s;
-                    
-                    tNode.scaleX = tNode.scaleY = s;
-                    
-                    tNode.x += wOffset / 2;
-                    tNode.y += hOffset / 2;
+                    _nodes[i].realScale = s;
                 }
-                _scale = s;
             }
         }
         
@@ -650,6 +677,34 @@ package cn.com.ultrapower.topology.view
         }
         
         /**
+         * 加载背景图
+         * */
+        private function loadBG(url:String):void
+        {
+            var imgLoader:URLLoader = new URLLoader();
+            var imgURL:URLRequest = new URLRequest(url);
+            
+            imgLoader.addEventListener(Event.COMPLETE, 
+                                        function():void
+                                        {
+                                            trace("OK~~~");
+                                            this.background = imgLoader.data;
+                                            imgLoader = null;
+                                            imgURL = null;
+                                        });
+            imgLoader.addEventListener(IOErrorEvent.IO_ERROR, 
+                                        function():void
+                                        {
+                                            trace("IO Error!");
+                                            imgLoader = null;
+                                            imgURL = null;
+                                        });
+            
+            imgLoader.load(imgURL);
+            
+        }
+        
+        /**
          * 执行缩放
          * */
         private function doScale(ws:Number = 0, hs:Number = 0):void
@@ -690,7 +745,6 @@ package cn.com.ultrapower.topology.view
             var i:uint;
             if(node && _existentNodes.indexOf(node.Id) === -1)
             {
-            	trace(">>>", level, node.Name);
                 _existentNodes.push(node.Id);
                 removeAloneNode(node);
                 if (!treeArray[level])
@@ -752,7 +806,7 @@ package cn.com.ultrapower.topology.view
         				_selectedNodes.push(targetObj);
         				targetObj.isSelected = true;
         			}
-                    //topoEvt.curNode = targetObj as Node;
+                    _curNode = targetObj as Node;
                     _oldMouseX = this.mouseX;
                     _oldMouseY = this.mouseY;
                     this.addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
@@ -762,12 +816,12 @@ package cn.com.ultrapower.topology.view
                 	// 创建节点代理用于创建连线
                     _state = STATE_MOVE_PROXY;
                 	var cNode:Node = getUsableObject(targetObj, true) as Node;
-                	//topoEvt.curNode = cNode;
+                	_curNode = cNode;
                     this.addChild(proxy);
                     proxy.x = this.mouseX;
                     proxy.y = this.mouseY;
-                	curLine = addLine(cNode, proxy);
-                	curLine.editable = false;
+                	_curLine = addLine(cNode, proxy);
+                	_curLine.editable = false;
                 	this.setNodeToTop(cNode);
                     emptySelectedNodes();
                     _selectedNodes.push(proxy);
@@ -779,7 +833,7 @@ package cn.com.ultrapower.topology.view
         		{
         			// 点击连线
         			_state = STATE_SELECT_LINE;
-        			//topoEvt.curLine = targetObj as Line;
+        			_curLine = targetObj as Line;
                     _selectedLines.push(targetObj);
                     targetObj.isSelected = true;
         		}
@@ -832,8 +886,8 @@ package cn.com.ultrapower.topology.view
         		case STATE_DRAG_RECT:
         		{
 	                checkObjects();
-	                this.removeChild(dragRect);
-	                this.removeEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
+	                removeChild(dragRect);
+	                removeEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
 	                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CLICK));
 	        		break;
 	        	}
@@ -843,16 +897,17 @@ package cn.com.ultrapower.topology.view
         		    if (tmpToNode)
         		    {
         		    	// 检测到合法节点
-	        		    curLine.bindToNode(tmpToNode);
-	        		    node2node(curLine.fromNode, curLine.toNode);
-	        		    tmpToNode.pushLine(curLine);
-                        curLine.editable = true;
+	        		    _curLine.bindToNode(tmpToNode);
+	        		    node2node(_curLine.fromNode, _curLine.toNode);
+	        		    tmpToNode.pushLine(_curLine);
+                        _curLine.editable = true;
                         dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED))
         		    }
         		    else
         		    {
         		    	// 无节点可绑定, 移除连线
-        		    	removeLine(curLine);
+        		    	removeLine(_curLine);
+        		    	_curLine = null;
         		    }
         		    this.removeChild(proxy);
         		    emptySelectedNodes();
@@ -893,7 +948,7 @@ package cn.com.ultrapower.topology.view
         			break;
         		}
         	}
-        	if (chkNode && (curLine.fromNode as Node).checkNode(chkNode))
+        	if (chkNode && (_curLine.fromNode as Node).checkNode(chkNode))
         	{
         		chkNode = null;
         	}
@@ -939,6 +994,7 @@ package cn.com.ultrapower.topology.view
             {
                 _selectedNodes.pop().isSelected = false;
             }
+            _curNode = null;
         }
         
         private function emptySelectedLines():void
