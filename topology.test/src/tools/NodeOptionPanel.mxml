@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="bindHandler();">
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initType();">
 <mx:Script>
     <![CDATA[
+        import mx.collections.ArrayCollection;
         import mx.events.ListEvent;
         import mx.managers.PopUpManager;
         import cn.com.ultrapower.topology.view.Graph;
@@ -11,9 +12,14 @@
         private var _curGraph:Graph;
         private var _curNode:Node;
         
-        private function bindHandler():void
+        private function initType():void
         {
-            type.addEventListener(ListEvent.CHANGE, changeNodeOptions);
+            var icon:Icons = new Icons();
+            var icons:Array = icon.getIconList();
+            for (var i:uint = 0; i < icons.length; i++)
+            {
+                type.dataProvider.addItem({label:icons[i], icon:icon.getIcon(icons[i])}); 
+            }
         }
         
         public function setObject(graph:Graph, node:Node):void
@@ -36,16 +42,6 @@
             }
         }
         
-        private function changeNodeOptions():void
-        {
-            _curNode.Type = type.text;
-            _curNode.Title = title.text;
-            _curNode.Describe = describe.text;
-            _curNode.ResId = resId.text;
-            _curNode.ChildMapId = childMapId.text;
-            _curNode.showTitle = showTitle.selected;
-        }
-        
         private function showMapSelecter():void
         {
             var popWin:SelectChildMap = new SelectChildMap()
@@ -61,37 +57,23 @@
 		<mx:Label id="nameId" maxWidth="120" />
 	</mx:FormItem>
     <mx:FormItem label="标题">
-        <mx:TextInput id="title" change="changeNodeOptions();" width="120"/>
+        <mx:TextInput id="title" change="_curNode.Title = event.target.text;" width="120"/>
     </mx:FormItem>
     <mx:FormItem label="类型">
-        <mx:ComboBox id="type">
-        	<mx:Array>
-                <mx:Object label="workgroup" icon="{new Icons().getIcon('workgroup')}" />
-                <mx:Object label="server" icon="{new Icons().getIcon('server')}" />
-                <mx:Object label="client" icon="{new Icons().getIcon('client')}" />
-                <mx:Object label="computer" icon="{new Icons().getIcon('computer')}" />
-                <mx:Object label="power" icon="{new Icons().getIcon('power')}" />
-                <mx:Object label="hardware" icon="{new Icons().getIcon('hardware')}" />
-                <mx:Object label="storage" icon="{new Icons().getIcon('storage')}" />
-                <mx:Object label="printer" icon="{new Icons().getIcon('printer')}" />
-                <mx:Object label="audio" icon="{new Icons().getIcon('audio')}" />
-                <mx:Object label="video" icon="{new Icons().getIcon('video')}" />
-                <mx:Object label="wifi" icon="{new Icons().getIcon('wifi')}" />
-        	</mx:Array>
-        </mx:ComboBox>
+        <mx:ComboBox id="type" maxWidth="150" change="_curNode.Type = event.target.text;" />
     </mx:FormItem>
     <mx:FormItem label="描述">
-        <mx:TextInput id="describe" change="changeNodeOptions();"  width="120"/>
+        <mx:TextInput id="describe" change="_curNode.Describe = event.target.text;"  width="120"/>
     </mx:FormItem>
     <mx:FormItem label="资源 Id">
-        <mx:TextInput id="resId" change="changeNodeOptions();"  width="120"/>
+        <mx:TextInput id="resId" change="_curNode.ResId = event.target.text;"  width="120"/>
     </mx:FormItem>
     <mx:FormItem label="子拓扑图" direction="horizontal">
-        <mx:TextInput id="childMapId" change="changeNodeOptions();" editable="false" width="80"/>
+        <mx:TextInput id="childMapId" change="_curNode.ChildMapId = event.target.text;" editable="false" width="80"/>
         <mx:Button label="选择..." click="showMapSelecter();" />
     </mx:FormItem>
     <mx:FormItem label="显示标题">
-        <mx:CheckBox id="showTitle" label="显示" change="changeNodeOptions();" />
+        <mx:CheckBox id="showTitle" label="显示" change="_curNode.showTitle = event.target.selected;" />
     </mx:FormItem>
     <mx:FormItem label="测试闪烁" direction="horizontal">
         <mx:ColorPicker width="50" change="_curNode.Blink = event.target.selectedColor" />
