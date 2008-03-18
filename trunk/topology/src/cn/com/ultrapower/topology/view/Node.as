@@ -590,12 +590,20 @@ package cn.com.ultrapower.topology.view
             {
             	// nothing
             }
+            // 配合右键的事件
+            var topoEvt:TopoEvent = new TopoEvent(TopoEvent.OVER_NODE);
+            topoEvt.node = this;
+            dispatchEvent(topoEvt);
         }
         
         private function mouseOutHandler(evt:MouseEvent):void
         {
             _editable && (proxy.visible = false);
             _isSelected? setSelectStyle(): setNormalStyle();
+            // 配合右键的事件
+            var topoEvt:TopoEvent = new TopoEvent(TopoEvent.OUT_NODE);
+            topoEvt.node = null;
+            dispatchEvent(topoEvt);
         }
         
         private function doubleClickHandler(evt:MouseEvent):void
