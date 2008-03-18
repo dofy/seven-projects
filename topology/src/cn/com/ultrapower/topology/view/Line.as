@@ -475,11 +475,19 @@ package cn.com.ultrapower.topology.view
         private function mouseOverHandler(evt:Event):void
         {
             _editable && (_isDown? setDownStyle(): _isSelected? setSuperStyle(): setOverStyle());
+            // 配合右键的事件
+            var topoEvt:TopoEvent = new TopoEvent(TopoEvent.OVER_LINE);
+            topoEvt.line = this;
+            dispatchEvent(topoEvt);
         }
         
         private function mouseOutHandler(evt:Event):void
         {
             _editable && (_isSelected? setSelectStyle(): setNormalStyle());
+            // 配合右键的事件
+            var topoEvt:TopoEvent = new TopoEvent(TopoEvent.OUT_LINE);
+            topoEvt.line = null;
+            dispatchEvent(topoEvt);
         }
         
         /**
