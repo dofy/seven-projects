@@ -24,18 +24,18 @@
         }
         
         private var xml1:XML = 
-        <topology>
-            <id>4587</id>
-            <name>拓扑组件 Demo</name>
-            <background>background/map2.png</background>
-              <node id="1" title="工作组" type="model" describe="根节点工作组" blink="ff0000" resId="95586" x="501.00" y="132.00"/>
-              <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="72.00" y="181.00"/>
-              <node id="3" title="客户端" type="client" describe="某客户端" x="655.00" y="243.00"/>
-              <node id="4" title="电脑设备" type="computer" describe="典型设备连接外设" x="384.00" y="332.00"/>
-              <node id="5" title="打印机" type="printer" describe="连接到电脑上的打印机" x="316.00" y="528.00"/>
-              <node id="6" title="存储" type="storage" x="238.00" describe="存储设备, 如硬盘" y="456.00"/>
-              <node id="7" title="音频" type="audio" x="490.00" describe="" blink="#00ff00" y="515.00"/>
-              <node id="8" title="视频" type="video" x="613.00" describe="" blink="ffff00" y="453.00"/>
+            <topology>
+              <id>4587</id>
+              <name>拓扑组件 Demo</name>
+              <background>background/map2.png</background>
+              <node id="1" title="工作组" type="basestation" describe="根节点工作组" blink="ff0000" resId="95586" x="537.50" y="288.50"/>
+              <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="195.50" y="326.50"/>
+              <node id="3" title="客户端" type="power" describe="某客户端" x="636.50" y="181.50"/>
+              <node id="4" title="电脑设备" type="firewall" describe="典型设备连接外设" x="379.50" y="441.50"/>
+              <node id="5" title="打印机" type="node_unix" describe="连接到电脑上的打印机" x="368.50" y="520.50"/>
+              <node id="6" title="存储" type="prouter" x="239.50" describe="存储设备, 如硬盘" y="429.50"/>
+              <node id="7" title="音频" type="backbonearea" x="519.50" describe="" blink="#00ff00" y="518.50"/>
+              <node id="8" title="视频" type="node_netscreen" x="567.50" describe="" blink="ffff00" y="431.50"/>
               <line fromId="1" toId="2" describe="工作组到服务器" color="ff0000" width="1" arrowType="1" arrowMode="0"/>
               <line fromId="1" toId="3" color="330066" width="2" arrowType="0" arrowMode="0"/>
               <line fromId="2" toId="4" color="0" blink="ff0000" width="1" arrowMode="0" arrowType="0"/>
@@ -43,7 +43,7 @@
               <line fromId="4" toId="6" color="ff" width="1" arrowType="0" arrowMode="0"/>
               <line fromId="4" toId="7" color="ffff" width="1" arrowType="0" arrowMode="0"/>
               <line fromId="4" toId="8" color="8000" width="1" arrowType="1" arrowMode="0"/>
-        </topology>
+            </topology>
         
         private var xml2:XML = 
         <topology>

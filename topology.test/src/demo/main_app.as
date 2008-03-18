@@ -8,18 +8,26 @@ import cn.com.ultrapower.topology.view.Graph;
 import cn.com.ultrapower.topology.view.Line;
 import cn.com.ultrapower.topology.view.Node;
 
+import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.system.System;
+import flash.ui.ContextMenu;
+import flash.ui.ContextMenuItem;
 
+import mx.containers.ControlBar;
 import mx.containers.Form;
+import mx.containers.TitleWindow;
 import mx.controls.Alert;
+import mx.controls.Button;
+import mx.controls.TextArea;
 import mx.core.DragSource;
 import mx.core.IUIComponent;
 import mx.events.CloseEvent;
 import mx.events.DragEvent;
 import mx.events.ItemClickEvent;
 import mx.managers.DragManager;
+import mx.managers.PopUpManager;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 
@@ -31,6 +39,14 @@ private var _curPanel:Form;
 private var globalPanel:Form = new GlobalPanel();
 private var nodePanel:Form = new NodeOptionPanel();
 private var linePanel:Form = new LineOptionsPanel();
+
+private const NODE_MENU_INFO:String = "查看节点信息(&W)";
+private const LINE_MENU_INFO:String = "查看链路信息(&W)";
+
+private var myContextMenu:ContextMenu;
+private var showInfoMenu:ContextMenuItem;
+private var watchingNode:Node;
+private var watchingLine:Line;
 
 ///////////////////////////////////////
 // public functions
@@ -73,6 +89,17 @@ private function initApp():void
     
     graphTest.addEventListener(KeyboardEvent.KEY_UP, deleteHandler);
     
+    graphTest.addEventListener(TopoEvent.OVER_NODE, pushContextMenu);
+    graphTest.addEventListener(TopoEvent.OUT_NODE, removeContextMenu);
+    graphTest.addEventListener(TopoEvent.OVER_LINE, pushContextMenu);
+    graphTest.addEventListener(TopoEvent.OUT_LINE, removeContextMenu);
+    
+    // 定义右键菜单
+    myContextMenu = new ContextMenu();
+    showInfoMenu = new ContextMenuItem("", true);
+    myContextMenu.customItems.push(showInfoMenu);
+    myContextMenu.hideBuiltInItems();
+    showInfoMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
 }
 
 private function addNodes():void
@@ -296,6 +323,74 @@ private function showChildMapHandler(evt:TopoEvent):void
 private function deleteHandler(event:KeyboardEvent):void
 {
     event.keyCode == 46 && graphTest.deleteSelectedObjects();
+}
+
+/**
+ * 设置右键菜单
+ * */
+private function pushContextMenu(event:TopoEvent):void
+{
+    if (event.target is Node)
+    {
+        showInfoMenu.caption = NODE_MENU_INFO;
+        watchingNode = event.node;
+        graphTest.contextMenu = myContextMenu;
+    }
+    else if (event.target is Line)
+    {
+        showInfoMenu.caption = LINE_MENU_INFO;
+        watchingLine = event.line;
+        graphTest.contextMenu = myContextMenu;
+    } 
+}
+
+private function removeContextMenu(event:TopoEvent):void
+{
+    graphTest.contextMenu = null;
+}
+
+private function subMenuHandler(event:ContextMenuEvent):void
+{
+    switch (event.target.caption)
+    {
+        case NODE_MENU_INFO:
+        {
+            trace("node >", watchingNode);
+            showMenuInfo("Node", watchingNode.toString());
+            break;
+        }
+        case LINE_MENU_INFO:
+        {
+            trace("line >", watchingLine);
+            showMenuInfo("Line", watchingLine.toString());
+            break;
+        }
+    }
+}
+
+private function showMenuInfo(title:String, msg:String):void
+{
+    var popWin:TitleWindow = new TitleWindow();
+    var infoArea:TextArea = new TextArea();
+    var closeButton:Button = new Button();
+    var ctrlBar:ControlBar = new ControlBar();
+    
+    popWin.title = title;
+    popWin.showCloseButton = true;
+    infoArea.text = msg;
+    infoArea.width = 400;
+    infoArea.height = 200;
+    closeButton.label = '关闭';
+    closeButton.addEventListener(MouseEvent.CLICK, function():void{PopUpManager.removePopUp(popWin)});
+    ctrlBar.setStyle('horizontalAlign', 'right');
+    
+    ctrlBar.addChild(closeButton);
+    popWin.addChild(infoArea);
+    popWin.addChild(ctrlBar);
+    
+    PopUpManager.addPopUp(popWin, this);
+    PopUpManager.centerPopUp(popWin);
+    
 }
 
 //////////////////////////////////
