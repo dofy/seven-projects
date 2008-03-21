@@ -2,6 +2,6 @@
 Application {
     backgroundColor: #dddddd;
 }
-Application, ToolTip {
+Application, ToolTip, AccordionHeader {
     fontSize: 12px;
 }

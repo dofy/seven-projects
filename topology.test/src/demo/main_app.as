@@ -14,16 +14,20 @@ import flash.events.MouseEvent;
 import flash.system.System;
 import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
+import flash.utils.getQualifiedClassName;
 
 import mx.containers.ControlBar;
 import mx.containers.Form;
 import mx.containers.TitleWindow;
+import mx.containers.VDividedBox;
 import mx.controls.Alert;
 import mx.controls.Button;
 import mx.controls.TextArea;
 import mx.core.DragSource;
 import mx.core.IUIComponent;
+import mx.core.UIComponent;
 import mx.events.CloseEvent;
+import mx.events.DividerEvent;
 import mx.events.DragEvent;
 import mx.events.ItemClickEvent;
 import mx.managers.DragManager;
@@ -40,11 +44,15 @@ private var globalPanel:Form = new GlobalPanel();
 private var nodePanel:Form = new NodeOptionPanel();
 private var linePanel:Form = new LineOptionsPanel();
 
-private const NODE_MENU_INFO:String = "查看节点信息(&W)";
-private const LINE_MENU_INFO:String = "查看链路信息(&W)";
+private const MENU_NODE_INFO:String = "查看节点信息(&W)";
+private const MENU_NODE_RES_INFO:String = "查看节点资源信息(&R)";
+
+private const MENU_LINE_INFO:String = "查看链路信息(&W)";
+private const MENU_LINE_RES_INFO:String = "查看链路资源信息(&R)";
 
 private var myContextMenu:ContextMenu;
 private var showInfoMenu:ContextMenuItem;
+private var showResMenu:ContextMenuItem;
 private var watchingNode:Node;
 private var watchingLine:Line;
 
@@ -96,10 +104,13 @@ private function initApp():void
     
     // 定义右键菜单
     myContextMenu = new ContextMenu();
-    showInfoMenu = new ContextMenuItem("", true);
+    showInfoMenu = new ContextMenuItem("");
+    showResMenu = new ContextMenuItem("");
     myContextMenu.customItems.push(showInfoMenu);
+    myContextMenu.customItems.push(showResMenu);
     myContextMenu.hideBuiltInItems();
     showInfoMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
+    showResMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
 }
 
 private function addNodes():void
@@ -117,7 +128,7 @@ private function addNodes():void
 }
 
 private function changePanel(title:String, cat:Form):Form{
-    optionsPanel.title = title;
+    optionsPanel.label = title;
     if (_curPanel != cat)
     {
         _curPanel = cat;
@@ -283,6 +294,11 @@ private function getTopoData(result:ResultEvent):void{
 	setData(xmlStr);
 
 }
+
+//////////////////////////////
+// handlers
+//////////////////////////////
+
 private function clickNodeHandler(evt:Event):void
 {
     trace("Click Node:", evt.target);
@@ -325,6 +341,26 @@ private function deleteHandler(event:KeyboardEvent):void
     event.keyCode == 46 && graphTest.deleteSelectedObjects();
 }
 
+private function dividerReleaseHandler(event:DividerEvent):void
+{
+    var ctrlObj:UIComponent = event.target.getChildAt(0);
+    trace(getQualifiedClassName(ctrlObj));
+    if(event.target is VDividedBox)
+    {
+        // 设置工具栏
+        ctrlObj.height = 0 == ctrlObj.height ? ctrlObj.maxHeight : 0;
+    }
+    else
+    {
+        // 设置属性面板
+        ctrlObj.width = 0 == ctrlObj.width ? ctrlObj.maxWidth : 0;
+    }
+}
+
+/////////////////////////////
+// other functions
+/////////////////////////////
+
 /**
  * 设置右键菜单
  * */
@@ -332,13 +368,16 @@ private function pushContextMenu(event:TopoEvent):void
 {
     if (event.target is Node)
     {
-        showInfoMenu.caption = NODE_MENU_INFO;
+        showInfoMenu.caption = MENU_NODE_INFO;
+        showResMenu.caption = event.target.ResId == "" ? "" : MENU_NODE_RES_INFO;
+        
         watchingNode = event.node;
         graphTest.contextMenu = myContextMenu;
     }
     else if (event.target is Line)
     {
-        showInfoMenu.caption = LINE_MENU_INFO;
+        showInfoMenu.caption = MENU_LINE_INFO;
+        showResMenu.caption = event.target.ResId == "" ? "" : MENU_LINE_RES_INFO;
         watchingLine = event.line;
         graphTest.contextMenu = myContextMenu;
     } 
@@ -353,13 +392,13 @@ private function subMenuHandler(event:ContextMenuEvent):void
 {
     switch (event.target.caption)
     {
-        case NODE_MENU_INFO:
+        case MENU_NODE_INFO:
         {
             trace("node >", watchingNode);
             showMenuInfo("Node", watchingNode.toString());
             break;
         }
-        case LINE_MENU_INFO:
+        case MENU_LINE_INFO:
         {
             trace("line >", watchingLine);
             showMenuInfo("Line", watchingLine.toString());
