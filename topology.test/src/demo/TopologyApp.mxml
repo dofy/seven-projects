@@ -38,6 +38,6 @@
             <tools:treeList id="listdata" width="100%" height="100%" />
         </mx:Canvas>
         </mx:Accordion>
-        <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" click="graphTest.setFocus();" /> 
+        <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" /> 
     </mx:HDividedBox>
 </mx:VDividedBox>
