@@ -20,7 +20,7 @@ package cn.com.ultrapower.topology.view
     [Event(name="nodeClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="lineClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="graphClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
-    [Event(name="graphChange", type="cn.com.ultrapower.topology.event.TopoEvent")]
+    [Event(name="graphChanged", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     
     public class Graph extends Canvas
@@ -123,6 +123,7 @@ package cn.com.ultrapower.topology.view
             _scale = 1;
             
             _bgImage = new Image();
+            _bgImage.addEventListener(Event.COMPLETE, bgImageCompleteHandler);
             
             _nodes = new Array();
             _lines = new Array();
@@ -232,6 +233,8 @@ package cn.com.ultrapower.topology.view
         public function center(obj:DisplayObject = null):void
         {
         	var tr:Rectangle;
+        	var xOffset:Number;
+        	var yOffset:Number
         	if (obj)
         	{
         	   tr = obj.getRect(this);
@@ -240,8 +243,11 @@ package cn.com.ultrapower.topology.view
             {
         	   tr = getContentArea();
         	}
-        	dMoveNodes(midpoint.x-tr.x-tr.width/2, midpoint.y-tr.y-tr.height/2);
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+        	xOffset = midpoint.x-tr.x-tr.width/2;
+        	yOffset = midpoint.y-tr.y-tr.height/2;
+        	dMoveNodes(xOffset, yOffset);
+        	_bgImage.x += xOffset;
+        	_bgImage.y += yOffset;
         }
         
         /**
@@ -254,9 +260,9 @@ package cn.com.ultrapower.topology.view
             newNode.Name = getNewNodeId(data.@id);
             newNode.x = _x;
             newNode.y = _y;
-            newNode.realScale = _scale;
             _nodes.push(newNode);
             addChild(newNode);
+            newNode.realScale = _scale;
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
             return newNode;
         }
@@ -456,13 +462,10 @@ package cn.com.ultrapower.topology.view
         
         public function set background(url:String):void
         {
-            if (_editable && url != _background)
+            if (isInit || (_editable && _background != url))
             {
-                //loadBG(url);
                 _background = url;
-                
                 _bgImage.source = url;
-                //setStyle("backgroundSize", "100%");
             }
         }
         
@@ -612,8 +615,23 @@ package cn.com.ultrapower.topology.view
             _isChanged = false;
             return xmlData;
         }
+        
+        /**
+         * 获取所有内容区域
+         * */
+        public function getAllArea():Rectangle
+        {
+            var rt:Rectangle = getContentArea();
+            rt.width = Math.max(rt.x + rt.width, _bgImage.x + _bgImage.contentWidth);
+            rt.height = Math.max(rt.y + rt.height, _bgImage.y + _bgImage.contentHeight);
+            rt.x = Math.min(rt.x, _bgImage.x);
+            rt.y = Math.min(rt.y, _bgImage.y);
+            rt.width -= rt.x;
+            rt.height -= rt.y;
+            return rt;
+        }
 
-        ////////////////////////////////////////
+        ///////////////////////////////////////
         // private functions
         ///////////////////////////////////////
         
@@ -649,25 +667,11 @@ package cn.com.ultrapower.topology.view
             addEventListener(TopoEvent.NODE_CHANGED, anyChangeHandler);
             addEventListener(TopoEvent.LINE_CHANGED, anyChangeHandler);
             
-            addEventListener(KeyboardEvent.KEY_DOWN, 
-                                function(event:KeyboardEvent):void
-                                {
-                                    _pressCtrl = event.ctrlKey;
-                                    _pressShift = event.shiftKey;
-                                });
-            addEventListener(KeyboardEvent.KEY_UP, function():void{_pressCtrl = _pressShift = false;});
+            addEventListener(KeyboardEvent.KEY_DOWN, kbDownHandler);
+            addEventListener(KeyboardEvent.KEY_UP, kbUpHandler);
             
-            addEventListener(EffectEvent.EFFECT_START, function():void{effectCount++});
-            addEventListener(EffectEvent.EFFECT_END, 
-                                function():void
-                                {
-                                    effectCount--;
-                                    if (effectCount <= 0)
-                                    {
-                                        trace(">>>> effect end!!!!!");
-                                        runActionsList();
-                                    }
-                                });
+            addEventListener(EffectEvent.EFFECT_START, effectStartHandler);
+            addEventListener(EffectEvent.EFFECT_END, effectEndHandler);
         }
         
         /**
@@ -802,221 +806,6 @@ package cn.com.ultrapower.topology.view
         private function removeAloneNode(node:Node):void
         {
             _aloneNodes.splice(_aloneNodes.indexOf(node), 1);
-        }
-        
-        /**
-         * 相应鼠标事件方法
-         * */
-        private function mouseDownHandler(event:MouseEvent):void
-        {
-            setFocus();
-            if ( _state != STATE_NOTHING)
-            {
-                return;
-            }
-        	var targetObj:Object;
-        	if (_editable)
-        	{
-        	    emptySelectedLines()
-        		// 拖拽节点
-        		targetObj = getUsableObject(event.target as Object);
-        		if (_pressCtrl && !_pressShift)
-        		{
-        		    // 拖拽全图
-                    _state = STATE_MOVE_ALL;
-                    emptySelectedNodes();
-                    _selectedNodes = _nodes.concat();
-                    _oldMouseX = mouseX;
-                    _oldMouseY = mouseY;
-                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
-        		}
-        		else if (_pressShift && !_pressCtrl)
-        		{
-        		    // 拖拽背景
-        		    _state = STATE_MOVE_BACKGROUND
-                    _oldMouseX = mouseX;
-                    _oldMouseY = mouseY;
-                    addEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
-        		}
-        		else if (_pressCtrl && _pressShift)
-        		{
-                    // 拖拽整个拓扑图
-                    _state = STATE_MOVE_ALL_PREVIEW;
-                    _selectedNodes = _nodes.concat();
-                    _oldMouseX = mouseX;
-                    _oldMouseY = mouseY;
-                    addEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
-        		}
-        		else if (targetObj is Node)
-        		{
-        			// 拖拽选中节点
-        			_state = STATE_MOVE_NODE;
-        			// 点击的节点不在选中范围内, 清除选中节点, 将当前阶段作为拖拽列表
-        			if (_selectedNodes.indexOf(targetObj) === -1)
-        			{
-        				emptySelectedNodes();
-        				_selectedNodes.push(targetObj);
-        				targetObj.isSelected = true;
-        			}
-                    _curNode = targetObj as Node;
-                    _oldMouseX = mouseX;
-                    _oldMouseY = mouseY;
-                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
-                }
-                else if (targetObj is NodeProxy)
-                {
-                	// 创建节点代理用于创建连线
-                    _state = STATE_MOVE_PROXY;
-                	var cNode:Node = getUsableObject(targetObj, true) as Node;
-                	_curNode = cNode;
-                    addChild(proxy);
-                    proxy.x = mouseX;
-                    proxy.y = mouseY;
-                	_curLine = addLine(cNode, proxy);
-                	_curLine.editable = false;
-                	setNodeToTop(cNode);
-                    emptySelectedNodes();
-                    _selectedNodes.push(proxy);
-                    _oldMouseX = mouseX;
-                    _oldMouseY = mouseY;
-                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
-        		}
-        		else if (targetObj is Line)
-        		{
-        			// 点击连线
-        			_state = STATE_SELECT_LINE;
-        			_curLine = targetObj as Line;
-                    _selectedLines.push(targetObj);
-                    targetObj.isSelected = true;
-        		}
-        		else
-        		{
-        			// 绘制选区
-        			if (_state != STATE_DRAG_RECT)
-        			{
-	                    _state = STATE_DRAG_RECT;
-	                    dragRect.setStartPoint(mouseX, mouseY);
-	                    
-	                    addChild(dragRect);
-	                    addEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
-        			}
-        		}
-        	}
-        	else
-        	{
-        		// 拖拽整个拓扑图
-        		_state = STATE_MOVE_ALL_PREVIEW;
-                _selectedNodes = _nodes.concat();
-                _oldMouseX = mouseX;
-                _oldMouseY = mouseY;
-                addEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
-        	}
-        }
-        
-        /**
-         * mouse handler
-         * */
-        private function moveNodesHandler(event:MouseEvent):void
-        {
-            // 移动整个拓扑图
-            _nodeMoved = true;
-            moveNodes(mouseX - _oldMouseX, mouseY - _oldMouseY);
-            _oldMouseX = mouseX;
-            _oldMouseY = mouseY;
-        }
-        
-        private function moveBackgroundHandler(event:MouseEvent):void
-        {
-            // 移动背景
-            _bgMoved = true;
-            _bgImage.move(_bgImage.x + mouseX - _oldMouseX, _bgImage.y + mouseY - _oldMouseY);
-            _oldMouseX = mouseX;
-            _oldMouseY = mouseY;
-        }
-        
-        private function moveAllHandler(event:MouseEvent):void
-        {
-            _nodeMoved = true;
-            _bgMoved = true;
-            moveNodes(mouseX - _oldMouseX, mouseY - _oldMouseY);
-            _bgImage.move(_bgImage.x + mouseX - _oldMouseX, _bgImage.y + mouseY - _oldMouseY);
-            _oldMouseX = mouseX;
-            _oldMouseY = mouseY;
-        }
-        
-        private function drawRectHandler(event:MouseEvent):void
-        {
-        	dragRect.reDraw(mouseX, mouseY);
-        }
-        
-        private function mouseUpHandler(event:Event):void
-        {
-            //this.setFocus();
-        	switch (_state)
-        	{
-        		case STATE_DRAG_RECT:
-        		{
-	                checkObjects();
-	                removeChild(dragRect);
-	                removeEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
-	                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CLICK));
-	        		break;
-	        	}
-        		case STATE_MOVE_PROXY:
-        		{
-        		    var tmpToNode:Node = checkProxy();
-        		    if (tmpToNode)
-        		    {
-        		    	// 检测到合法节点
-	        		    _curLine.bindToNode(tmpToNode);
-	        		    node2node(_curLine.fromNode, _curLine.toNode);
-	        		    tmpToNode.pushLine(_curLine);
-                        _curLine.editable = true;
-                        dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED))
-        		    }
-        		    else
-        		    {
-        		    	// 无节点可绑定, 移除连线
-        		    	removeLine(_curLine);
-        		    	_curLine = null;
-        		    }
-        		    removeChild(proxy);
-        		    emptySelectedNodes();
-        		}
-        		case STATE_MOVE_ALL:
-        		{
-                    emptySelectedNodes();
-        		}
-        		case STATE_MOVE_NODE:
-        		{
-                    removeEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
-                    _nodeMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
-                    _nodeMoved = false;
-        		    break;
-        		}
-        		case STATE_MOVE_BACKGROUND:
-        		{
-                    removeEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
-                    _bgMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
-                    _bgMoved = false;
-                    break;
-        		}
-                case STATE_MOVE_ALL_PREVIEW:
-                {
-                    removeEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
-                    break;
-                }
-        		case STATE_SELECT_LINE:
-        		{
-        		    emptySelectedNodes();
-        		}
-        	}
-            _state = STATE_NOTHING;
-        }
-        
-        private function anyChangeHandler(event:TopoEvent):void
-        {
-            _isChanged = true;
         }
         
         /**
@@ -1206,6 +995,270 @@ package cn.com.ultrapower.topology.view
                 f.call(f);
                 obj.go && runActionsList();
             }
+        }
+        
+        ///////////////////////////////////
+        // handler
+        ///////////////////////////////////
+        
+        /**
+         * 相应鼠标事件方法
+         * */
+        private function mouseDownHandler(event:MouseEvent):void
+        {
+            setFocus();
+            if ( _state != STATE_NOTHING)
+            {
+                return;
+            }
+            var targetObj:Object;
+            if (_editable)
+            {
+                emptySelectedLines()
+                // 拖拽节点
+                targetObj = getUsableObject(event.target as Object);
+                if (_pressCtrl && !_pressShift)
+                {
+                    // 拖拽全图
+                    _state = STATE_MOVE_ALL;
+                    emptySelectedNodes();
+                    _selectedNodes = _nodes.concat();
+                    _oldMouseX = mouseX;
+                    _oldMouseY = mouseY;
+                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
+                }
+                else if (_pressShift && !_pressCtrl)
+                {
+                    // 拖拽背景
+                    _state = STATE_MOVE_BACKGROUND
+                    _oldMouseX = mouseX;
+                    _oldMouseY = mouseY;
+                    addEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
+                }
+                else if (_pressCtrl && _pressShift)
+                {
+                    // 拖拽整个拓扑图
+                    _state = STATE_MOVE_ALL_PREVIEW;
+                    _selectedNodes = _nodes.concat();
+                    _oldMouseX = mouseX;
+                    _oldMouseY = mouseY;
+                    addEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
+                }
+                else if (targetObj is Node)
+                {
+                    // 拖拽选中节点
+                    _state = STATE_MOVE_NODE;
+                    // 点击的节点不在选中范围内, 清除选中节点, 将当前阶段作为拖拽列表
+                    if (_selectedNodes.indexOf(targetObj) === -1)
+                    {
+                        emptySelectedNodes();
+                        _selectedNodes.push(targetObj);
+                        targetObj.isSelected = true;
+                    }
+                    _curNode = targetObj as Node;
+                    _oldMouseX = mouseX;
+                    _oldMouseY = mouseY;
+                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
+                }
+                else if (targetObj is NodeProxy)
+                {
+                    // 创建节点代理用于创建连线
+                    _state = STATE_MOVE_PROXY;
+                    var cNode:Node = getUsableObject(targetObj, true) as Node;
+                    _curNode = cNode;
+                    addChild(proxy);
+                    proxy.x = mouseX;
+                    proxy.y = mouseY;
+                    _curLine = addLine(cNode, proxy);
+                    _curLine.editable = false;
+                    setNodeToTop(cNode);
+                    emptySelectedNodes();
+                    _selectedNodes.push(proxy);
+                    _oldMouseX = mouseX;
+                    _oldMouseY = mouseY;
+                    addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
+                }
+                else if (targetObj is Line)
+                {
+                    // 点击连线
+                    _state = STATE_SELECT_LINE;
+                    _curLine = targetObj as Line;
+                    _selectedLines.push(targetObj);
+                    targetObj.isSelected = true;
+                }
+                else
+                {
+                    // 绘制选区
+                    if (_state != STATE_DRAG_RECT)
+                    {
+                        _state = STATE_DRAG_RECT;
+                        dragRect.setStartPoint(mouseX, mouseY);
+                        
+                        addChild(dragRect);
+                        addEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
+                    }
+                }
+            }
+            else
+            {
+                // 拖拽整个拓扑图
+                _state = STATE_MOVE_ALL_PREVIEW;
+                _selectedNodes = _nodes.concat();
+                _oldMouseX = mouseX;
+                _oldMouseY = mouseY;
+                addEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
+            }
+        }
+        
+        /**
+         * mouse handler
+         * */
+        private function moveNodesHandler(event:MouseEvent):void
+        {
+            // 移动整个拓扑图
+            _nodeMoved = true;
+            moveNodes(mouseX - _oldMouseX, mouseY - _oldMouseY);
+            _oldMouseX = mouseX;
+            _oldMouseY = mouseY;
+        }
+        
+        /**
+         * 移动背景
+         * */
+        private function moveBackgroundHandler(event:MouseEvent):void
+        {
+            // 移动背景
+            _bgMoved = true;
+            _bgImage.move(_bgImage.x + mouseX - _oldMouseX, _bgImage.y + mouseY - _oldMouseY);
+            _oldMouseX = mouseX;
+            _oldMouseY = mouseY;
+        }
+        
+        /**
+         * 移动背景和全部节点
+         * */
+        private function moveAllHandler(event:MouseEvent):void
+        {
+            _nodeMoved = true;
+            _bgMoved = true;
+            moveNodes(mouseX - _oldMouseX, mouseY - _oldMouseY);
+            _bgImage.move(_bgImage.x + mouseX - _oldMouseX, _bgImage.y + mouseY - _oldMouseY);
+            _oldMouseX = mouseX;
+            _oldMouseY = mouseY;
+        }
+        
+        /**
+         * 绘制选取框
+         * */
+        private function drawRectHandler(event:MouseEvent):void
+        {
+            dragRect.reDraw(mouseX, mouseY);
+        }
+        
+        /**
+         * 处理鼠标事件
+         * */
+        private function mouseUpHandler(event:Event):void
+        {
+            //this.setFocus();
+            switch (_state)
+            {
+                case STATE_DRAG_RECT:
+                {
+                    checkObjects();
+                    removeChild(dragRect);
+                    removeEventListener(MouseEvent.MOUSE_MOVE, drawRectHandler);
+                    dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CLICK));
+                    break;
+                }
+                case STATE_MOVE_PROXY:
+                {
+                    var tmpToNode:Node = checkProxy();
+                    if (tmpToNode)
+                    {
+                        // 检测到合法节点
+                        _curLine.bindToNode(tmpToNode);
+                        node2node(_curLine.fromNode, _curLine.toNode);
+                        tmpToNode.pushLine(_curLine);
+                        _curLine.editable = true;
+                        dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED))
+                    }
+                    else
+                    {
+                        // 无节点可绑定, 移除连线
+                        removeLine(_curLine);
+                        _curLine = null;
+                    }
+                    removeChild(proxy);
+                    emptySelectedNodes();
+                }
+                case STATE_MOVE_ALL:
+                {
+                    emptySelectedNodes();
+                }
+                case STATE_MOVE_NODE:
+                {
+                    removeEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
+                    _nodeMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                    _nodeMoved = false;
+                    break;
+                }
+                case STATE_MOVE_BACKGROUND:
+                {
+                    removeEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
+                    _bgMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                    _bgMoved = false;
+                    break;
+                }
+                case STATE_MOVE_ALL_PREVIEW:
+                {
+                    removeEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
+                    break;
+                }
+                case STATE_SELECT_LINE:
+                {
+                    emptySelectedNodes();
+                }
+            }
+            _state = STATE_NOTHING;
+        }
+        
+        private function anyChangeHandler(event:TopoEvent):void
+        {
+            _isChanged = true;
+        }
+        
+        private function kbDownHandler(event:KeyboardEvent):void
+        {
+            _pressCtrl = event.ctrlKey;
+            _pressShift = event.shiftKey;
+        }
+        
+        private function kbUpHandler(event:KeyboardEvent):void
+        {
+            _pressCtrl = _pressShift = false;
+        }
+        
+        private function effectStartHandler(event:EffectEvent):void
+        {
+            effectCount++;
+        }
+        
+        private function effectEndHandler(event:EffectEvent):void
+        {
+            effectCount--;
+            if (effectCount <= 0)
+            {
+                trace(">>>> effect end!!!!!");
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                runActionsList();
+            }
+        }
+        
+        private function bgImageCompleteHandler(event:Event):void
+        {
+            // 背景图片加载完成
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
         }
     }
 }
