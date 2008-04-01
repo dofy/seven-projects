@@ -18,9 +18,9 @@ package cn.com.ultrapower.topology.event
         
         public static const NODE_DOUBLE_CLICK:String = "nodeDoubleClick";
         
-        public static const GRAPH_CHANGED:String = "graphChanged";
-        public static const NODE_CHANGED:String = "nodeChanged";
-        public static const LINE_CHANGED:String = "lineChanged";
+        public static const GRAPH_CHANGE:String = "graphChange";
+        public static const NODE_CHANGE:String = "nodeChange";
+        public static const LINE_CHANGE:String = "lineChange";
         
         public var node:Node;
         public var line:Line;

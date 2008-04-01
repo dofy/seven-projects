@@ -51,7 +51,7 @@ package cn.com.ultrapower.topology.tool
         public function set graph(g:Graph):void
         {
             _graph = g;
-            _graph.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+            _graph.addEventListener(TopoEvent.GRAPH_CHANGE, graphChangeHandler);
             refreshBitmap();
         }
         

@@ -20,7 +20,7 @@ package cn.com.ultrapower.topology.view
     [Event(name="nodeClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="lineClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="graphClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
-    [Event(name="graphChanged", type="cn.com.ultrapower.topology.event.TopoEvent")]
+    [Event(name="graphChange", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     
     public class Graph extends Canvas
@@ -223,7 +223,7 @@ package cn.com.ultrapower.topology.view
         	{
         	    model && (drawBot = model);
                 drawBot.makeTreeForm(this, getTreeArray());
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         	}
         }
         
@@ -263,7 +263,7 @@ package cn.com.ultrapower.topology.view
             _nodes.push(newNode);
             addChild(newNode);
             newNode.realScale = _scale;
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
             return newNode;
         }
         
@@ -288,7 +288,7 @@ package cn.com.ultrapower.topology.view
 	        		removeNode(_selectedNodes.pop());
 	        	}
 	        	_nodes.indexOf(_rootNode) === -1 && _nodes.length > 0 && (_rootNode = _nodes[0]);
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         	}
         }
         
@@ -303,7 +303,7 @@ package cn.com.ultrapower.topology.view
                 {
                     removeLine(_selectedLines.pop());
                 }
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
             }
         }
         
@@ -663,9 +663,9 @@ package cn.com.ultrapower.topology.view
         private function bindListener():void{
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
             addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
-            addEventListener(TopoEvent.GRAPH_CHANGED, anyChangeHandler);
-            addEventListener(TopoEvent.NODE_CHANGED, anyChangeHandler);
-            addEventListener(TopoEvent.LINE_CHANGED, anyChangeHandler);
+            addEventListener(TopoEvent.GRAPH_CHANGE, anyChangeHandler);
+            addEventListener(TopoEvent.NODE_CHANGE, anyChangeHandler);
+            addEventListener(TopoEvent.LINE_CHANGE, anyChangeHandler);
             
             addEventListener(KeyboardEvent.KEY_DOWN, kbDownHandler);
             addEventListener(KeyboardEvent.KEY_UP, kbUpHandler);
@@ -762,7 +762,7 @@ package cn.com.ultrapower.topology.view
     			tn = _nodes[i];
     			tn.moveTo(cx + (tn.x - cx) * ws / cw, cy + (tn.y - cy) * hs / ch);
     		}
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         }
         
         /**
@@ -1181,7 +1181,7 @@ package cn.com.ultrapower.topology.view
                         node2node(_curLine.fromNode, _curLine.toNode);
                         tmpToNode.pushLine(_curLine);
                         _curLine.editable = true;
-                        dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED))
+                        dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE))
                     }
                     else
                     {
@@ -1199,14 +1199,14 @@ package cn.com.ultrapower.topology.view
                 case STATE_MOVE_NODE:
                 {
                     removeEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
-                    _nodeMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                    _nodeMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
                     _nodeMoved = false;
                     break;
                 }
                 case STATE_MOVE_BACKGROUND:
                 {
                     removeEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
-                    _bgMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                    _bgMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
                     _bgMoved = false;
                     break;
                 }
@@ -1250,7 +1250,7 @@ package cn.com.ultrapower.topology.view
             if (effectCount <= 0)
             {
                 trace(">>>> effect end!!!!!");
-                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
                 runActionsList();
             }
         }
@@ -1258,7 +1258,7 @@ package cn.com.ultrapower.topology.view
         private function bgImageCompleteHandler(event:Event):void
         {
             // 背景图片加载完成
-            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         }
     }
 }
