@@ -44,11 +44,11 @@ private var globalPanel:Form = new GlobalPanel();
 private var nodePanel:Form = new NodeOptionPanel();
 private var linePanel:Form = new LineOptionsPanel();
 
-private const MENU_NODE_INFO:String = "查看节点信息(&W)";
-private const MENU_NODE_RES_INFO:String = "查看节点资源信息(&R)";
+private const MENU_NODE_INFO:String = "节点信息(&W)";
+private const MENU_NODE_RES_INFO:String = "节点资源信息(&R)";
 
-private const MENU_LINE_INFO:String = "查看链路信息(&W)";
-private const MENU_LINE_RES_INFO:String = "查看链路资源信息(&R)";
+private const MENU_LINE_INFO:String = "链路信息(&W)";
+private const MENU_LINE_RES_INFO:String = "链路资源信息(&R)";
 
 private var myContextMenu:ContextMenu;
 private var showInfoMenu:ContextMenuItem;
@@ -89,7 +89,7 @@ private function initApp():void
     graphTest.addEventListener(TopoEvent.NODE_CLICK, clickNodeHandler);
     graphTest.addEventListener(TopoEvent.LINE_CLICK, clickLineHandler);
     graphTest.addEventListener(TopoEvent.GRAPH_CLICK, selectNoneHandler);
-    graphTest.addEventListener(TopoEvent.GRAPH_CHANGED, graphChangeHandler);
+    graphTest.addEventListener(TopoEvent.GRAPH_CHANGE, graphChangeHandler);
     graphTest.addEventListener(TopoEvent.NODE_DOUBLE_CLICK, showChildMapHandler);
 
     graphTest.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);

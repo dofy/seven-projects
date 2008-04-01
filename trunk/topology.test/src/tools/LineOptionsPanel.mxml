@@ -54,7 +54,9 @@
         <mx:ColorPicker id="lineColor" width="60" change="_curLine.color = event.target.selectedColor;" />
     </mx:FormItem>
     <mx:FormItem label="线宽" direction="horizontal">
-        <mx:HSlider id="lineWidth" minimum="1" maximum="10" snapInterval="1" width="100" change="_curLine.lineWidth = event.target.value;"/>
+        <mx:HSlider id="lineWidth" minimum="1" maximum="10" snapInterval="1" width="100"
+            labels="['1px', '10px']" 
+            change="_curLine.lineWidth = event.target.value;"/>
     </mx:FormItem>
     <mx:FormItem label="箭头类型">
         <mx:ComboBox id="arrowType" change="_curLine.arrowType = event.target.selectedItem.data;">
