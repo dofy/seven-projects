@@ -223,7 +223,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo = xv;
             effect.yTo = yv;
             effect.play();
-            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
         }
         
         /**
@@ -236,7 +236,7 @@ package cn.com.ultrapower.topology.view
             effect.xTo += xv;
             effect.yTo += yv;
             effect.play();
-            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+            dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
         }
         
         /**
@@ -284,7 +284,7 @@ package cn.com.ultrapower.topology.view
         
         public function set Name(s:Number):void
         {
-        	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));;
+        	_editable && (_data.@id = s) && dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));;
         }
         
         public function get Name():Number
@@ -298,7 +298,7 @@ package cn.com.ultrapower.topology.view
             {
             	_data.@title = s;
             	nodeTitle.text = s;
-                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
         }
         
@@ -313,7 +313,7 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@type = s;
                 nodeIcon.source = icons.getIcon(s);
-                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
         }
         
@@ -328,7 +328,7 @@ package cn.com.ultrapower.topology.view
             {
                 _data.@describe = s;
                 toolTip = s;
-                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
         }
         
@@ -370,7 +370,7 @@ package cn.com.ultrapower.topology.view
             if (_editable && (_data.@childMapId != mapId))
             {
                 _data.@childMapId = mapId;
-                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
         }
         
@@ -384,7 +384,7 @@ package cn.com.ultrapower.topology.view
             if (_editable && (_data.@resId != resId))
             {
                 _data.@resId = resId;
-                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGED));
+                dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
         }
         
