@@ -46,11 +46,13 @@
         <mx:TextInput id="mapName" width="120" change="_curGraph.mapName = event.target.text;" />
     </mx:FormItem>
     <mx:FormItem label="横距缩放" direction="horizontal">
-        <mx:HSlider id="wScale" minimum="10" maximum="200" snapInterval="1"  width="100" 
+        <mx:HSlider id="wScale" minimum="10" maximum="200" value="100" snapInterval="1"  width="100"
+            labels="['10%', '200%']" 
             change="_curGraph.widthScale = event.value / 100" />
     </mx:FormItem>
     <mx:FormItem label="纵距缩放" direction="horizontal">
-        <mx:HSlider id="hScale" minimum="10" maximum="200" snapInterval="1"  width="100" 
+        <mx:HSlider id="hScale" minimum="10" maximum="200" value="100" snapInterval="1"  width="100"
+            labels="['10%', '200%']"  
             change="_curGraph.heightScale = event.value / 100" />
     </mx:FormItem>
     <mx:FormItem label="大小缩放" direction="horizontal">

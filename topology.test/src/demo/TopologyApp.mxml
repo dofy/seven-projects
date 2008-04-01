@@ -2,7 +2,7 @@
 <mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:topo="cn.com.ultrapower.topology.view.*" 
     dividerRelease="dividerReleaseHandler(event);"
-    creationComplete="initApp();" xmlns:tools="tools.*">
+    creationComplete="initApp();" xmlns:tools="tools.*" xmlns:tool="cn.com.ultrapower.topology.tool.*">
     <mx:Metadata>
         [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     </mx:Metadata>
@@ -16,10 +16,6 @@
             <mx:Object label="新建" icon="@Embed('../icons/new.png')" data="new" />
             <mx:Object label="保存" icon="@Embed('../icons/save.png')" data="save" />
             <mx:Object label="删除" icon="@Embed('../icons/delete.png')" data="del" />
-            <!--
-            <mx:Object label="Edit" icon="@Embed('../icons/edit.png')" data="edit" />
-            <mx:Object label="Move" icon="@Embed('../icons/move.png')" data="move" />
-            -->
             <mx:Object label="拓扑居中" icon="@Embed('../icons/center.png')" data="center" />
             <mx:Object label="节点居中" icon="@Embed('../icons/center_obj.png')" data="centerObject" />
             <mx:Object label="随机排列" icon="@Embed('../icons/random.png')" data="d_random" />
@@ -31,13 +27,16 @@
         <mx:CheckBox label="编辑模式" selected="true" change="graphTest.editable = event.target.selected" />
     </mx:HBox>
     <mx:HDividedBox width="100%" height="100%" dividerRelease="dividerReleaseHandler(event);">
-        <mx:Accordion width="280" maxWidth="280" height="100%">
-        <mx:Tile id="nodesBar" label="添加节点" height="100%" horizontalAlign="center" />
-        <mx:Canvas label="全局属性" id="optionsPanel" />
-        <mx:Canvas label="拓扑图列表" width="100%" height="100%">
-            <tools:treeList id="listdata" width="100%" height="100%" />
-        </mx:Canvas>
-        </mx:Accordion>
+        <mx:VBox width="280" maxWidth="280" height="100%">
+            <tool:Airscape width="280" height="150" graph="{graphTest}" />
+            <mx:Accordion width="100%" height="100%">
+            <mx:Tile id="nodesBar" label="添加节点" height="100%" horizontalAlign="center" />
+            <mx:Canvas label="全局属性" id="optionsPanel" />
+            <mx:Canvas label="拓扑图列表" width="100%" height="100%">
+                <tools:treeList id="listdata" width="100%" height="100%" />
+            </mx:Canvas>
+            </mx:Accordion>
+        </mx:VBox>
         <topo:Graph id="graphTest" backgroundColor="#ffffff" width="100%" height="100%" /> 
     </mx:HDividedBox>
 </mx:VDividedBox>
