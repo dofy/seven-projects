@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:VDividedBox xmlns:mx="http://www.adobe.com/2006/mxml"
-    xmlns:topo="cn.com.ultrapower.topology.view.*" 
+    xmlns:topo="cn.com.ultrapower.topology.view.*"
+    useHandCursor="true" 
     dividerRelease="dividerReleaseHandler(event);"
-    creationComplete="initApp();" xmlns:tools="tools.*" xmlns:tool="cn.com.ultrapower.topology.tool.*">
+    creationComplete="initApp();" 
+    xmlns:tools="tools.*" xmlns:tool="cn.com.ultrapower.topology.tool.*">
     <mx:Metadata>
         [Event(name="nodeDoubleClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     </mx:Metadata>
@@ -28,7 +30,9 @@
     </mx:HBox>
     <mx:HDividedBox width="100%" height="100%" dividerRelease="dividerReleaseHandler(event);">
         <mx:VBox width="280" maxWidth="280" height="100%">
-            <tool:Airscape width="280" height="150" graph="{graphTest}" />
+            <mx:Panel title="使用帮助" width="280" height="180">
+                <mx:TextArea width="100%" height="100%" htmlText="{helpInfo}" editable="false" />
+            </mx:Panel>
             <mx:Accordion width="100%" height="100%">
             <mx:Tile id="nodesBar" label="添加节点" height="100%" horizontalAlign="center" />
             <mx:Canvas label="全局属性" id="optionsPanel" />

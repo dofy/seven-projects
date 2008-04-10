@@ -56,6 +56,13 @@ private var showResMenu:ContextMenuItem;
 private var watchingNode:Node;
 private var watchingLine:Line;
 
+private var helpInfo:String = 
+                "1. <b>Ctrl + 拖拽</b>: 拖拽全部节点;<br />" + 
+                "2. <b>Shift + 拖拽</b>: 拖拽背景图片;<br />" + 
+                "3. <b>Ctrl + Shift + 拖拽</b>: 拖拽整个拓扑图;<br />" + 
+                "4. <b>Space + 移动鼠标</b>: 漫游模式,方便观看大图;<br />" +
+                "<i>注: 以上所有操作的前提是拓扑图处于激活状态(焦点在拓扑图上), 即如果没反应需先点击一下拓扑图.</i>"
+
 ///////////////////////////////////////
 // public functions
 ///////////////////////////////////////
