@@ -12,10 +12,12 @@ package cn.com.ultrapower.topology.view
     import flash.geom.Rectangle;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
+    import flash.ui.Keyboard;
     
     import mx.containers.Canvas;
     import mx.controls.Image;
     import mx.events.EffectEvent;
+    import mx.managers.CursorManager;
 
     [Event(name="nodeClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
     [Event(name="lineClick", type="cn.com.ultrapower.topology.event.TopoEvent")]
@@ -25,6 +27,7 @@ package cn.com.ultrapower.topology.view
     
     public class Graph extends Canvas
     {
+        // consts
         private const NODE_ID_BEGIN:uint = 0; // 节点开始层级
         private const LINE_ID_BEGIN:uint = 0; // 线 开始层级
         
@@ -36,10 +39,36 @@ package cn.com.ultrapower.topology.view
         private const STATE_MOVE_ALL_PREVIEW:uint = 7;
         private const STATE_SELECT_LINE:uint = 10;
         private const STATE_DRAG_RECT:uint = 100;
+        private const STATE_FREE_MODE:uint = 200;
         
         public const MIN_SCALE:Number = .5;
         public const MAX_SCALE:Number = 3;
         
+        private const MOVE_SPEED:Number = 10;
+        
+        // cursor
+        [Embed(source="../assets/mouse/m_c.png")]
+        private var mC:Class;
+        [Embed(source="../assets/mouse/m_l.png")]
+        private var mL:Class;
+        [Embed(source="../assets/mouse/m_r.png")]
+        private var mR:Class;
+        [Embed(source="../assets/mouse/m_u.png")]
+        private var mU:Class;
+        [Embed(source="../assets/mouse/m_d.png")]
+        private var mD:Class;
+        [Embed(source="../assets/mouse/m_lu.png")]
+        private var mLU:Class;
+        [Embed(source="../assets/mouse/m_ld.png")]
+        private var mLD:Class;
+        [Embed(source="../assets/mouse/m_ru.png")]
+        private var mRU:Class;
+        [Embed(source="../assets/mouse/m_rd.png")]
+        private var mRD:Class;
+        
+        private var cursorArray:Array = [mC, mL, mR, mU, mLU, mRU, mD, mLD, mRD];
+        
+        // vars
         private var _nodeId:uint; // 节点开始 Id
         private var _lineId:uint; // 线  开始 Id
         
@@ -74,10 +103,16 @@ package cn.com.ultrapower.topology.view
         private var _pressCtrl:Boolean;    // ctrl 被按下
         private var _pressShift:Boolean;   // shift 被按下
         
+        private var xStep:Number = 0;
+        private var yStep:Number = 0;
+        
+        private var mouseFlag:int;
+        private var oldMouseFlag:int = -1;
+        
         private var _scale:Number;         // 缩放比
         
         private var _nodeMoved:Boolean = false;  // 节点被移动
-        private var _bgMoved:Boolean = false;  // 背景被移动
+        private var _bgMoved:Boolean = false;    // 背景被移动
         
         // ** 绘制用变量 **
         private var _existentNodes:Array; // 已经存在的节点
@@ -1212,6 +1247,7 @@ package cn.com.ultrapower.topology.view
                 }
                 case STATE_MOVE_ALL_PREVIEW:
                 {
+                    emptySelectedNodes();
                     removeEventListener(MouseEvent.MOUSE_MOVE, moveAllHandler);
                     break;
                 }
@@ -1230,13 +1266,40 @@ package cn.com.ultrapower.topology.view
         
         private function kbDownHandler(event:KeyboardEvent):void
         {
-            _pressCtrl = event.ctrlKey;
-            _pressShift = event.shiftKey;
+            if (Keyboard.SPACE == event.keyCode)
+            {
+                if (STATE_NOTHING == _state)
+                {
+                    _state = STATE_FREE_MODE;
+                    _selectedNodes = _nodes.concat();
+                    addEventListener(MouseEvent.MOUSE_MOVE, freeModeHandler);
+                    addEventListener(Event.ENTER_FRAME, freeModeEFHandler);
+                }
+            }
+            else
+            {
+                _pressCtrl = event.ctrlKey;
+                _pressShift = event.shiftKey;
+            }
         }
         
         private function kbUpHandler(event:KeyboardEvent):void
         {
-            _pressCtrl = _pressShift = false;
+            if (STATE_FREE_MODE == _state)
+            {
+                
+                CursorManager.removeAllCursors();
+                emptySelectedNodes();
+                _state = STATE_NOTHING;
+                removeEventListener(MouseEvent.MOUSE_MOVE, freeModeHandler);
+                removeEventListener(Event.ENTER_FRAME, freeModeEFHandler);
+                _nodeMoved || _bgMoved && dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
+                
+                oldMouseFlag = -1;
+                xStep = yStep = 0;
+                _pressCtrl = _pressShift = false;
+                _nodeMoved = _bgMoved = false;
+            }
         }
         
         private function effectStartHandler(event:EffectEvent):void
@@ -1259,6 +1322,71 @@ package cn.com.ultrapower.topology.view
         {
             // 背景图片加载完成
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
+        }
+        
+        /**
+         * 漫游模式
+         * */
+        private function freeModeHandler(event:MouseEvent):void
+        {
+            var ar:Rectangle = getAllArea();
+            var gr:Rectangle = getRect(this);
+            var xSpaceL1:Number = gr.width / 3;
+            var xSpaceL2:Number = xSpaceL1 * 2;
+            var ySpaceL1:Number = gr.height / 3;
+            var ySpaceL2:Number = ySpaceL1 * 2;
+            
+            _nodeMoved = true;
+            _bgMoved = true;
+            
+            var mouseXFlag:uint;
+            var mouseYFlag:uint;
+            
+            if (mouseX < xSpaceL1)
+            {
+                xStep = 1 * MOVE_SPEED;
+                mouseXFlag = 1;
+            }
+            else if (mouseX > xSpaceL2)
+            {
+                xStep = -1 * MOVE_SPEED;
+                mouseXFlag = 2;
+            }
+            else
+            {
+                xStep = 0;
+                mouseXFlag = 0;
+            }
+            
+            if (mouseY < ySpaceL1)
+            {
+                yStep = 1 * MOVE_SPEED;
+                mouseYFlag = 3;
+            }
+            else if (mouseY > ySpaceL2)
+            {
+                yStep = -1 * MOVE_SPEED;
+                mouseYFlag = 6;
+            }
+            else
+            {
+                yStep = 0;
+                mouseYFlag = 0;
+            }
+            mouseFlag = mouseXFlag + mouseYFlag;
+            if (mouseFlag != oldMouseFlag)
+            {
+                oldMouseFlag = mouseFlag;
+                CursorManager.removeAllCursors();
+                CursorManager.setCursor(cursorArray[mouseXFlag + mouseYFlag]);
+            }
+        }
+        
+        private function freeModeEFHandler(event:Event):void
+        {
+            moveNodes(xStep, yStep);
+            _bgImage.x += xStep;
+            _bgImage.y += yStep;
         }
     }
 }
