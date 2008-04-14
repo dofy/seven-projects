@@ -242,6 +242,7 @@ package cn.com.ultrapower.topology.view
             if(!_rootNode)
             {
                 trace("根节点不存在!");
+                dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
                 return false;
             }
             
@@ -1285,9 +1286,8 @@ package cn.com.ultrapower.topology.view
         
         private function kbUpHandler(event:KeyboardEvent):void
         {
-            if (STATE_FREE_MODE == _state)
+            if (Keyboard.SPACE == event.keyCode || _pressCtrl || _pressShift)
             {
-                
                 CursorManager.removeAllCursors();
                 emptySelectedNodes();
                 _state = STATE_NOTHING;
