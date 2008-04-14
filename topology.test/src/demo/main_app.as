@@ -8,6 +8,7 @@ import cn.com.ultrapower.topology.view.Graph;
 import cn.com.ultrapower.topology.view.Line;
 import cn.com.ultrapower.topology.view.Node;
 
+import flash.display.StageQuality;
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -215,11 +216,17 @@ private function commandButtonHandler(evt:ItemClickEvent):void
 		    topoXML = graphTest.XMLData;
 		    mapId = topoXML.id;
 		    mapData = topoXML.toString();
+		    if (topoXML.name == '')
+            {
+                Alert.show("请给拓扑图定义个名称。", "警告！");
+                return ;
+            }
+
 		    /*
         	topoService.addEventListener(FaultEvent.FAULT,gotError);
             topoService.editTopology.addEventListener(ResultEvent.RESULT,saveTopoData);
             topoService.editTopology(mapId,mapData);
-            listdata.init();
+            listdata && listdata.init();
         	*/
             break;
         }

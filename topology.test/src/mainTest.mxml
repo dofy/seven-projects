@@ -47,6 +47,8 @@
         
         private var xml2:XML = 
         <topology>
+              <id>45871</id>
+              <name>拓扑组件 -- Demo</name>
             <background>background/bg2.jpg</background>
           <node id="1" title="工作组" type="workgroup" describe="根节点工作组" x="501" y="132"/>
           <node id="2" title="服务器" type="server" describe="工作组中某台服务器" x="377" y="226"/>
