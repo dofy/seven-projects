@@ -121,6 +121,12 @@ package cn.com.ultrapower.topology.assets
         private var transport:Class;
         [Embed(source="icons/unknowrouter.png")]
         private var unknowrouter:Class;
+        
+        
+        [Embed(source="swf/lang.swf")]
+        private var lang:Class;
+        [Embed(source="swf/users.swf")]
+        private var users:Class;
 
 	    
 		public function Icons(){
@@ -181,7 +187,9 @@ package cn.com.ultrapower.topology.assets
                                 "switch2",
                                 "thread",
                                 "transport",
-                                "unknowrouter");
+                                "unknowrouter",
+                                "lang",
+                                "users");
                                 
             classList = new Array(
                                 abr,
@@ -240,7 +248,9 @@ package cn.com.ultrapower.topology.assets
                                 switch2,
                                 thread,
                                 transport,
-                                unknowrouter);
+                                unknowrouter,
+                                lang,
+                                users);
 		}
 
         /**
