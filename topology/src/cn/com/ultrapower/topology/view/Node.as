@@ -337,6 +337,11 @@ package cn.com.ultrapower.topology.view
             return _data.@describe;
         }
         
+        public function get Blink():int
+        {
+            return _blink;
+        }
+        
         public function set Blink(b:int):void
         {
             if (_blink != b)
