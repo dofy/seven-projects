@@ -8,7 +8,8 @@ import cn.com.ultrapower.topology.view.Graph;
 import cn.com.ultrapower.topology.view.Line;
 import cn.com.ultrapower.topology.view.Node;
 
-import flash.display.StageQuality;
+import demo.WarningInfo;
+
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -23,6 +24,7 @@ import mx.containers.TitleWindow;
 import mx.containers.VDividedBox;
 import mx.controls.Alert;
 import mx.controls.Button;
+import mx.controls.DataGrid;
 import mx.controls.TextArea;
 import mx.core.DragSource;
 import mx.core.IUIComponent;
@@ -51,9 +53,16 @@ private const MENU_NODE_RES_INFO:String = "节点资源信息(&R)";
 private const MENU_LINE_INFO:String = "链路信息(&W)";
 private const MENU_LINE_RES_INFO:String = "链路资源信息(&R)";
 
+private const MENU_WARNING_INFO_VIEW_HISTORY:String = "历史告警(&H)";
+private const MENU_WARNING_INFO_VIEW:String = "当前告警(&V)";
+
 private var myContextMenu:ContextMenu;
 private var showInfoMenu:ContextMenuItem;
 private var showResMenu:ContextMenuItem;
+private var wiViewHistory:ContextMenuItem;
+private var wiView:ContextMenuItem;
+private var wiConfirm:ContextMenuItem;
+private var wiClear:ContextMenuItem;
 private var watchingNode:Node;
 private var watchingLine:Line;
 
@@ -114,11 +123,23 @@ private function initApp():void
     myContextMenu = new ContextMenu();
     showInfoMenu = new ContextMenuItem("");
     showResMenu = new ContextMenuItem("");
+    wiViewHistory = new ContextMenuItem("", true);
+    wiView = new ContextMenuItem("");
+    wiConfirm = new ContextMenuItem("");
+    wiClear = new ContextMenuItem("");
     myContextMenu.customItems.push(showInfoMenu);
     myContextMenu.customItems.push(showResMenu);
+    myContextMenu.customItems.push(wiViewHistory);
+    myContextMenu.customItems.push(wiView);
+    myContextMenu.customItems.push(wiConfirm);
+    myContextMenu.customItems.push(wiClear);
     myContextMenu.hideBuiltInItems();
     showInfoMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
     showResMenu.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
+    wiViewHistory.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
+    wiView.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
+    wiConfirm.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
+    wiClear.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, subMenuHandler);
 }
 
 private function addNodes():void
@@ -394,7 +415,18 @@ private function pushContextMenu(event:TopoEvent):void
         showResMenu.caption = event.target.ResId == "" ? "" : MENU_LINE_RES_INFO;
         watchingLine = event.line;
         graphTest.contextMenu = myContextMenu;
-    } 
+    }
+    
+    if (event.target.Blink > -1)
+    {
+        // 添加告警菜单
+        wiViewHistory.caption = MENU_WARNING_INFO_VIEW_HISTORY;
+        wiView.caption = MENU_WARNING_INFO_VIEW;
+    }
+    else
+    {
+        wiViewHistory.caption = wiView.caption = "";
+    }
 }
 
 private function removeContextMenu(event:TopoEvent):void
@@ -408,14 +440,22 @@ private function subMenuHandler(event:ContextMenuEvent):void
     {
         case MENU_NODE_INFO:
         {
-            trace("node >", watchingNode);
             showMenuInfo("Node", watchingNode.toString());
             break;
         }
         case MENU_LINE_INFO:
         {
-            trace("line >", watchingLine);
             showMenuInfo("Line", watchingLine.toString());
+            break;
+        }
+        case MENU_WARNING_INFO_VIEW_HISTORY:
+        {
+            showWarningInfoWin("历史告警");
+            break;
+        }
+        case MENU_WARNING_INFO_VIEW:
+        {
+            showMenuInfo("当前告警", "当前告警");
             break;
         }
     }
@@ -435,15 +475,45 @@ private function showMenuInfo(title:String, msg:String):void
     infoArea.height = 200;
     closeButton.label = '关闭';
     closeButton.addEventListener(MouseEvent.CLICK, function():void{PopUpManager.removePopUp(popWin)});
+    popWin.addEventListener(CloseEvent.CLOSE, function():void{PopUpManager.removePopUp(popWin)});
     ctrlBar.setStyle('horizontalAlign', 'right');
     
     ctrlBar.addChild(closeButton);
     popWin.addChild(infoArea);
     popWin.addChild(ctrlBar);
     
-    PopUpManager.addPopUp(popWin, this);
+    PopUpManager.addPopUp(popWin, this, true);
     PopUpManager.centerPopUp(popWin);
+}
+
+private function showWarningInfoWin(title:String):void
+{
+    var popWin:TitleWindow = new TitleWindow();
+    var infoArea:DataGrid = new WarningInfo();
+    var closeButton:Button = new Button();
+    var confirmButton:Button = new Button();
+    var clearButton:Button = new Button();
+    var ctrlBar:ControlBar = new ControlBar();
     
+    popWin.title = title;
+    popWin.showCloseButton = true;
+    infoArea.width = 660;
+    infoArea.height = 350;
+    closeButton.label = '关闭';
+    confirmButton.label = '确认告警';
+    clearButton.label = '清除告警';
+    closeButton.addEventListener(MouseEvent.CLICK, function():void{PopUpManager.removePopUp(popWin)});
+    popWin.addEventListener(CloseEvent.CLOSE, function():void{PopUpManager.removePopUp(popWin)});
+    ctrlBar.setStyle('horizontalAlign', 'right');
+    
+    ctrlBar.addChild(confirmButton);
+    ctrlBar.addChild(clearButton);
+    ctrlBar.addChild(closeButton);
+    popWin.addChild(infoArea);
+    popWin.addChild(ctrlBar);
+    
+    PopUpManager.addPopUp(popWin, this, true);
+    PopUpManager.centerPopUp(popWin);
 }
 
 //////////////////////////////////
