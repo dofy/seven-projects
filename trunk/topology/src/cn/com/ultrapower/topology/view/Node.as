@@ -132,6 +132,8 @@ package cn.com.ultrapower.topology.view
             proxy.visible = false;
             
             effect.easingFunction = Elastic.easeOut;
+            
+            checkChildMap();
 
             setStyle("borderStyle", "inside");
             setStyle("borderThickness", 0);
@@ -374,9 +376,15 @@ package cn.com.ultrapower.topology.view
         {
             if (_editable && (_data.@childMapId != mapId))
             {
+                checkChildMap();
                 _data.@childMapId = mapId;
                 dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
+        }
+        
+        public function get ChildMapId():String
+        {
+            return _data.@childMapId;
         }
         
         public function get ResId():String
@@ -391,11 +399,6 @@ package cn.com.ultrapower.topology.view
                 _data.@resId = resId;
                 dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
             }
-        }
-        
-        public function get ChildMapId():String
-        {
-            return _data.@childMapId;
         }
         
         public function get Data():XML
@@ -622,6 +625,15 @@ package cn.com.ultrapower.topology.view
          * */
         private function blinkLoopHandler(event:EffectEvent):void{
             event.target.play();
+        }
+        
+        /**
+         * 检测 childMap, 改变样式
+         * */
+        private function checkChildMap():void
+        {
+            nodeTitle.setStyle("fontWeight", ChildMapId.length > 0 ? "bold" : "");
+            nodeTitle.text = (ChildMapId.length > 0 ? "*" : "") + Title;
         }
     }
 }
