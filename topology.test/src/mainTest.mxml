@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" xmlns:demo="demo.*"
-    creationComplete="initApp();"
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal" 
+    xmlns:topo="topo.*" creationComplete="initApp();"
     >
 <mx:Style source="main.css" />
 <mx:Script>
@@ -31,7 +31,7 @@
               <node id="1" title="工作组" type="basestation" describe="根节点工作组" blink="ff0000" resId="95586" x="537.50" y="288.50"/>
               <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="195.50" y="326.50"/>
               <node id="3" title="客户端" type="power" describe="某客户端" x="636.50" y="181.50"/>
-              <node id="4" title="电脑设备" type="firewall" describe="典型设备连接外设" x="379.50" y="441.50"/>
+              <node id="4" title="电脑设备" type="firewall" childMapId="2345" describe="典型设备连接外设" x="379.50" y="441.50"/>
               <node id="5" title="打印机" type="node_unix" describe="连接到电脑上的打印机" x="368.50" y="520.50"/>
               <node id="6" title="存储" type="prouter" x="239.50" describe="存储设备, 如硬盘" y="429.50"/>
               <node id="7" title="音频" type="backbonearea" x="519.50" describe="" blink="#00ff00" y="518.50"/>
@@ -73,5 +73,5 @@
         </topology>
     ]]>
 </mx:Script>
-    <demo:TopologyApp id="topoApp" width="100%" height="100%" nodeDoubleClick="dbClickHandler(event);" />
+    <topo:TopologyApp id="topoApp" width="100%" height="100%" nodeDoubleClick="dbClickHandler(event);" />
 </mx:Application>
