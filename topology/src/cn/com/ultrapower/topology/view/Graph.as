@@ -939,7 +939,7 @@ package cn.com.ultrapower.topology.view
         {
         	if (getChildren().indexOf(line) >= 0)
         	{
-        		removeChild(line);
+        		removeChild(line as DisplayObject);
         		_lines.splice(_lines.indexOf(line), 1);
         		line.fromNode.removeSubNode(line.toNode);
         		line.toNode.removeParentNode(line.fromNode);
@@ -1196,6 +1196,22 @@ package cn.com.ultrapower.topology.view
          * */
         private function mouseUpHandler(event:Event):void
         {
+            /*
+            if (event.target is Line)
+            {
+                trace(9);
+                if (Math.random() < .5)
+                {
+                    trace(8);
+                    (event.target as Line).setDrawBot(new DLLine(event.target as Line));
+                }
+                else
+                {
+                    trace(7);
+                    (event.target as Line).setDrawBot(new DLMultiLine(event.target as Line));
+                }
+            }
+            */
             //this.setFocus();
             switch (_state)
             {

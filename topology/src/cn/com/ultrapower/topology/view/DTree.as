@@ -6,7 +6,6 @@ package cn.com.ultrapower.topology.view
 		
 		public function DTree()
 		{
-			super();
 			_padding = 50;
 		}
 
