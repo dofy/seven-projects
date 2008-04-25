@@ -4,7 +4,6 @@ package cn.com.ultrapower.topology.view
 	{
 		public function DRandom()
 		{
-			super();
 		}
 
 		public function makeTreeForm(graph:Graph, treeArray:Array):void

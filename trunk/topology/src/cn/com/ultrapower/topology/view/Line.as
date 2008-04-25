@@ -13,12 +13,12 @@ package cn.com.ultrapower.topology.view
     
     public class Line extends UIComponent
     {
-        private const BG_ALPHA_NORMAL:Number = 0;
-        private const BG_ALPHA_OVER:Number   = 0.15;
-        private const BG_ALPHA_SELECT:Number = 0.3;
-        private const BG_ALPHA_SUPER:Number  = 0.5;
+        public const BG_ALPHA_NORMAL:Number = 0;
+        public const BG_ALPHA_OVER:Number   = 0.15;
+        public const BG_ALPHA_SELECT:Number = 0.3;
+        public const BG_ALPHA_SUPER:Number  = 0.5;
         
-        private const BG_WIDTH_OFFSET:uint = 7;
+        public const BG_WIDTH_OFFSET:uint = 7;
         
         private const BLINK_ALPHA_FROM:Number  = 1;
         private const BLINK_ALPHA_TO:Number  = 0.5;
@@ -57,10 +57,12 @@ package cn.com.ultrapower.topology.view
         private var _isSelected:Boolean; // 被选中
         private var _isDown:Boolean;     // 鼠标按下
         
-        private var arrow1:Arrow;     // from 端箭头
-        private var arrow2:Arrow;     // to   端箭头
-        private var _ra1:uint;        // arrow1 增补角度
-        private var _ra2:uint;        // arrow2 增补角度
+        private var _arrow1:Arrow;     // from 端箭头
+        private var _arrow2:Arrow;     // to   端箭头
+        private var _ra1:uint;        // _arrow1 增补角度
+        private var _ra2:uint;        // _arrow2 增补角度
+        
+        private var drawBot:IDrawLine;
         
         public function Line(id:uint, data:XML)
         {
@@ -69,11 +71,12 @@ package cn.com.ultrapower.topology.view
             _data = data? data: <line fromId="" toId="" color="000000" width="1" arrowType="0" arrowMode="0"/>;
             
             blinkBot = new Glow(this);
+            drawBot = new DLLine(this);
             
-            this.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-            this.addEventListener(MouseEvent.MOUSE_UP,   mouseUpHandler);
-            this.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
-            this.addEventListener(MouseEvent.MOUSE_OUT,  mouseOutHandler);
+            addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+            addEventListener(MouseEvent.MOUSE_UP,   mouseUpHandler);
+            addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+            addEventListener(MouseEvent.MOUSE_OUT,  mouseOutHandler);
         }
         
         override protected function createChildren():void
@@ -81,11 +84,11 @@ package cn.com.ultrapower.topology.view
             super.createChildren();
             
             toolTip = _data.@describe;
-            arrow1 = new Arrow(_color, _width);
-            arrow2 = new Arrow(_color, _width);
+            _arrow1 = new Arrow(_color, _width);
+            _arrow2 = new Arrow(_color, _width);
             
-            this.addChild(arrow1);
-            this.addChild(arrow2);
+            addChild(_arrow1);
+            addChild(_arrow2);
             
             var tBlink:String = _data.@blink;
             tBlink = tBlink.replace(/#|0x/ig, '');
@@ -161,6 +164,12 @@ package cn.com.ultrapower.topology.view
             }
         }
         
+        public function setDrawBot(db:IDrawLine):void
+        {
+            drawBot = db;
+            drawBot.refresh();
+        }
+        
         ////////////////////////////////////////
         // getter & setter
         ////////////////////////////////////////
@@ -187,11 +196,21 @@ package cn.com.ultrapower.topology.view
             refresh();
         }
         
+        public function get x1():Number
+        {
+            return _x1;
+        }
+        
         public function set y1(n:Number):void
         {
             //trace(_id, "y1:", n);
             _y1 = n;
             refresh();
+        }
+        
+        public function get y1():Number
+        {
+            return _y1;
         }
         
         public function set x2(n:Number):void
@@ -201,11 +220,21 @@ package cn.com.ultrapower.topology.view
             refresh();
         }
         
+        public function get x2():Number
+        {
+            return _x2;
+        }
+        
         public function set y2(n:Number):void
         {
             //trace(_id, "y2:", n);
             _y2 = n;
             refresh();
+        }
+        
+        public function get y2():Number
+        {
+            return _y2;
         }
         
         public function set Describe(s:String):void
@@ -275,8 +304,8 @@ package cn.com.ultrapower.topology.view
             if (_color != c)
             {
             	_color = c;
-            	arrow1.color = c;
-            	arrow2.color = c;
+            	_arrow1.color = c;
+            	_arrow2.color = c;
             	refresh();
                 dispatchEvent(new TopoEvent(TopoEvent.LINE_CHANGE));
             }
@@ -292,8 +321,8 @@ package cn.com.ultrapower.topology.view
             if (_width != w)
             {
                 _width = w <= 0? 1 : w;
-                arrow1.lineWidth = _width;
-                arrow2.lineWidth = _width;
+                _arrow1.lineWidth = _width;
+                _arrow2.lineWidth = _width;
                 refresh();
                 dispatchEvent(new TopoEvent(TopoEvent.LINE_CHANGE));
             }
@@ -304,13 +333,33 @@ package cn.com.ultrapower.topology.view
             return _width;
         }
         
+        public function get arrow1():Arrow
+        {
+            return _arrow1;
+        }
+        
+        public function get arrow2():Arrow
+        {
+            return _arrow2;
+        }
+        
+        public function get ra1():uint
+        {
+            return _ra1;
+        }
+        
+        public function get ra2():uint
+        {
+            return _ra2;
+        }
+        
         public function set arrowType(t:uint):void
         {
             if (_type != t)
             {
                 _type = t;
-                arrow1.type = t;
-                arrow2.type = t;
+                _arrow1.type = t;
+                _arrow2.type = t;
                 redrawArrow();
                 dispatchEvent(new TopoEvent(TopoEvent.LINE_CHANGE));
             }
@@ -390,38 +439,48 @@ package cn.com.ultrapower.topology.view
         }
         
         /////////////////////////////////////////
-        // private functions
+        // protected functions
         /////////////////////////////////////////
         
-        private function refresh(bgAlpha:Number = 0):void
+        protected function refresh(bgAlpha:Number = 0):void
         {
             if (_canRefresh)
             {
+                drawBot.refresh(bgAlpha);
                 //trace("重绘连线", _id);
-                this.graphics.clear();
-                this.graphics.lineStyle(_width, _color);
-                this.graphics.moveTo(_x1, _y1);
-                this.graphics.lineTo(_x2, _y2);
-                this.graphics.lineStyle(BG_WIDTH_OFFSET + _width, _color, _isSelected && bgAlpha == 0 ? BG_ALPHA_SELECT : bgAlpha);
-                this.graphics.lineTo(_x1, _y1);
+                /*
+                graphics.clear();
+                graphics.lineStyle(_width, _color);
+                graphics.moveTo(_x1, _y1);
+                graphics.lineTo(_x2, _y2);
+                graphics.lineStyle(BG_WIDTH_OFFSET + _width, _color, _isSelected && bgAlpha == 0 ? BG_ALPHA_SELECT : bgAlpha);
+                graphics.lineTo(_x1, _y1);
                 redrawArrow();
+                */
             }
         }
         
         /**
          * 重绘 arrow
          * */
-        private function redrawArrow():void
+        protected function redrawArrow():void
         {
+            drawBot.redrawArrow();
+            /*
             var baseRotation:Number;
-            arrow1.draw();
-            arrow2.draw();
-            arrow1.move(_x1 + (_x2 - _x1) * .4, _y1 + (_y2 - _y1) * .4);
-            arrow2.move(_x1 + (_x2 - _x1) * .6, _y1 + (_y2 - _y1) * .6);
+            _arrow1.draw();
+            _arrow2.draw();
+            _arrow1.move(_x1 + (_x2 - _x1) * .4, _y1 + (_y2 - _y1) * .4);
+            _arrow2.move(_x1 + (_x2 - _x1) * .6, _y1 + (_y2 - _y1) * .6);
             baseRotation = Math.atan2(_y2 - _y1 , _x2 - _x1);
-            arrow1.rotation = baseRotation * 180 / Math.PI + _ra1;
-            arrow2.rotation = baseRotation * 180 / Math.PI + _ra2;
+            _arrow1.rotation = baseRotation * 180 / Math.PI + _ra1;
+            _arrow2.rotation = baseRotation * 180 / Math.PI + _ra2;
+            */
         }
+        
+        /////////////////////////////////////////
+        // private functions
+        /////////////////////////////////////////
         
         /**
          * 普通样式
