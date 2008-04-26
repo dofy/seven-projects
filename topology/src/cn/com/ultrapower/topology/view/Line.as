@@ -438,6 +438,21 @@ package cn.com.ultrapower.topology.view
             s? setSelectStyle(): setNormalStyle();
         }
         
+        public function set index(ind:int):void
+        {
+            drawBot.index = ind;
+        }
+        
+        public function set count(len:int):void
+        {
+            drawBot.count = len;
+        }
+        
+        public function set positive(pos:Boolean):void
+        {
+            drawBot.positive = pos;
+        }
+        
         /////////////////////////////////////////
         // protected functions
         /////////////////////////////////////////
