@@ -4,6 +4,7 @@ package cn.com.ultrapower.topology.view
     
     public class DLLine implements IDrawLine
     {
+        private const NAME:String = "DLLine";
         private var _line:Line;
         public function DLLine(line:Line)
         {
@@ -37,5 +38,24 @@ package cn.com.ultrapower.topology.view
             _line.arrow2.rotation = baseRotation * 180 / Math.PI + _line.ra2;
         }
         
+        ////////////////////////////////
+        // getter & setter
+        ////////////////////////////////
+        
+        public function set index(ind:int):void{}
+        
+        public function get index():int
+        {
+            return 0;
+        }
+        
+        public function set count(c:int):void{}
+        
+        public function set positive(pos:Boolean):void{}
+        
+        public function get name():String
+        {
+            return NAME;
+        }
     }
 }

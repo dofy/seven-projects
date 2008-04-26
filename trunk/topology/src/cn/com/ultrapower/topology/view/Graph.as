@@ -1,6 +1,7 @@
 package cn.com.ultrapower.topology.view
 {
     import cn.com.ultrapower.topology.event.TopoEvent;
+    import cn.com.ultrapower.topology.tool.LineData;
     import cn.com.ultrapower.topology.tool.SelectRect;
     
     import flash.display.DisplayObject;
@@ -121,6 +122,8 @@ package cn.com.ultrapower.topology.view
         
         private var drawBot:IDraw;        // 绘制树形算法
         private var isInit:Boolean;       // 是否初始化中
+        
+        private var lineData:LineData = new LineData();
         
         private var selectNone:Boolean;
         
@@ -859,10 +862,13 @@ package cn.com.ultrapower.topology.view
         			break;
         		}
         	}
+        	/*
+        	// 多线了, 不用判断了
         	if (chkNode && (_curLine.fromNode as Node).checkNode(chkNode))
         	{
         		chkNode = null;
         	}
+        	*/
         	return chkNode;
         }
         
@@ -927,6 +933,7 @@ package cn.com.ultrapower.topology.view
             	toNode.pushLine(tmpLine);
             	tmpLine.editable = _editable;
             	addChildAt(tmpLine, 1);
+            	lineData.pushLine(tmpLine);
             	return tmpLine;
             }
             else
@@ -939,6 +946,7 @@ package cn.com.ultrapower.topology.view
         {
         	if (getChildren().indexOf(line) >= 0)
         	{
+        	    lineData.removeLine(line);
         		removeChild(line as DisplayObject);
         		_lines.splice(_lines.indexOf(line), 1);
         		line.fromNode.removeSubNode(line.toNode);
@@ -1233,6 +1241,7 @@ package cn.com.ultrapower.topology.view
                         node2node(_curLine.fromNode, _curLine.toNode);
                         tmpToNode.pushLine(_curLine);
                         _curLine.editable = true;
+                        lineData.pushLine(_curLine);
                         dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE))
                     }
                     else

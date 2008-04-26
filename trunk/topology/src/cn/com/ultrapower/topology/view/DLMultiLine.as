@@ -4,6 +4,7 @@ package cn.com.ultrapower.topology.view
     
     public class DLMultiLine implements IDrawLine
     {
+        private const NAME:String = "DLMultiLine";
         // 弯曲点百分比
         private const PRE_LENGTH:Number = .2;
         // 弯曲点偏移量
@@ -13,7 +14,7 @@ package cn.com.ultrapower.topology.view
         private var _p2:Point = new Point();
         // 
         private var _index:int = 0;
-        private var _length:int = 2;
+        private var _count:int = 2;
         
         // 决定弯曲方向
         private var _positive:int = 1;
@@ -29,7 +30,7 @@ package cn.com.ultrapower.topology.view
         {
             var offset:Number = PRE_STEP * Math.ceil(_index / 2);
             (0 == _index % 2) && (offset *= -1);
-            (0 == _length % 2) && (offset -= PRE_STEP / 2);
+            (0 == _count % 2) && (offset -= PRE_STEP / 2);
             _p1 = getPointInfo(_line.x1, _line.y1, _line.x2, _line.y2, offset, 1);
             _p2 = getPointInfo(_line.x2, _line.y2, _line.x1, _line.y1, offset, -1);
             _line.graphics.clear();
@@ -92,9 +93,9 @@ package cn.com.ultrapower.topology.view
             return _index;
         }
         
-        public function set length(len:int):void
+        public function set count(c:int):void
         {
-            _length = len;
+            _count = c;
             refresh();
         }
         
@@ -102,6 +103,11 @@ package cn.com.ultrapower.topology.view
         {
             _positive = pos ? 1 : -1;
             refresh();
+        }
+        
+        public function get name():String
+        {
+            return NAME;
         }
     }
 }
