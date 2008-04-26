@@ -181,6 +181,7 @@ package cn.com.ultrapower.topology.view
             
             _isChanged = false;
             _rootNode = null;
+            lineData.clean();
         }
         
         /**
