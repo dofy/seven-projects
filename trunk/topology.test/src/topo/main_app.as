@@ -2,12 +2,7 @@
 import cn.com.ultrapower.topology.assets.Icons;
 import cn.com.ultrapower.topology.event.TopoEvent;
 import cn.com.ultrapower.topology.tool.TopoHistory;
-import cn.com.ultrapower.topology.view.DDefault;
-import cn.com.ultrapower.topology.view.DRandom;
-import cn.com.ultrapower.topology.view.DTree;
-import cn.com.ultrapower.topology.view.Graph;
-import cn.com.ultrapower.topology.view.Line;
-import cn.com.ultrapower.topology.view.Node;
+import cn.com.ultrapower.topology.view.*;
 
 import flash.events.ContextMenuEvent;
 import flash.events.Event;
@@ -290,6 +285,21 @@ private function commandButtonHandler(evt:ItemClickEvent):void
         case 'd_random':
         {
             graphTest.draw(new DRandom());
+            break;
+        }
+        case 'd_group':
+        {
+            graphTest.draw(new DGroup());
+            break;
+        }
+        case 'd_round':
+        {
+            graphTest.draw(new DRound());
+            break;
+        }
+        case 'd_tile':
+        {
+            graphTest.draw(new DTile());
             break;
         }
         case 'd_tree':
