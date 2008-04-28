@@ -576,6 +576,11 @@ package cn.com.ultrapower.topology.view
             return _isChanged;
         }
         
+        public function get nodeLength():uint
+        {
+            return _nodes.length;
+        }
+        
         /**
          * 模式转换
          * */
