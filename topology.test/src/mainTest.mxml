@@ -24,26 +24,26 @@
         }
         
         private var xml1:XML = 
-            <topology>
-              <id>4587</id>
-              <name>拓扑组件 Demo</name>
-              <background>background/map2.png</background>
-              <node id="1" title="工作组" type="basestation" describe="根节点工作组" blink="ff0000" resId="95586" x="537.50" y="288.50"/>
-              <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="195.50" y="326.50"/>
-              <node id="3" title="客户端" type="power" describe="某客户端" x="636.50" y="181.50"/>
-              <node id="4" title="电脑设备" type="firewall" childMapId="2345" describe="典型设备连接外设" x="379.50" y="441.50"/>
-              <node id="5" title="打印机" type="node_unix" describe="连接到电脑上的打印机" x="368.50" y="520.50"/>
-              <node id="6" title="存储" type="prouter" x="239.50" describe="存储设备, 如硬盘" y="429.50"/>
-              <node id="7" title="音频" type="backbonearea" x="519.50" describe="" blink="#00ff00" y="518.50"/>
-              <node id="8" title="视频" type="node_netscreen" x="567.50" describe="" blink="ffff00" y="431.50"/>
-              <line fromId="1" toId="2" describe="工作组到服务器" color="ff0000" width="1" arrowType="1" arrowMode="0"/>
-              <line fromId="1" toId="3" color="330066" width="2" arrowType="0" arrowMode="0"/>
-              <line fromId="2" toId="4" color="0" blink="ff0000" width="1" arrowMode="0" arrowType="0"/>
-              <line fromId="4" toId="5" color="ff00ff" width="1" arrowMode="0" arrowType="0"/>
-              <line fromId="4" toId="6" color="ff" width="1" arrowType="0" arrowMode="0"/>
-              <line fromId="4" toId="7" color="ffff" width="1" arrowType="0" arrowMode="0"/>
-              <line fromId="4" toId="8" color="8000" width="1" arrowType="1" arrowMode="0"/>
-            </topology>
+<topology>
+  <id>4587</id>
+  <name>拓扑组件 Demo</name>
+  <background x="-43.40" y="-16.45" scalex="0.90" scaley="0.85">background/map2.png</background>
+  <node id="1" title="工作组" type="basestation" describe="根节点工作组" blink="ff0000" resId="95586" x="415.70" y="208.55"/>
+  <node id="2" title="服务器" type="abr" describe="工作组中某台服务器" blink="ffffff" x="108.20" y="240.70"/>
+  <node id="3" title="客户端" type="power" describe="某客户端" x="504.75" y="118.05"/>
+  <node id="4" title="电脑设备" type="firewall" childMapId="2345" describe="典型设备连接外设" x="273.65" y="338.05"/>
+  <node id="5" title="打印机" type="node_unix" describe="连接到电脑上的打印机" x="263.70" y="404.90"/>
+  <node id="6" title="存储" type="prouter" x="147.70" describe="存储设备, 如硬盘" y="327.85"/>
+  <node id="7" title="音频" type="backbonearea" x="399.55" describe="" blink="#00ff00" y="403.25"/>
+  <node id="8" title="视频" type="node_netscreen" x="442.70" describe="" blink="ffff00" y="329.60"/>
+  <line fromId="1" toId="2" describe="工作组到服务器" color="ff0000" width="1" arrowType="1" arrowMode="0"/>
+  <line fromId="1" toId="3" color="330066" width="2" arrowType="0" arrowMode="0"/>
+  <line fromId="2" toId="4" color="0" blink="ff0000" width="1" arrowMode="0" arrowType="0"/>
+  <line fromId="4" toId="5" color="ff00ff" width="1" arrowMode="0" arrowType="0"/>
+  <line fromId="4" toId="6" color="ff" width="1" arrowType="0" arrowMode="0"/>
+  <line fromId="4" toId="7" color="ffff" width="1" arrowType="0" arrowMode="0"/>
+  <line fromId="4" toId="8" color="8000" width="1" arrowType="1" arrowMode="0"/>
+</topology>
         
         private var xml2:XML = 
         <topology>
