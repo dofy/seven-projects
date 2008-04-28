@@ -131,7 +131,7 @@ package cn.com.ultrapower.topology.view
             nodeIcon.addChild(proxy);
             proxy.visible = false;
             
-            effect.easingFunction = Elastic.easeOut;
+//            effect.easingFunction = Elastic.easeOut;
             
             checkChildMap();
 
