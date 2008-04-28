@@ -13,7 +13,6 @@ package cn.com.ultrapower.topology.view
     import flash.geom.Rectangle;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
-    import flash.ui.Keyboard;
     
     import mx.containers.Canvas;
     import mx.controls.Image;
@@ -91,6 +90,11 @@ package cn.com.ultrapower.topology.view
         private var _timeOffset:Number         // 时间差
         
         private var _bgImage:Image;  // 背景
+        private var _bgX:Number;
+        private var _bgY:Number;
+        private var _bgScaleX:Number;
+        private var _bgScaleY:Number;
+        
         private var _nodes:Array;    // 节点数组
         private var _lines:Array;    // 线 数组
         
@@ -100,9 +104,6 @@ package cn.com.ultrapower.topology.view
         private var _selectedLines:Array;  // 选中的连线
         private var _oldMouseX:Number;     // 原 鼠标 x 坐标
         private var _oldMouseY:Number;     // 原 鼠标 y 坐标
-        
-        private var _pressCtrl:Boolean;    // ctrl 被按下
-        private var _pressShift:Boolean;   // shift 被按下
         
         private var xStep:Number = 0;
         private var yStep:Number = 0;
@@ -129,6 +130,16 @@ package cn.com.ultrapower.topology.view
         
         private var effectCount:int = 0;
         private var _actions:Array = new Array();
+        
+        // 快捷键控制
+        private var _kMoveNode:Boolean;   // 移动节点控制键 被按下
+        private var _kMoveBack:Boolean;   // 移动背景控制键 被按下
+        private var _kMoveTopo:Boolean;   // 移动拓扑控制键 被按下
+        
+        private const KCODE_MOVE_NODE:int = 65;
+        private const KCODE_MOVE_BACK:int = 83;
+        private const KCODE_MOVE_TOPO:int = 68;
+        private const KCODE_FREE_MODE:int = 70;
         
         public function Graph()
         {
@@ -172,7 +183,7 @@ package cn.com.ultrapower.topology.view
             dragRect = new SelectRect();
             proxy = new NodeProxy();
             
-            _pressCtrl = _pressShift = false;
+            _kMoveNode = _kMoveBack = _kMoveTopo = false;
             
             drawBot = new DDefault();
             
@@ -204,6 +215,10 @@ package cn.com.ultrapower.topology.view
             addChild(_bgImage);
             
             background = xml.background;
+            _bgX = xml.background.@x;
+            _bgY = xml.background.@y;
+            _bgScaleX = xml.background.@scalex;
+            _bgScaleY = xml.background.@scaley;
             
             if (0 == _serverTime)
             {
@@ -253,7 +268,6 @@ package cn.com.ultrapower.topology.view
             draw();
             _isChanged = false;
             isInit = false;
-
             return true;
         }
         
@@ -509,6 +523,54 @@ package cn.com.ultrapower.topology.view
             }
         }
         
+        public function get bgX():Number
+        {
+            return _bgImage.x;
+        }
+        
+        public function set bgX(xx:Number):void
+        {
+            _bgImage.x = xx;
+        }
+        
+        public function get bgY():Number
+        {
+            return _bgImage.y;
+        }
+        
+        public function set bgY(yy:Number):void
+        {
+            _bgImage.y = yy;
+        }
+        
+        public function get bgScaleX():Number
+        {
+            return _bgImage.scaleX;
+        }
+        
+        public function set bgScaleX(ww:Number):void
+        {
+            if (ww > 0)
+            {
+                _bgImage.scaleX = ww;
+            }
+            
+        }
+        
+        public function get bgScaleY():Number
+        {
+            return _bgImage.scaleY;
+        }
+        
+        public function set bgScaleY(hh:Number):void
+        {
+            if (hh > 0)
+            {
+                _bgImage.scaleY = hh;
+            }
+            
+        }
+        
         public function get isChanged():Boolean
         {
             return _isChanged;
@@ -642,6 +704,10 @@ package cn.com.ultrapower.topology.view
             xmlData.id = _id;
             xmlData.name = _name;
             xmlData.background = _background;
+            xmlData.background.@x = _bgImage.x.toFixed(2);
+            xmlData.background.@y = _bgImage.y.toFixed(2);
+            xmlData.background.@scalex = _bgImage.scaleX.toFixed(2);
+            xmlData.background.@scaley = _bgImage.scaleY.toFixed(2);
             // 节点数据
             for (i = 0; i < _nodes.length; i++)
             {
@@ -790,7 +856,7 @@ package cn.com.ultrapower.topology.view
         	
         	if (ws <= 0)
         	{
-        	   ws = cw
+        	   ws = cw;
         	}
         	if (hs <= 0)
         	{
@@ -802,6 +868,12 @@ package cn.com.ultrapower.topology.view
     			tn = _nodes[i];
     			tn.moveTo(cx + (tn.x - cx) * ws / cw, cy + (tn.y - cy) * hs / ch);
     		}
+            var oldsx:Number = _bgImage.scaleX;
+            var oldsy:Number = _bgImage.scaleY;
+            _bgImage.scaleX *= ws / cw;
+            _bgImage.scaleY *= hs / ch;
+            _bgImage.x = cx + (_bgImage.x - cx) * ws / cw;
+            _bgImage.y = cy + (_bgImage.y - cy) * hs / ch;
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         }
         
@@ -1038,7 +1110,7 @@ package cn.com.ultrapower.topology.view
                 var f:Function = obj.fun;
                 var g:Boolean = obj.go;
                 f.call(f);
-                obj.go && runActionsList();
+                g && runActionsList();
             }
         }
         
@@ -1062,7 +1134,7 @@ package cn.com.ultrapower.topology.view
                 emptySelectedLines()
                 // 拖拽节点
                 targetObj = getUsableObject(event.target as Object);
-                if (_pressCtrl && !_pressShift)
+                if (_kMoveNode)
                 {
                     // 拖拽全图
                     _state = STATE_MOVE_ALL;
@@ -1072,7 +1144,7 @@ package cn.com.ultrapower.topology.view
                     _oldMouseY = mouseY;
                     addEventListener(MouseEvent.MOUSE_MOVE, moveNodesHandler);
                 }
-                else if (_pressShift && !_pressCtrl)
+                else if (_kMoveBack)
                 {
                     // 拖拽背景
                     _state = STATE_MOVE_BACKGROUND
@@ -1080,7 +1152,7 @@ package cn.com.ultrapower.topology.view
                     _oldMouseY = mouseY;
                     addEventListener(MouseEvent.MOUSE_MOVE, moveBackgroundHandler);
                 }
-                else if (_pressCtrl && _pressShift)
+                else if (_kMoveTopo)
                 {
                     // 拖拽整个拓扑图
                     _state = STATE_MOVE_ALL_PREVIEW;
@@ -1293,7 +1365,7 @@ package cn.com.ultrapower.topology.view
         
         private function kbDownHandler(event:KeyboardEvent):void
         {
-            if (Keyboard.SPACE == event.keyCode)
+            if (KCODE_FREE_MODE == event.keyCode)
             {
                 if (STATE_NOTHING == _state)
                 {
@@ -1305,14 +1377,15 @@ package cn.com.ultrapower.topology.view
             }
             else
             {
-                _pressCtrl = event.ctrlKey;
-                _pressShift = event.shiftKey;
+                _kMoveNode = KCODE_MOVE_NODE == event.keyCode;
+                _kMoveBack = KCODE_MOVE_BACK == event.keyCode;
+                _kMoveTopo = KCODE_MOVE_TOPO == event.keyCode;
             }
         }
         
         private function kbUpHandler(event:KeyboardEvent):void
         {
-            if (Keyboard.SPACE == event.keyCode || _pressCtrl || _pressShift)
+            if (KCODE_FREE_MODE == event.keyCode || _kMoveNode || _kMoveBack || _kMoveTopo)
             {
                 CursorManager.removeAllCursors();
                 emptySelectedNodes();
@@ -1323,7 +1396,8 @@ package cn.com.ultrapower.topology.view
                 
                 oldMouseFlag = -1;
                 xStep = yStep = 0;
-                _pressCtrl = _pressShift = false;
+                
+                _kMoveNode = _kMoveBack = _kMoveTopo = false;
                 _nodeMoved = _bgMoved = false;
             }
         }
@@ -1348,6 +1422,12 @@ package cn.com.ultrapower.topology.view
         {
             // 背景图片加载完成
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
+            
+            // 背景 移动/缩放
+            bgX = _bgX;
+            bgY = _bgY;
+            bgScaleX = _bgScaleX;
+            bgScaleY = _bgScaleY;
         }
         
         /**
