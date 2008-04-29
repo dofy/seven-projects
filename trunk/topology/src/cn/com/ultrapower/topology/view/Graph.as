@@ -341,7 +341,6 @@ package cn.com.ultrapower.topology.view
 	        	{
 	        		removeNode(_selectedNodes.pop());
 	        	}
-	        	_nodes.indexOf(_rootNode) === -1 && _nodes.length > 0 && (_rootNode = _nodes[0]);
                 dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
         	}
         }
@@ -371,7 +370,9 @@ package cn.com.ultrapower.topology.view
             _existentNodes = new Array();
             _aloneNodes = _nodes.concat();
             // 入口
+            _nodes.indexOf(_rootNode) === -1 && _nodes.length > 0 && (_rootNode = _nodes[0]);
             pushNode(treeArray, _rootNode);
+            trace("root", null == _rootNode);
             // 处理剩余节点
             _aloneNodes.length > 0 && treeArray.push(_aloneNodes);
             return treeArray;

@@ -17,7 +17,7 @@ package cn.com.ultrapower.topology.view
 			var len:int = graph.nodeLength;
 			var ind:int = 0;
             var xc:int = Math.round(Math.pow(rc.width * len / rc.height, 0.5));
-            var yc:int = Math.round(Math.pow(rc.height * len / rc.width, 0.5));
+            var yc:int = Math.ceil(len / xc);
             var xStep:Number = rc.width / (xc + 2);
             var yStep:Number = rc.height / (yc + 2);
             for (var i:uint = 0; i < treeArray.length; i++)
