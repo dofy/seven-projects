@@ -11,7 +11,6 @@ package cn.com.ultrapower.topology.view
     import mx.effects.Glow;
     import mx.effects.Move;
     import mx.effects.Zoom;
-    import mx.effects.easing.Elastic;
     import mx.events.EffectEvent; 
     
     public class Node extends VBox implements INode
@@ -52,6 +51,9 @@ package cn.com.ultrapower.topology.view
         private var _ox:Number;          // 原始 x 坐标信息
         private var _oy:Number;          // 原始 y 坐标信息
         private var _scale:Number;       // 缩放比例
+//        
+//        private var _endX:Number;     // 移动最终横坐标
+//        private var _endY:Number;     // 移动最终纵坐标
         
         private var _showTitle:Boolean = true;  // 显示标题
 //        private var _hasTitle:Boolean = true;   // 存在标题
@@ -225,6 +227,8 @@ package cn.com.ultrapower.topology.view
             effect.xTo = xv;
             effect.yTo = yv;
             effect.play();
+//            _endX = xv;
+//            _endY = yv;
             dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
         }
         
@@ -238,6 +242,8 @@ package cn.com.ultrapower.topology.view
             effect.xTo += xv;
             effect.yTo += yv;
             effect.play();
+//            _endX = x + xv;
+//            _endY = y + yv;
             dispatchEvent(new TopoEvent(TopoEvent.NODE_CHANGE));
         }
         
@@ -337,6 +343,16 @@ package cn.com.ultrapower.topology.view
         public function get Describe():String
         {
             return _data.@describe;
+        }
+        
+        public function get endX():Number
+        {
+            return effect.xTo;
+        }
+        
+        public function get endY():Number
+        {
+            return effect.yTo;
         }
         
         public function get Blink():int

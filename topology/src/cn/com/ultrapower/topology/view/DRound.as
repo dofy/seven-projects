@@ -18,7 +18,7 @@ package cn.com.ultrapower.topology.view
 			var rc:Rectangle = graph.getBounds(graph);
 			var ox:Number = rc.width / 2 - 30;
 			var oy:Number = rc.height / 2 - 30;
-			var r:Number = Math.min(rc.width, rc.height) / 2 - 100;
+			var r:Number = Math.min(rc.width, rc.height) / 2 - 70;
             for (var i:uint = 0; i < treeArray.length; i++)
             {
                 for (var j:uint = 0; j < treeArray[i].length; j++)

@@ -6,7 +6,7 @@
 <topology>
     <id>mapId</id>
     <name>MapName</name>
-    <background>bg</background>
+    <background x="7.5" y="100" scalex="0.8" scaley="1.2" >bg</background>
     <systime>1205569121000</systime>
 <!--
 	根节点名称无所谓, 叫什么都行, 没有任何属性
