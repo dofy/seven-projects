@@ -651,7 +651,7 @@ package cn.com.ultrapower.topology.view
         public function get widthScale():Number
         {
         	var tr:Rectangle = getContentArea();
-            return tr.width / width;
+            return tr.width == 0 ? 0 : tr.width / width;
         }
         
         public function set widthScale(ws:Number):void
@@ -664,7 +664,7 @@ package cn.com.ultrapower.topology.view
         public function get heightScale():Number
         {
             var tr:Rectangle = getContentArea();
-            return tr.height / height;
+            return tr.height == 0 ? 0 : tr.height / height;
         }
         
         public function set heightScale(hs:Number):void
@@ -798,8 +798,8 @@ package cn.com.ultrapower.topology.view
         	{
                 xMin = _nodes[0].x;
                 yMin = _nodes[0].y;
-                xMax = _nodes[0].x + _nodes[0].width;
-                yMax = _nodes[0].y + _nodes[0].height;
+                xMax = _nodes[0].x;// + _nodes[0].width;
+                yMax = _nodes[0].y;// + _nodes[0].height;
 	            
 	            if (_nodes.length > 1)
 	            {
@@ -807,8 +807,8 @@ package cn.com.ultrapower.topology.view
 		        	{
 		                xMin = Math.min(xMin, _nodes[i].x);
 		                yMin = Math.min(yMin, _nodes[i].y);
-		                xMax = Math.max(xMax, _nodes[i].x + _nodes[i].width);
-		                yMax = Math.max(yMax, _nodes[i].y + _nodes[i].height);
+		                xMax = Math.max(xMax, _nodes[i].x);// + _nodes[i].width);
+		                yMax = Math.max(yMax, _nodes[i].y);// + _nodes[i].height);
 		        	}	
 	        	}
         	}
@@ -876,8 +876,8 @@ package cn.com.ultrapower.topology.view
     		}
             var oldsx:Number = _bgImage.scaleX;
             var oldsy:Number = _bgImage.scaleY;
-            _bgImage.scaleX *= ws / cw;
-            _bgImage.scaleY *= hs / ch;
+            cw > 0 && (_bgImage.scaleX *= ws / cw);
+            ch > 0 && (_bgImage.scaleY *= hs / ch);
             _bgImage.x = cx + (_bgImage.x - cx) * ws / cw;
             _bgImage.y = cy + (_bgImage.y - cy) * hs / ch;
             dispatchEvent(new TopoEvent(TopoEvent.GRAPH_CHANGE));
