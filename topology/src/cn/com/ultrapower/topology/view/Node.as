@@ -24,8 +24,8 @@ package cn.com.ultrapower.topology.view
         private const BG_ALPHA_SUPER:Number  = 0.9;
         
         private const BLINK_ALPHA_FROM:Number  = 1;
-        private const BLINK_ALPHA_TO:Number  = 0.5;
-        private const BLINK_STRENGTH_FROM:Number  = 20;
+        private const BLINK_ALPHA_TO:Number  = 1;
+        private const BLINK_STRENGTH_FROM:Number  = 10;
         private const BLINK_STRENGTH_TO:Number  = 0;
         
         private var icons:Icons;          // 图标资源
@@ -83,6 +83,12 @@ package cn.com.ultrapower.topology.view
             zoom = new Zoom(this);
             proxy = new NodeProxy(Name);
             blinkBot = new Glow(nodeIcon);
+            blinkBot.alphaFrom = BLINK_ALPHA_FROM;
+            blinkBot.alphaTo = BLINK_ALPHA_TO;
+            blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
+            blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
+            blinkBot.repeatCount = 2;
+            blinkBot.repeatDelay = Math.random() * 1000 + 2000;
             _scale = 1;
             effect.addEventListener(EffectEvent.EFFECT_END, 
                                     function():void
@@ -375,10 +381,6 @@ package cn.com.ultrapower.topology.view
                 {
                     // 闪烁处理
                     trace("flash");
-                    blinkBot.alphaFrom = BLINK_ALPHA_FROM;
-                    blinkBot.alphaTo = BLINK_ALPHA_TO;
-                    blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
-                    blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
                     blinkBot.color = b;
                     blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
                     blinkBot.addEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
@@ -421,6 +423,7 @@ package cn.com.ultrapower.topology.view
         {
         	_data.@x = x.toFixed(2);
         	_data.@y = y.toFixed(2);
+        	_data.@blink = _blink.toString(16);
         	return _data;
         }
         

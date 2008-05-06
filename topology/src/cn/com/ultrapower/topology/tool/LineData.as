@@ -32,14 +32,17 @@ package cn.com.ultrapower.topology.tool
         public function removeLine(line:Line):void
         {
             var _index:int = _arr.indexOf(line);
-            var tmpXML:XML = _dat.line.(@arrIndex == _index)[0].copy();
-            delete _dat.line.(@arrIndex == _index)[0];
-            _arr.splice(_index, 1);
-            
-            var dat:XMLList = _dat.line.(@arrIndex > _index);
-            for (var i:int = 0; i < dat.length(); i++)
-                dat[i].@arrIndex = String(dat[i].@arrIndex - 1);
-            chgLineOptions(tmpXML, true);
+            if (_index !== -1)
+            {
+                var tmpXML:XML = _dat.line.(@arrIndex == _index)[0].copy();
+                delete _dat.line.(@arrIndex == _index)[0];
+                _arr.splice(_index, 1);
+                
+                var dat:XMLList = _dat.line.(@arrIndex > _index);
+                for (var i:int = 0; i < dat.length(); i++)
+                    dat[i].@arrIndex = String(dat[i].@arrIndex - 1);
+                chgLineOptions(tmpXML, true);
+            }
         }
         
         public function clean():void

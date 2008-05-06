@@ -21,8 +21,8 @@ package cn.com.ultrapower.topology.view
         public const BG_WIDTH_OFFSET:uint = 7;
         
         private const BLINK_ALPHA_FROM:Number  = 1;
-        private const BLINK_ALPHA_TO:Number  = 0.5;
-        private const BLINK_STRENGTH_FROM:Number  = 25;
+        private const BLINK_ALPHA_TO:Number  = 1;
+        private const BLINK_STRENGTH_FROM:Number  = 15;
         private const BLINK_STRENGTH_TO:Number  = 0;
         
         private var _id:uint;
@@ -71,6 +71,13 @@ package cn.com.ultrapower.topology.view
             _data = data? data: <line fromId="" toId="" color="000000" width="1" arrowType="0" arrowMode="0"/>;
             
             blinkBot = new Glow(this);
+            blinkBot.alphaFrom = BLINK_ALPHA_FROM;
+            blinkBot.alphaTo = BLINK_ALPHA_TO;
+            blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
+            blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
+            blinkBot.repeatCount = 2;
+            blinkBot.repeatDelay = Math.random() * 1000 + 2000;
+                    
             drawBot = new DLLine(this);
             
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
@@ -272,10 +279,6 @@ package cn.com.ultrapower.topology.view
                 {
                     // 闪烁处理
                     trace("flash");
-                    blinkBot.alphaFrom = BLINK_ALPHA_FROM;
-                    blinkBot.alphaTo = BLINK_ALPHA_TO;
-                    blinkBot.blurXFrom = blinkBot.blurYFrom = BLINK_STRENGTH_FROM;
-                    blinkBot.blurXTo = blinkBot.blurYTo = BLINK_STRENGTH_TO;
                     blinkBot.color = b;
                     blinkBot.removeEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
                     blinkBot.addEventListener(EffectEvent.EFFECT_END, blinkLoopHandler);
@@ -414,6 +417,7 @@ package cn.com.ultrapower.topology.view
             _data.@width = _width;
             _data.@arrowType = _type;
             _data.@arrowMode = _mode;
+            _data.@blink = _blink.toString(16);
         	return _data;
         }
         
