@@ -7,128 +7,112 @@ package cn.com.ultrapower.topology.assets
 	    private var iconsList:Array;
 	    private var classList:Array;
 
-        [Embed(source="icons/abr.png")]
+        [Embed(source="swficons/abr.swf")]
         private var abr:Class;
-        [Embed(source="icons/adapter.png")]
+        [Embed(source="swficons/adapter.swf")]
         private var adapter:Class;
-        [Embed(source="icons/asbr.png")]
+        [Embed(source="swficons/asbr.swf")]
         private var asbr:Class;
-        [Embed(source="icons/backbonearea.png")]
+        [Embed(source="swficons/backbonearea.swf")]
         private var backbonearea:Class;
-        [Embed(source="icons/basestation.png")]
+        [Embed(source="swficons/basestation.swf")]
         private var basestation:Class;
-        [Embed(source="icons/fax.png")]
-        private var fax:Class;
-        [Embed(source="icons/fcport.png")]
+        [Embed(source="swficons/fcport.swf")]
         private var fcport:Class;
-        [Embed(source="icons/filesystem.png")]
+        [Embed(source="swficons/filesystem.swf")]
         private var filesystem:Class;
-        [Embed(source="icons/firewall.png")]
+        [Embed(source="swficons/firewall.swf")]
         private var firewall:Class;
-        [Embed(source="icons/firewall1.png")]
-        private var firewall1:Class;
-        [Embed(source="icons/get_in_database.png")]
+        [Embed(source="swficons/get_in_database.swf")]
         private var get_in_database:Class;
-        [Embed(source="icons/hba.png")]
+        [Embed(source="swficons/hba.swf")]
         private var hba:Class;
-        [Embed(source="icons/l1l2router.png")]
+        [Embed(source="swficons/l1l2router.swf")]
         private var l1l2router:Class;
-        [Embed(source="icons/l1router.png")]
+        [Embed(source="swficons/l1router.swf")]
         private var l1router:Class;
-        [Embed(source="icons/l2router.png")]
+        [Embed(source="swficons/l2router.swf")]
         private var l2router:Class;
-        [Embed(source="icons/layer3switch.png")]
+        [Embed(source="swficons/layer3switch.swf")]
         private var layer3switch:Class;
-        [Embed(source="icons/layer3switch1.png")]
+        [Embed(source="swficons/layer3switch1.swf")]
         private var layer3switch1:Class;
-        [Embed(source="icons/model.png")]
+        [Embed(source="swficons/model.swf")]
         private var model:Class;
-        [Embed(source="icons/monitor.png")]
+        [Embed(source="swficons/monitor.swf")]
         private var monitor:Class;
-        [Embed(source="icons/network.png")]
+        [Embed(source="swficons/network.swf")]
         private var network:Class;
-        [Embed(source="icons/node.png")]
+        [Embed(source="swficons/node.swf")]
         private var node:Class;
-        [Embed(source="icons/node_hp.png")]
+        [Embed(source="swficons/node_hp.swf")]
         private var node_hp:Class;
-        [Embed(source="icons/node_ibm.png")]
+        [Embed(source="swficons/node_ibm.swf")]
         private var node_ibm:Class;
-        [Embed(source="icons/node_linux.png")]
+        [Embed(source="swficons/node_linux.swf")]
         private var node_linux:Class;
-        [Embed(source="icons/node_microsoft.png")]
+        [Embed(source="swficons/node_microsoft.swf")]
         private var node_microsoft:Class;
-        [Embed(source="icons/node_netscreen.png")]
-        private var node_netscreen:Class;
-        [Embed(source="icons/node_sun.png")]
+        [Embed(source="swficons/node_sun.swf")]
         private var node_sun:Class;
-        [Embed(source="icons/node_unix.png")]
+        [Embed(source="swficons/node_unix.swf")]
         private var node_unix:Class;
-        [Embed(source="icons/normalarea.png")]
+        [Embed(source="swficons/normalarea.swf")]
         private var normalarea:Class;
-        [Embed(source="icons/pdsn.png")]
+        [Embed(source="swficons/pdsn.swf")]
         private var pdsn:Class;
-        [Embed(source="icons/perouter.png")]
+        [Embed(source="swficons/perouter.swf")]
         private var perouter:Class;
-        [Embed(source="icons/power.png")]
+        [Embed(source="swficons/power.swf")]
         private var power:Class;
-        [Embed(source="icons/price.png")]
+        [Embed(source="swficons/price.swf")]
         private var price:Class;
-        [Embed(source="icons/prouter.png")]
+        [Embed(source="swficons/prouter.swf")]
         private var prouter:Class;
-        [Embed(source="icons/router.png")]
+        [Embed(source="swficons/router.swf")]
         private var router:Class;
-        [Embed(source="icons/router1.png")]
+        [Embed(source="swficons/router1.swf")]
         private var router1:Class;
-        [Embed(source="icons/router2.png")]
+        [Embed(source="swficons/router2.swf")]
         private var router2:Class;
-        [Embed(source="icons/router3.png")]
+        [Embed(source="swficons/router3.swf")]
         private var router3:Class;
-        [Embed(source="icons/router4.png")]
+        [Embed(source="swficons/router4.swf")]
         private var router4:Class;
-        [Embed(source="icons/sanswitch.png")]
+        [Embed(source="swficons/sanswitch.swf")]
         private var sanswitch:Class;
-        [Embed(source="icons/satellite.png")]
+        [Embed(source="swficons/satellite.swf")]
         private var satellite:Class;
-        [Embed(source="icons/snmpnode.png")]
+        [Embed(source="swficons/snmpnode.swf")]
         private var snmpnode:Class;
-        [Embed(source="icons/snmpnode_hp.png")]
+        [Embed(source="swficons/snmpnode_hp.swf")]
         private var snmpnode_hp:Class;
-        [Embed(source="icons/snmpnode_ibm.png")]
+        [Embed(source="swficons/snmpnode_ibm.swf")]
         private var snmpnode_ibm:Class;
-        [Embed(source="icons/snmpnode_linux.png")]
+        [Embed(source="swficons/snmpnode_linux.swf")]
         private var snmpnode_linux:Class;
-        [Embed(source="icons/snmpnode_microsoft.png")]
+        [Embed(source="swficons/snmpnode_microsoft.swf")]
         private var snmpnode_microsoft:Class;
-        [Embed(source="icons/snmpnode_sun.png")]
+        [Embed(source="swficons/snmpnode_sun.swf")]
         private var snmpnode_sun:Class;
-        [Embed(source="icons/snmpnode_unix.png")]
+        [Embed(source="swficons/snmpnode_unix.swf")]
         private var snmpnode_unix:Class;
-        [Embed(source="icons/speaker.png")]
-        private var speaker:Class;
-        [Embed(source="icons/storageport.png")]
+        [Embed(source="swficons/storageport.swf")]
         private var storageport:Class;
-        [Embed(source="icons/stubarea.png")]
+        [Embed(source="swficons/stubarea.swf")]
         private var stubarea:Class;
-        [Embed(source="icons/switch0.png")]
+        [Embed(source="swficons/switch0.swf")]
         private var switch0:Class;
-        [Embed(source="icons/switch1.png")]
+        [Embed(source="swficons/switch1.swf")]
         private var switch1:Class;
-        [Embed(source="icons/switch2.png")]
+        [Embed(source="swficons/switch2.swf")]
         private var switch2:Class;
-        [Embed(source="icons/thread.png")]
+        [Embed(source="swficons/thread.swf")]
         private var thread:Class;
-        [Embed(source="icons/transport.png")]
-        private var transport:Class;
-        [Embed(source="icons/unknowrouter.png")]
+        [Embed(source="swficons/unknowrouter.swf")]
         private var unknowrouter:Class;
-        
-        
-        [Embed(source="swf/lang.swf")]
-        private var lang:Class;
-        [Embed(source="swf/users.swf")]
-        private var users:Class;
 
-	    
+    
 		public function Icons(){
 			iconsList = new Array(
                                 "abr",
@@ -136,11 +120,9 @@ package cn.com.ultrapower.topology.assets
                                 "asbr",
                                 "backbonearea",
                                 "basestation",
-                                "fax",
                                 "fcport",
                                 "filesystem",
                                 "firewall",
-                                "firewall1",
                                 "get_in_database",
                                 "hba",
                                 "l1l2router",
@@ -156,7 +138,6 @@ package cn.com.ultrapower.topology.assets
                                 "node_ibm",
                                 "node_linux",
                                 "node_microsoft",
-                                "node_netscreen",
                                 "node_sun",
                                 "node_unix",
                                 "normalarea",
@@ -179,17 +160,13 @@ package cn.com.ultrapower.topology.assets
                                 "snmpnode_microsoft",
                                 "snmpnode_sun",
                                 "snmpnode_unix",
-                                "speaker",
                                 "storageport",
                                 "stubarea",
                                 "switch0",
                                 "switch1",
                                 "switch2",
                                 "thread",
-                                "transport",
-                                "unknowrouter",
-                                "lang",
-                                "users");
+                                "unknowrouter");
                                 
             classList = new Array(
                                 abr,
@@ -197,11 +174,9 @@ package cn.com.ultrapower.topology.assets
                                 asbr,
                                 backbonearea,
                                 basestation,
-                                fax,
                                 fcport,
                                 filesystem,
                                 firewall,
-                                firewall1,
                                 get_in_database,
                                 hba,
                                 l1l2router,
@@ -217,7 +192,6 @@ package cn.com.ultrapower.topology.assets
                                 node_ibm,
                                 node_linux,
                                 node_microsoft,
-                                node_netscreen,
                                 node_sun,
                                 node_unix,
                                 normalarea,
@@ -240,17 +214,13 @@ package cn.com.ultrapower.topology.assets
                                 snmpnode_microsoft,
                                 snmpnode_sun,
                                 snmpnode_unix,
-                                speaker,
                                 storageport,
                                 stubarea,
                                 switch0,
                                 switch1,
                                 switch2,
                                 thread,
-                                transport,
-                                unknowrouter,
-                                lang,
-                                users);
+                                unknowrouter);
 		}
 
         /**
