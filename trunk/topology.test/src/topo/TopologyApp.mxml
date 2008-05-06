@@ -19,7 +19,7 @@
             <mx:Object label="保存" icon="@Embed('../icons/save.png')" data="save" />
             <mx:Object label="删除" icon="@Embed('../icons/delete.png')" data="del" />
             <mx:Object label="拓扑居中" icon="@Embed('../icons/center.png')" data="center" />
-            <mx:Object label="节点居中" icon="@Embed('../icons/center_obj.png')" data="centerObject" />
+            <!--mx:Object label="节点居中" icon="@Embed('../icons/center_obj.png')" data="centerObject" /-->
             <!--mx:Object label="随机排列" icon="@Embed('../icons/d_random.png')" data="d_random" /-->
             <mx:Object label="星型排列" icon="@Embed('../icons/d_star.png')" data="d_group" />
             <mx:Object label="平铺排列" icon="@Embed('../icons/d_tile.png')" data="d_tile" />
